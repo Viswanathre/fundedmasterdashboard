@@ -1,30 +1,44 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Bell, Search, HelpCircle } from "lucide-react";
+import { Bell, Search, HelpCircle, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function Header() {
+interface HeaderProps {
+    onMenuClick: () => void;
+}
+
+export default function Header({ onMenuClick }: HeaderProps) {
     const pathname = usePathname();
 
     if (pathname === "/challenges") return null;
 
     return (
         <header className="h-20 px-8 flex items-center justify-between sticky top-0 z-40 bg-bg-main border-b border-white/5">
-            {/* Search Input */}
-            <div className="flex-1 max-w-md hidden md:flex">
-                <div className="relative w-full group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-shark-blue transition-colors" size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search markets, challenges..."
-                        className="w-full bg-white border-transparent focus:border-shark-blue/20 focus:ring-4 focus:ring-shark-blue/5 rounded-2xl py-2.5 pl-10 pr-4 text-sm outline-none transition-all shadow-sm group-hover:shadow-md"
-                    />
-                </div>
-            </div>
+            {/* Left Section (Mobile Menu + Search) */}
+            <div className="flex items-center gap-4">
+                <button
+                    onClick={onMenuClick}
+                    className="md:hidden p-2 -ml-2 text-gray-400 hover:text-white transition-colors"
+                >
+                    <Menu size={24} />
+                </button>
 
-            {/* Mobile Title (visible only on small screens) */}
-            <h1 className="md:hidden font-bold text-xl text-shark-dark">SharkFunded</h1>
+                {/* Search Input */}
+                <div className="max-w-md hidden md:block w-96">
+                    <div className="relative w-full group">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-shark-blue transition-colors" size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search markets, challenges..."
+                            className="w-full bg-white border-transparent focus:border-shark-blue/20 focus:ring-4 focus:ring-shark-blue/5 rounded-2xl py-2.5 pl-10 pr-4 text-sm outline-none transition-all shadow-sm group-hover:shadow-md"
+                        />
+                    </div>
+                </div>
+
+                {/* Mobile Title (visible only on small screens) */}
+                <h1 className="md:hidden font-bold text-xl text-shark-dark">SharkFunded</h1>
+            </div>
 
             {/* Right Actions */}
             <div className="flex items-center gap-4">
