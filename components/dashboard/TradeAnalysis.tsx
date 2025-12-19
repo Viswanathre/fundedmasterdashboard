@@ -261,7 +261,7 @@ export default function TradeAnalysis() {
                 centerLabel="Profit"
                 centerValue={safeShort.totalProfit >= 0 ? `$${safeShort.totalProfit.toFixed(2)}` : `-$${Math.abs(safeShort.totalProfit).toFixed(2)}`}
                 centerValueColor={safeShort.totalProfit >= 0 ? "text-green-400" : "text-white"}
-                colors={{ left: "#ef4444", right: "#22c55e" }} // Red on Left, Green on Right (Loss/Win)? 
+
                 // Actually usually dashboard gauges are consistent. Let's stick to Green = Win (Left?), Red = Loss (Right?)
                 // Provided image "Short Analysis": Left starts Red, Right ends Green. The arc is mostly Red.
                 // Center text "-$1,890.13". 
