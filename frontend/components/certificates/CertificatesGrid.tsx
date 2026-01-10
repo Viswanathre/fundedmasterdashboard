@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { format } from "date-fns";
 import { Award, CheckCircle, Shield, Eye, X, Download, Calendar } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import PayoutCertificate, { PayoutCertificateRef } from "@/components/certificates/PayoutCertificate";
 
 interface Payout {
@@ -28,7 +28,7 @@ interface CertificatesGridProps {
 }
 
 // Animation Variants
-const containerVariants = {
+const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
         opacity: 1,
@@ -38,7 +38,7 @@ const containerVariants = {
     }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 50 } }
 };
