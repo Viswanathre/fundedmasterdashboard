@@ -127,11 +127,11 @@ export default function EconomicsPage() {
                 </div>
 
                 {/* EVENTS TABLE */}
-                <div className="bg-[#050810]/50 backdrop-blur-md rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+                <div className="bg-[#646a78] rounded-2xl overflow-hidden shadow-2xl border-none">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-white/5 text-[11px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/5">
+                                <tr className="bg-[#5c6270] text-[11px] font-bold text-gray-200 uppercase tracking-widest border-b border-black/10">
                                     <th className="px-6 py-4 w-24">Time</th>
                                     <th className="px-6 py-4 w-20">Cur</th>
                                     <th className="px-6 py-4 w-24 text-center">Impact</th>
@@ -141,7 +141,7 @@ export default function EconomicsPage() {
                                     <th className="px-6 py-4 text-right w-32">Previous</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-black/5 bg-[#646a78]">
                                 <AnimatePresence initial={false}>
                                     {filteredEvents.map((item) => (
                                         <motion.tr
@@ -149,24 +149,26 @@ export default function EconomicsPage() {
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             exit={{ opacity: 0, x: 10 }}
-                                            className="group hover:bg-white/5 transition-colors cursor-default"
+                                            className="group hover:bg-[#5c6270] transition-colors cursor-default"
                                         >
-                                            <td className="px-6 py-4 font-mono text-sm text-gray-300 font-medium group-hover:text-white transition-colors">
+                                            <td className="px-6 py-4 font-mono text-xs text-white font-medium">
                                                 {item.time}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="inline-block px-2 py-1 rounded bg-[#0a0f1c] border border-white/10 text-xs font-bold text-gray-300">
+                                                <span className="inline-block px-1.5 py-0.5 rounded-[4px] bg-black text-[10px] font-bold text-white shadow-sm min-w-[32px] text-center">
                                                     {item.currency}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-center">
-                                                <div className={cn(
-                                                    "w-full py-1 rounded text-[10px] font-bold uppercase tracking-wide border",
-                                                    item.impact === 'High' ? "bg-red-500/10 text-red-500 border-red-500/20" :
-                                                        item.impact === 'Medium' ? "bg-orange-500/10 text-orange-500 border-orange-500/20" :
-                                                            "bg-green-500/10 text-green-500 border-green-500/20"
-                                                )}>
-                                                    {item.impact}
+                                                <div className="flex justify-center">
+                                                    <span className={cn(
+                                                        "px-3 py-0.5 rounded-[4px] text-[10px] font-bold uppercase tracking-wide min-w-[60px] text-center shadow-sm",
+                                                        item.impact === 'High' ? "bg-[#f23d4f] text-white" :
+                                                            item.impact === 'Medium' ? "bg-[#ff9000] text-white" :
+                                                                "bg-[#22c55e] text-white"
+                                                    )}>
+                                                        {item.impact}
+                                                    </span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -174,19 +176,19 @@ export default function EconomicsPage() {
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 {item.actual ? (
-                                                    <span className="text-sm font-bold text-[#00E5FF]">{item.actual}</span>
+                                                    <span className="text-sm font-bold text-cyan-300">{item.actual}</span>
                                                 ) : (
-                                                    <span className="text-gray-600">-</span>
+                                                    <span className="text-gray-400">-</span>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 text-right text-sm text-gray-400 font-medium">{item.forecast}</td>
-                                            <td className="px-6 py-4 text-right text-sm text-gray-500 font-medium">{item.previous}</td>
+                                            <td className="px-6 py-4 text-right text-sm text-gray-300 font-medium">{item.forecast}</td>
+                                            <td className="px-6 py-4 text-right text-sm text-gray-400 font-medium">{item.previous}</td>
                                         </motion.tr>
                                     ))}
                                 </AnimatePresence>
                                 {filteredEvents.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                                        <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                                             <div className="flex flex-col items-center justify-center gap-2">
                                                 <AlertTriangle size={24} className="opacity-50" />
                                                 <p className="text-sm font-medium">No events found matching your criteria.</p>
