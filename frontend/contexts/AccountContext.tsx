@@ -49,7 +49,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
                     table: 'challenges',
                 },
                 (payload) => {
-                    // console.log('⚡ Realtime account update received:', payload);
+
                     fetchAccounts(); // Refresh accounts when any change happens
                 }
             )
@@ -63,10 +63,10 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     const fetchAccounts = async () => {
         try {
             const data = await fetchFromBackend('/api/dashboard/accounts');
-            console.log("📊 [AccountContext] Raw Accounts Data:", data);
+
 
             if (data && data.accounts) {
-                console.log(`📊 [AccountContext] Found ${data.accounts.length} accounts`);
+
                 const accountsData = data.accounts.map((challenge: any) => ({
                     id: challenge.id,
                     challenge_id: challenge.id,

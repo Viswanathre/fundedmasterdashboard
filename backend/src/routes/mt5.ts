@@ -489,6 +489,16 @@ router.post('/trades/webhook', async (req: Request, res: Response) => {
                 }
 
                 console.log(`✅ Successfully upserted ${validTrades.length} trades from batch.`);
+
+                // WebSocket: Broadcast trade updates to affected users (filter ensures non-null)
+                const { broadcastTradeUpdate } = await import('../services/socket');
+                // validTrades is already filtered from null in line 477
+                (validTrades as any[]).forEach(trade => {
+                    broadcastTradeUpdate(trade.challenge_id, {
+                        type: 'new_trade',
+                        trade: trade
+                    });
+                });
             }
 
             res.json({ success: true, processed: validTrades.length });
@@ -566,6 +576,14 @@ router.post('/trades/webhook', async (req: Request, res: Response) => {
             }
 
             console.log(`✅ Trade ${ticket} saved via Event webhook.`);
+
+            // WebSocket: Broadcast trade update
+            const { broadcastTradeUpdate } = await import('../services/socket');
+            broadcastTradeUpdate(challenge.id, {
+                type: 'new_trade',
+                trade: tradeData
+            });
+
             res.json({ success: true });
             return;
         }

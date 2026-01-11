@@ -65,7 +65,7 @@ export default function TradeHistory() {
                         filter: `challenge_id=eq.${selectedAccount.id}`,
                     },
                     (payload) => {
-                        console.log('⚡ Realtime trade update received:', payload);
+
                         fetchTrades(true); // Silent refresh
                     }
                 )
@@ -81,12 +81,12 @@ export default function TradeHistory() {
         try {
             if (!selectedAccount) return;
             if (!isSilent) setLoading(true);
-            console.log(`[TradeHistory] Fetching trades for account ${selectedAccount.id} using filter ${filter}`);
+
 
             // fetchFromBackend handles auth headers automatically
             const data = await fetchFromBackend(`/api/dashboard/trades?filter=${filter}&limit=500&accountId=${selectedAccount.id}`);
 
-            console.log('[TradeHistory] Response Data:', data);
+
 
             setTrades(data.trades || []);
         } catch (error) {

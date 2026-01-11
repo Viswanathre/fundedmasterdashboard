@@ -9,7 +9,7 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl!, supabaseKey!);
 const BRIDGE_URL = process.env.BRIDGE_URL || 'https://2b267220ca1b.ngrok-free.app';
 
-const SYNC_INTERVAL_MS = 3 * 60 * 1000; // 3 minutes
+const SYNC_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes (backup polling - webhook is primary)
 
 export function startTradeSyncScheduler() {
     console.log(`⏳ Trade Sync Scheduler started (Bulk Mode). Interval: ${SYNC_INTERVAL_MS / 1000}s`);

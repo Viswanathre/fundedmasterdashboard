@@ -12,7 +12,15 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware (Restart Triggered)
-app.use(cors());
+app.use(cors({
+    origin: [
+        'http://localhost:3000',  // Frontend
+        'http://localhost:3002',  // Admin portal
+        process.env.FRONTEND_URL || '',
+        process.env.ADMIN_URL || ''
+    ].filter(Boolean),
+    credentials: true
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -59,9 +67,12 @@ import webhooksRouter from './routes/webhooks';
 import objectivesRouter from './routes/objectives';
 import rankingRouter from './routes/ranking';
 import adminSettingsRouter from './routes/admin_settings';
+import adminHealthRouter from './routes/admin_health';
 
 app.use('/api/overview', overviewRouter);
 app.use('/api/admin/settings', adminSettingsRouter); // Register Settings Route
+
+app.use('/api/admin/health', adminHealthRouter); // Register Health Route
 app.use('/api/payouts', payoutsRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/certificates', certificatesRouter);
@@ -156,12 +167,20 @@ import { startTradeSyncScheduler } from './services/trade-sync-scheduler';
 import { startRiskEventWorker } from './workers/risk-event-worker';
 import { startTradeSyncWorker } from './workers/trade-sync-worker';
 
-startRiskMonitor(20); // Risk checks every 20s
+startRiskMonitor(60); // Risk checks every 60s (optimized from 20s)
 startRiskEventWorker(); // Start Event Listener
 startDailyEquityReset(); // Schedule midnight reset
 startTradeSyncScheduler(); // Dispatch jobs every 10s
 startTradeSyncWorker(); // Keep Worker active for manual syncs if needed
 
-app.listen(PORT, () => {
+// Initialize Socket.IO
+import { createServer } from 'http';
+import { initializeSocket } from './services/socket';
+
+const httpServer = createServer(app);
+initializeSocket(httpServer);
+
+httpServer.listen(PORT, () => {
     console.log(`Risk Engine Backend running on port ${PORT}`);
+    console.log(`✅ WebSocket server ready`);
 });

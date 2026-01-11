@@ -16,8 +16,9 @@ import {
     Ticket,
     Trophy,
     List,
-    Gauge, // Add this
-    Settings // Add this
+    Gauge,
+    Settings,
+    Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutAdmin } from "@/app/actions/admin-auth";
@@ -37,6 +38,7 @@ const navigation = [
     { name: "Affiliate Payouts", href: "/affiliates", icon: Wallet, roles: ['super_admin', 'payouts_admin', 'sub_admin'] },
     { name: "Competitions", href: "/competitions", icon: Trophy, roles: ['super_admin', 'sub_admin'] },
     { name: "Coupons", href: "/coupons", icon: Ticket, roles: ['super_admin', 'sub_admin'] },
+    { name: "System Health", href: "/system-health", icon: Activity, roles: ['super_admin'] },
     { name: "Admins", href: "/admins", icon: ShieldCheck, roles: ['super_admin'] },
 ];
 

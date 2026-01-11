@@ -1,0 +1,160 @@
+import { Server as SocketIOServer } from 'socket.io';
+import { Server as HTTPServer } from 'http';
+import { supabase } from '../lib/supabase';
+
+let io: SocketIOServer | null = null;
+
+export function initializeSocket(httpServer: HTTPServer) {
+    io = new SocketIOServer(httpServer, {
+        cors: {
+            origin: [
+                'http://localhost:3000',
+                'http://localhost:3002',
+                process.env.FRONTEND_URL || '',
+                process.env.ADMIN_URL || ''
+            ].filter(Boolean),
+            methods: ['GET', 'POST'],
+            credentials: true
+        },
+        transports: ['websocket', 'polling']
+    });
+
+    io.on('connection', async (socket) => {
+        console.log(`🔌 WebSocket connected: ${socket.id}`);
+
+        // Handle authentication - expect userId from client
+        socket.on('authenticate', async (data: { userId: string }) => {
+            try {
+                const { userId } = data;
+
+                if (!userId) {
+                    socket.emit('auth_error', { message: 'Missing userId' });
+                    return;
+                }
+
+                // Store userId in socket
+                (socket as any).userId = userId;
+
+                // Fetch user's active challenges and subscribe to their rooms
+                const { data: challenges, error } = await supabase
+                    .from('challenges')
+                    .select('id, login, status')
+                    .eq('user_id', userId)
+                    .eq('status', 'active');
+
+                if (error) {
+                    console.error('Error fetching challenges:', error);
+                    socket.emit('auth_error', { message: 'Failed to fetch challenges' });
+                    return;
+                }
+
+                // Join rooms for each challenge
+                if (challenges && challenges.length > 0) {
+                    challenges.forEach(challenge => {
+                        const roomName = `challenge_${challenge.id}`;
+                        socket.join(roomName);
+                        console.log(`✅ Socket ${socket.id} joined room: ${roomName}`);
+                    });
+                }
+
+                // Also join user-specific room
+                socket.join(`user_${userId}`);
+
+                socket.emit('authenticated', {
+                    success: true,
+                    challenges: challenges?.map(c => c.id) || []
+                });
+
+                console.log(`🔐 Socket authenticated for user: ${userId}`);
+            } catch (error) {
+                console.error('Authentication error:', error);
+                socket.emit('auth_error', { message: 'Authentication failed' });
+            }
+        });
+
+        // Handle manual challenge subscription
+        socket.on('subscribe_challenge', (challengeId: string) => {
+            const roomName = `challenge_${challengeId}`;
+            socket.join(roomName);
+            console.log(`📡 Socket ${socket.id} subscribed to ${roomName}`);
+        });
+
+        // Handle unsubscribe
+        socket.on('unsubscribe_challenge', (challengeId: string) => {
+            const roomName = `challenge_${challengeId}`;
+            socket.leave(roomName);
+            console.log(`📴 Socket ${socket.id} unsubscribed from ${roomName}`);
+        });
+
+        socket.on('disconnect', () => {
+            console.log(`🔌 WebSocket disconnected: ${socket.id}`);
+        });
+
+        socket.on('error', (error) => {
+            console.error(`❌ WebSocket error on ${socket.id}:`, error);
+        });
+    });
+
+    console.log('✅ Socket.IO initialized');
+    return io;
+}
+
+export function getIO(): SocketIOServer | null {
+    return io;
+}
+
+// Metrics
+export function getSocketMetrics() {
+    if (!io) {
+        return {
+            totalConnections: 0,
+            authenticatedConnections: 0,
+            rooms: []
+        };
+    }
+
+    const sockets = Array.from(io.sockets.sockets.values());
+    const authenticatedCount = sockets.filter(s => (s as any).userId).length;
+    const rooms = Array.from(io.sockets.adapter.rooms.keys())
+        .filter(room => room.startsWith('challenge_') || room.startsWith('user_'));
+
+    return {
+        totalConnections: io.engine.clientsCount,
+        authenticatedConnections: authenticatedCount,
+        rooms: rooms,
+        roomCount: rooms.length
+    };
+}
+
+// Broadcast helpers
+export function broadcastTradeUpdate(challengeId: string, trade: any) {
+    if (!io) {
+        console.warn('⚠️ Socket.IO not initialized, cannot broadcast trade update');
+        return;
+    }
+
+    const roomName = `challenge_${challengeId}`;
+    io.to(roomName).emit('trade_update', trade);
+    console.log(`📤 Broadcasted trade update to room: ${roomName}`);
+}
+
+export function broadcastBalanceUpdate(challengeId: string, balanceData: any) {
+    if (!io) {
+        console.warn('⚠️ Socket.IO not initialized, cannot broadcast balance update');
+        return;
+    }
+
+    const roomName = `challenge_${challengeId}`;
+    io.to(roomName).emit('balance_update', balanceData);
+    console.log(`📤 Broadcasted balance update to room: ${roomName}`);
+}
+
+export function broadcastToUser(userId: string, event: string, data: any) {
+    if (!io) {
+        console.warn('⚠️ Socket.IO not initialized, cannot broadcast to user');
+        return;
+    }
+
+    io.to(`user_${userId}`).emit(event, data);
+    console.log(`📤 Broadcasted ${event} to user: ${userId}`);
+}

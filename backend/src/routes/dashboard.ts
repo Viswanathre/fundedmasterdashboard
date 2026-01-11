@@ -355,21 +355,24 @@ router.get('/objectives', authenticate, async (req: AuthRequest, res: Response) 
         console.log(`   Total Loss: $${totalLoss}, Total Profit: $${totalProfit}`);
 
         // Fetch challenge limits
+        // NOTE: max_daily_loss, max_total_loss, profit_target columns don't exist in challenges table
+        // Using default values based on account size instead
         const { data: challenge, error: challengeError } = await supabase
             .from('challenges')
-            .select('max_daily_loss, max_total_loss, profit_target')
+            .select('initial_balance')
             .eq('id', challenge_id)
             .single();
 
         if (challengeError) {
             console.error('Error fetching challenge:', challengeError);
-            // Decide if this should be a hard error or proceed with defaults
-            // For now, we'll log and proceed with defaults as per original logic
+            // Proceed with defaults
         }
 
-        const maxDailyLoss = Number(challenge?.max_daily_loss) || 5000;
-        const maxTotalLoss = Number(challenge?.max_total_loss) || 10000;
-        const profitTarget = Number(challenge?.profit_target) || 8000;
+        // Calculate risk limits based on account size (industry standard percentages)
+        const accountSize = Number(challenge?.initial_balance) || 100000;
+        const maxDailyLoss = accountSize * 0.05; // 5% daily loss limit
+        const maxTotalLoss = accountSize * 0.10; // 10% total loss limit  
+        const profitTarget = accountSize * 0.08; // 8% profit target
 
         const responseData = {
             objectives: {

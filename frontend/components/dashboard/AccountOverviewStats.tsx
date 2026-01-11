@@ -5,7 +5,7 @@ import { DollarSign, TrendingUp, Calendar, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAccount } from "@/contexts/AccountContext";
 import { fetchFromBackend } from "@/lib/backend-api";
-import { createClient } from "@/utils/supabase/client";
+import { useSocket } from "@/contexts/SocketContext";
 
 interface StatProps {
     label: string;
@@ -34,12 +34,12 @@ function StatBox({ label, value, icon: Icon, isNegative, isPositive }: StatProps
 
 export default function AccountOverviewStats() {
     // Force HMR update
-    console.log("AccountOverviewStats loaded");
+
     const { selectedAccount, loading } = useAccount();
+    const { socket, isConnected, isAuthenticated } = useSocket();
 
     // Use state for Realized PnL
     const [realizedPnL, setRealizedPnL] = useState<number | null>(null);
-    const supabase = createClient();
 
     useEffect(() => {
         if (!selectedAccount) return;
@@ -55,7 +55,6 @@ export default function AccountOverviewStats() {
                     setRealizedPnL(data.objectives.stats.net_pnl);
                 } else {
                     // Fallback or null if not ready
-                    // If we stick with null, it might flicker, but for now safe
                     console.warn("net_pnl not found in response", data);
                 }
             } catch (error) {
@@ -65,17 +64,31 @@ export default function AccountOverviewStats() {
 
         fetchRealizedPnL();
 
-        // Realtime Subscription for updates
-        const channel = supabase
-            .channel(`realtime-pnl-${selectedAccount.id}`)
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'trades', filter: `challenge_id=eq.${selectedAccount.id}` },
-                () => fetchRealizedPnL())
-            .subscribe();
+        // WebSocket: Listen for real-time trade and balance updates
+        if (socket && isAuthenticated) {
+            const handleTradeUpdate = (data: any) => {
 
-        return () => {
-            supabase.removeChannel(channel);
-        };
-    }, [selectedAccount, supabase]);
+                // Refetch PnL when new trade arrives
+                fetchRealizedPnL();
+            };
+
+            const handleBalanceUpdate = (data: any) => {
+
+                // Update balance if provided
+                if (data.balance !== undefined) {
+                    setRealizedPnL(data.balance - (selectedAccount.initial_balance || 100000));
+                }
+            };
+
+            socket.on('trade_update', handleTradeUpdate);
+            socket.on('balance_update', handleBalanceUpdate);
+
+            return () => {
+                socket.off('trade_update', handleTradeUpdate);
+                socket.off('balance_update', handleBalanceUpdate);
+            };
+        }
+    }, [selectedAccount, socket, isConnected, isAuthenticated]);
 
 
     if (loading) {

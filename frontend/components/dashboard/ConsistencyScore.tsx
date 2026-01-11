@@ -43,7 +43,7 @@ export default function ConsistencyScore() {
 
             const result = await fetchFromBackend(`/api/dashboard/consistency?challenge_id=${selectedAccount.id}`);
 
-            console.log("Consistency Result:", result);
+
             if (!result.consistency) {
                 console.error("Missing consistency data:", result);
                 setData({
