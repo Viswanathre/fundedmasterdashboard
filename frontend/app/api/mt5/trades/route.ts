@@ -65,11 +65,13 @@ export async function POST(req: NextRequest) {
         // We update 'last_trade_at' and maybe total_trades count.
 
         // Increment total_trades
-        await supabase.rpc('increment_challenge_stats', {
+        const { error: rpcError } = await supabase.rpc('increment_challenge_stats', {
             p_challenge_id: challenge.id,
             p_trades_count: trades.length,
             p_profit_add: totalProfit
-        }).catch(async () => {
+        });
+
+        if (rpcError) {
             // Fallback if RPC doesn't exist (simpler update)
             await supabase
                 .from('challenges')
@@ -77,7 +79,7 @@ export async function POST(req: NextRequest) {
                     last_trade_at: new Date().toISOString()
                 })
                 .eq('id', challenge.id);
-        });
+        }
 
         return NextResponse.json({
             success: true,

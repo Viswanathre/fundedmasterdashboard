@@ -173,6 +173,7 @@ startDailyEquityReset(); // Schedule midnight reset
 startTradeSyncScheduler(); // Dispatch jobs every 10s
 startTradeSyncWorker(); // Keep Worker active for manual syncs if needed
 
+
 // Initialize Socket.IO
 import { createServer } from 'http';
 import { initializeSocket } from './services/socket';
@@ -180,7 +181,27 @@ import { initializeSocket } from './services/socket';
 const httpServer = createServer(app);
 initializeSocket(httpServer);
 
-httpServer.listen(PORT, () => {
+const server = httpServer.listen(PORT, () => {
     console.log(`Risk Engine Backend running on port ${PORT}`);
     console.log(`✅ WebSocket server ready`);
+});
+
+// GLOBAL ERROR HANDLERS (Prevent Crashes)
+process.on('uncaughtException', (err) => {
+    console.error('❌ CRITICAL: Uncaught Exception:', err);
+    // Optional: Graceful shutdown logic here if state is corrupted
+    // server.close(() => process.exit(1));
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+// Graceful Shutdown
+process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+        console.log('HTTP server closed');
+        process.exit(0);
+    });
 });

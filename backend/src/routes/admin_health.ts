@@ -113,6 +113,14 @@ router.get('/', async (req, res: Response) => {
             }
         };
 
+        // 6. System Resources
+        const memUsage = process.memoryUsage();
+        healthData.system = {
+            memory_rss: `${Math.round(memUsage.rss / 1024 / 1024)}MB`,
+            memory_heap: `${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`,
+            uptime: `${Math.round(process.uptime())}s`
+        };
+
         // Overall system status
         const allHealthy = Object.values(healthData.services).every((service: any) =>
             service.status === 'healthy' || service.status === 'running' || service.status === 'scheduled'
