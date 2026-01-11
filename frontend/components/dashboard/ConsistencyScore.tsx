@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Award } from "lucide-react";
 import { useAccount } from "@/contexts/AccountContext";
+import { fetchFromBackend } from "@/lib/backend-api";
 
 interface ConsistencyData {
     consistencyScore: number;
@@ -40,22 +41,19 @@ export default function ConsistencyScore() {
                 return;
             }
 
-            const response = await fetch(`/api/dashboard/consistency?challenge_id=${selectedAccount.challenge_id}`);
+            const result = await fetchFromBackend(`/api/dashboard/consistency?challenge_id=${selectedAccount.id}`);
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch consistency data');
-            }
-
-            const result = await response.json();
-
+            console.log("Consistency Result:", result);
             if (!result.consistency) {
+                console.error("Missing consistency data:", result);
                 setData({
-                    consistencyScore: 0,
+                    consistencyScore: -2, // Distinct error code
                     isPayoutEligible: false,
                     totalProfit: 0,
                     largestTrade: 0,
                     totalWinningTrades: 0,
                     threshold: 15,
+                    accountType: result.error || "Unknown Error" // Store error msg
                 });
                 setLoading(false);
                 return;
@@ -63,19 +61,19 @@ export default function ConsistencyScore() {
 
             const c = result.consistency;
             setData({
-                consistencyScore: c.consistencyScore || 0,
-                isPayoutEligible: c.isPayoutEligible || false,
-                totalProfit: c.totalProfit || 0,
-                largestTrade: c.largestTrade || 0,
-                totalWinningTrades: c.totalWinningTrades || 0,
-                threshold: c.threshold || 15,
-                accountType: c.accountType,
-                isInstantFunding: c.isInstantFunding || false,
+                consistencyScore: c.score || 0, // Backend sends 'score' not 'consistencyScore'
+                isPayoutEligible: c.eligible || false, // Backend sends 'eligible'
+                totalProfit: result.stats?.avg_win || 0,
+                largestTrade: result.stats?.largest_win || 0,
+                totalWinningTrades: 0, // Not in response
+                threshold: 15,
+                accountType: undefined,
+                isInstantFunding: false,
             });
         } catch (error) {
             console.error('Error fetching consistency:', error);
             setData({
-                consistencyScore: 0,
+                consistencyScore: -1, // Error / No Data
                 isPayoutEligible: false,
                 totalProfit: 0,
                 largestTrade: 0,
@@ -119,7 +117,7 @@ export default function ConsistencyScore() {
             <div className="relative overflow-hidden rounded-xl p-8 bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50">
                 <div className="relative z-10 text-center">
                     <div className="text-6xl font-black text-white">
-                        {data.consistencyScore.toFixed(2)}%
+                        {data.consistencyScore === -1 ? "Net Error" : data.consistencyScore === -2 ? `API Error: ${data.accountType || '?'}` : `${data.consistencyScore.toFixed(2)}%`}
                     </div>
                 </div>
             </div>

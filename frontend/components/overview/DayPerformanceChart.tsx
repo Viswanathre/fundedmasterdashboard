@@ -67,7 +67,7 @@ export default function DayPerformanceChart({ data }: DayPerformanceChartProps) 
                             {/* Labels */}
                             <div className="text-center">
                                 <p className={`text-[10px] font-bold ${isPositive ? 'text-green-400' : 'text-red-400'} mb-0.5`}>
-                                    {isPositive ? '+' : ''}${Math.abs(day.value) >= 1000 ? `${(Math.abs(day.value) / 1000).toFixed(1)}k` : Math.abs(day.value)}
+                                    {isPositive ? '+' : ''}${Math.abs(day.value) >= 1000 ? `${(Math.abs(day.value) / 1000).toFixed(1)}k` : Math.abs(day.value).toFixed(2)}
                                 </p>
                                 <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold group-hover:text-white transition-colors">{day.label}</p>
                             </div>

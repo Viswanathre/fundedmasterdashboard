@@ -788,3 +788,4 @@
 [2026-01-10T06:43:54.561Z] Filtering by Challenge ID: 4206dbba-ecb4-47b2-b7cc-79ce214fa966
 [2026-01-10T06:52:15.889Z] Filtering by Challenge ID: 58def4a3-8532-42ed-976d-fb30409d331d
 [2026-01-10T06:52:16.690Z] Filtering by Challenge ID: 58def4a3-8532-42ed-976d-fb30409d331d
+[2026-01-10T19:06:36.759Z] DB Error: {"message":"TypeError: fetch failed","details":"TypeError: fetch failed\n\nCaused by: Error: read ECONNRESET (ECONNRESET)\nError: read ECONNRESET\n    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)","hint":"","code":""}

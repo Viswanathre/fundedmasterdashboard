@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Trophy, Calendar, Users, DollarSign, Clock, BarChart2, Tag, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from 'next/link';
+import { fetchFromBackend } from "@/lib/backend-api";
 
 interface Competition {
     id: string;
@@ -36,16 +37,13 @@ export default function CompetitionsClient() {
             const supabase = createClient();
             const { data: { user } } = await supabase.auth.getUser();
 
-            const url = new URL(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/competitions`);
+            let endpoint = '/api/competitions';
             if (user) {
-                url.searchParams.append('userId', user.id);
+                endpoint += `?userId=${user.id}`;
             }
 
-            const response = await fetch(url.toString());
-            if (response.ok) {
-                const data = await response.json();
-                setCompetitions(data);
-            }
+            const data = await fetchFromBackend(endpoint);
+            setCompetitions(data);
         } catch (error) {
             console.error("Failed to fetch competitions:", error);
         } finally {

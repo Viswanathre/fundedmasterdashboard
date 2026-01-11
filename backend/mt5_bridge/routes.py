@@ -323,6 +323,7 @@ def check_bulk(requests: List[StopOutRequest]):
                  if user:
                      equity = getattr(user, "Equity", 0.0)
                      balance = getattr(user, "Balance", 0.0)
+                     print(f"DEBUG: UserRequest({req.login}) returned Eq: {equity}, Bal: {balance} [MOCK: {isinstance(worker.manager.UserRequest(req.login), object)}]")
                  else:
                      continue 
 
@@ -359,7 +360,7 @@ def check_bulk(requests: List[StopOutRequest]):
 
                 results.append({
                     "login": req.login,
-                    "status": "FAILED",
+                    "status": "breached",
                     "equity": equity,
                     "balance": balance,
                     "actions": actions
@@ -367,7 +368,7 @@ def check_bulk(requests: List[StopOutRequest]):
             else:
                 results.append({
                     "login": req.login,
-                    "status": "SAFE",
+                    "status": "active",
                     "equity": equity,
                     "balance": balance
                 })

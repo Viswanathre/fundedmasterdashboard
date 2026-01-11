@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Trophy, Calendar, DollarSign, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { fetchFromBackend } from "@/lib/backend-api";
 
 interface Competition {
     id: string;
@@ -40,7 +41,7 @@ export default function CompetitionsClient() {
         prize_pool: 0,
         max_participants: 0,
         initial_balance: 100000,
-        platform: "matchtrader",
+        platform: "metatrader5",
         image_url: ""
     });
 
@@ -50,11 +51,8 @@ export default function CompetitionsClient() {
 
     const fetchCompetitions = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/competitions/admin`);
-            if (response.ok) {
-                const data = await response.json();
-                setCompetitions(data);
-            }
+            const data = await fetchFromBackend('/api/competitions/admin');
+            setCompetitions(data);
         } catch (error) {
             console.error("Failed to fetch competitions:", error);
         } finally {
@@ -103,37 +101,33 @@ export default function CompetitionsClient() {
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("🚀 Creating competition with data:", formData);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/competitions`, {
+            const data = await fetchFromBackend('/api/competitions', {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             });
+            console.log("✅ Competition created:", data);
 
-            if (response.ok) {
-                alert("Competition created successfully!");
-                setShowCreateModal(false);
-                fetchCompetitions();
-                // Reset form
-                setFormData({
-                    title: "",
-                    description: "",
-                    start_date: "",
-                    end_date: "",
-                    entry_fee: 0,
-                    prize_pool: 0,
-                    max_participants: 0,
-                    initial_balance: 100000,
-                    platform: "matchtrader",
-                    image_url: ""
-                });
-            } else {
-                const err = await response.json();
-                alert(`Failed to create competition: ${err.error || 'Unknown error'}`);
-            }
-        } catch (error) {
-            console.error("Error creating competition:", error);
-            alert("Error creating competition: Network or system error");
+            alert("Competition created successfully!");
+            setShowCreateModal(false);
+            fetchCompetitions();
+            // Reset form
+            setFormData({
+                title: "",
+                description: "",
+                start_date: "",
+                end_date: "",
+                entry_fee: 0,
+                prize_pool: 0,
+                max_participants: 0,
+                initial_balance: 100000,
+                platform: "matchtrader",
+                image_url: ""
+            });
+        } catch (error: any) {
+            console.error("❌ Competition creation error:", error);
+            alert(`Failed to create competition: ${error.message || 'Unknown error'}. Check console for details.`);
         }
     };
 
@@ -267,8 +261,10 @@ export default function CompetitionsClient() {
                                         onChange={(e) => setFormData({ ...formData, platform: e.target.value })}
                                         className="w-full bg-gray-900/50 border border-gray-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500/50 transition-colors"
                                     >
+                                        <option value="metatrader5">MetaTrader 5</option>
                                         <option value="matchtrader">MatchTrader</option>
                                         <option value="fundingpips">FundingPips</option>
+
                                     </select>
                                 </div>
                                 <div className="space-y-2">

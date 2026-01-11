@@ -118,6 +118,26 @@ router.post('/server-config', authenticate, async (req, res) => {
             .single();
 
         if (error) throw error;
+
+        // --- TRIGGER BRIDGE RELOAD ---
+        const BRIDGE_URL = process.env.BRIDGE_URL || 'http://localhost:5001';
+        try {
+            console.log("Triggering Bridge Reload...", BRIDGE_URL);
+            // We use a short timeout because we don't want to block the UI if bridge is restarting
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+            await fetch(`${BRIDGE_URL}/reload-config`, {
+                method: 'POST',
+                signal: controller.signal
+            }).then(r => r.json()).then(d => console.log("Reload Response:", d));
+
+            clearTimeout(timeoutId);
+        } catch (bridgeError) {
+            console.error("Failed to trigger bridge reload (might be offline):", bridgeError);
+            // Non-fatal, user saved config to DB at least.
+        }
+
         res.json(data);
     } catch (e: any) {
         res.status(500).json({ error: e.message });

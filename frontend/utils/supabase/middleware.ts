@@ -61,5 +61,17 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url)
     }
 
+    // EXTRA SECURITY: double check for dashboard paths
+    if (!user && (
+        request.nextUrl.pathname === '/' ||
+        request.nextUrl.pathname.startsWith('/dashboard') ||
+        request.nextUrl.pathname.startsWith('/challenges') ||
+        request.nextUrl.pathname.startsWith('/payouts')
+    )) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/login'
+        return NextResponse.redirect(url)
+    }
+
     return supabaseResponse
 }

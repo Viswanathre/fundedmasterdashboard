@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Clock, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAccount } from "@/contexts/AccountContext";
+import { fetchFromBackend } from "@/lib/backend-api";
 import { useState, useEffect } from "react";
 
 interface ObjectiveRowProps {
@@ -136,17 +137,10 @@ export default function TradingObjectives() {
 
 
                 // Fetch rules from API
-                const response = await fetch(`/api/objectives/calculate`, {
+                const result = await fetchFromBackend('/api/objectives/calculate', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ challenge_id: selectedAccount.challenge_id })
                 });
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch objectives');
-                }
-
-                const result = await response.json();
 
                 if (!result.objectives) {
                     console.log('No specific rules found, using defaults for:', accountType, accountSize);

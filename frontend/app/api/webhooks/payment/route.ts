@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { mt5Bridge } from '@/lib/mt5-bridge';
 
 /**
  * Payment Success Webhook
@@ -163,29 +164,22 @@ async function handleWebhook(request: NextRequest) {
 
         const mt5Payload = {
             group: mt5Group,
-            leverage: order.account_types?.leverage || 100, // Default to 100 if missing
+            leverage: order.account_types?.leverage || 100,
             name: fullName,
             email: email,
             balance: order.account_size,
-            callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/mt5`
         };
 
-        const mt5ApiUrl = process.env.MT5_API_URL || 'https://687d9be96ebb.ngrok-free.app';
-        console.log('Requesting MT5 account creation via bridge:', mt5Payload);
+        console.log('Requesting MT5 account creation via SDK:', mt5Payload);
 
-        const mt5Response = await fetch(`${mt5ApiUrl}/create-account`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(mt5Payload),
-        });
-
-        const mt5Data = await mt5Response.json();
-
-        if (!mt5Response.ok) {
-            console.error('MT5 account creation failed:', mt5Data);
+        let mt5Data;
+        try {
+            mt5Data = await mt5Bridge.createAccount(mt5Payload);
+        } catch (bridgeError) {
+            console.error('MT5 account creation failed:', bridgeError);
             // Don't fail webhook - retry later logic could go here
             return NextResponse.json({
-                message: 'Payment received, account creation pending'
+                message: 'Payment received, account creation pending (Bridge Error)'
             });
         }
 
@@ -239,10 +233,11 @@ async function handleWebhook(request: NextRequest) {
                 current_equity: order.account_size,
                 start_of_day_equity: order.account_size,
                 status: 'active',
+                group: mt5Group, // Save the actual group used
                 login: mt5Data.login,
                 master_password: mt5Data.password,
                 investor_password: mt5Data.investor_password || '',
-                server: mt5Data.server,
+                server: (mt5Data as any).server || process.env.MT5_SERVER_NAME || 'SharkFunded-Demo',
                 platform: order.platform,
                 model: order.model,
                 leverage: order.account_types?.leverage || 100,

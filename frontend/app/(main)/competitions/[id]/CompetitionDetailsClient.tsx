@@ -6,6 +6,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import PageLoader from "@/components/ui/PageLoader";
+import { fetchFromBackend } from "@/lib/backend-api";
 
 interface Competition {
     id: string;
@@ -60,29 +61,25 @@ export default function CompetitionDetailsClient({ competitionId }: { competitio
             if (user) setUserId(user.id);
 
             // Fetch Competition Details
-            const compUrl = new URL(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/competitions`);
-            if (user) compUrl.searchParams.append('userId', user.id);
-
-            const compRes = await fetch(compUrl.toString());
-            if (compRes.ok) {
-                const comps = await compRes.json();
-                const found = comps.find((c: Competition) => c.id === competitionId);
-                if (found) setCompetition(found);
+            let endpoint = '/api/competitions';
+            if (user) {
+                endpoint += `?userId=${user.id}`;
             }
+
+            const comps = await fetchFromBackend(endpoint);
+            const found = comps.find((c: Competition) => c.id === competitionId);
+            if (found) setCompetition(found);
 
             // Fetch Leaderboard
-            const leadRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/competitions/${competitionId}/leaderboard`);
-            if (leadRes.ok) {
-                const data = await leadRes.json();
-                // Mock extra stats for design match if missing
-                const enriched = data.map((p: any) => ({
-                    ...p,
-                    trades_count: p.trades_count || 0,
-                    win_ratio: p.win_ratio || 0,
-                    profit: p.profit || 0
-                }));
-                setLeaderboard(enriched);
-            }
+            const data = await fetchFromBackend(`/api/competitions/${competitionId}/leaderboard`);
+            // Mock extra stats for design match if missing
+            const enriched = data.map((p: any) => ({
+                ...p,
+                trades_count: p.trades_count || 0,
+                win_ratio: p.win_ratio || 0,
+                profit: p.profit || 0
+            }));
+            setLeaderboard(enriched);
 
         } catch (error) {
             console.error("Error fetching competition details:", error);

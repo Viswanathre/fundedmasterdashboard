@@ -89,28 +89,33 @@ const GaugeCard = ({ title, centerLabel, centerValue, centerSubValue, centerValu
                             return (
                                 <>
                                     {/* Left Arc (Wins) */}
-                                    <motion.path
-                                        d={`M ${startX} ${startY} A ${r} ${r} 0 0 1 ${splitX} ${splitY}`}
-                                        fill="none"
-                                        stroke={colors.left}
-                                        strokeWidth="12"
-                                        strokeLinecap="round"
-                                        initial={{ pathLength: 0 }}
-                                        animate={{ pathLength: 1 }}
-                                        transition={{ duration: 1, ease: "easeOut" }}
-                                    />
+                                    {percentages.left > 0 && (
+                                        <motion.path
+                                            d={`M ${startX} ${startY} A ${r} ${r} 0 0 1 ${splitX} ${splitY}`}
+                                            fill="none"
+                                            stroke={colors.left}
+                                            strokeWidth="12"
+                                            strokeLinecap="round"
+                                            initial={{ pathLength: 0 }}
+                                            animate={{ pathLength: 1 }}
+                                            transition={{ duration: 1, ease: "easeOut" }}
+                                        />
+                                    )}
 
                                     {/* Right Arc (Losses) */}
-                                    <motion.path
-                                        d={`M ${splitX} ${splitY} A ${r} ${r} 0 0 1 ${endX} ${endY}`}
-                                        fill="none"
-                                        stroke={colors.right}
-                                        strokeWidth="12"
-                                        strokeLinecap="round"
-                                        initial={{ pathLength: 0 }}
-                                        animate={{ pathLength: 1 }}
-                                        transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    />
+                                    {/* Only render red arc if we have losses (percentage > 0) */}
+                                    {percentages.right > 0 && (
+                                        <motion.path
+                                            d={`M ${splitX} ${splitY} A ${r} ${r} 0 0 1 ${endX} ${endY}`}
+                                            fill="none"
+                                            stroke={colors.right}
+                                            strokeWidth="12"
+                                            strokeLinecap="round"
+                                            initial={{ pathLength: 0 }}
+                                            animate={{ pathLength: 1 }}
+                                            transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
+                                        />
+                                    )}
                                 </>
                             );
                         })()}
@@ -180,7 +185,12 @@ export default function TradeAnalysis() {
 
 
     const calculateStats = (type: 'buy' | 'sell' | 'all') => {
-        const filtered = type === 'all' ? trades : trades.filter(t => t.type === type);
+        const filtered = type === 'all' ? trades : trades.filter(t => {
+            const tType = String(t.type).toLowerCase();
+            if (type === 'buy') return tType === 'buy' || tType === '0';
+            if (type === 'sell') return tType === 'sell' || tType === '1';
+            return false;
+        });
         const total = filtered.length;
         if (total === 0) return null;
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Calendar, Hash, BarChart3, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
 import { useAccount } from "@/contexts/AccountContext";
+import { fetchFromBackend } from "@/lib/backend-api";
 import { cn } from "@/lib/utils";
 
 interface StatItem {
@@ -22,12 +23,10 @@ export default function DetailedStats() {
             if (!selectedAccount) return;
             setLoading(true);
             try {
-                const res = await fetch('/api/objectives/calculate', {
+                const data = await fetchFromBackend('/api/objectives/calculate', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ challenge_id: selectedAccount.id })
                 });
-                const data = await res.json();
                 if (data.stats) {
                     setStatsData(data.stats);
                 }

@@ -31,13 +31,13 @@ async function runTradeSync() {
         // 1. Fetch Active Challenges
         const { data: challenges, error } = await supabase
             .from('challenges')
-            .select('id, user_id, login')
+            .select('id, user_id, login, created_at')
             .eq('status', 'active');
 
         if (error || !challenges || challenges.length === 0) return;
 
-        // 2. Process in Batches (e.g. 50 accounts per HTTP request)
-        const BATCH_SIZE = 50;
+        // 2. Process in Batches (e.g. 25 accounts per HTTP request - Reduced for stability)
+        const BATCH_SIZE = 25;
         for (let i = 0; i < challenges.length; i += BATCH_SIZE) {
             const batch = challenges.slice(i, i + BATCH_SIZE);
             await processBatch(batch);
@@ -65,12 +65,15 @@ async function processBatch(challenges: any[], attempt = 1) {
 
         // Call Python Bulk Endpoint with Timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 120s timeout (increased for history fetch)
 
         try {
             const response = await fetch(`${BRIDGE_URL}/fetch-trades-bulk`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true'
+                },
                 body: JSON.stringify({ logins, incremental: true }),
                 signal: controller.signal
             });
@@ -89,6 +92,16 @@ async function processBatch(challenges: any[], attempt = 1) {
             const formattedTrades = trades.map((t: any) => {
                 const challenge = challengeMap.get(t.login);
                 if (!challenge) return null;
+
+                // GHOST TRADE PROTECTION: Ignore trades older than challenge creation
+                const challengeStartTime = new Date(challenge.created_at).getTime();
+                const tradeTime = (t.close_time || t.time) * 1000; // Prefer close time for historical checks
+
+                // Allow 60s buffer for clock skew
+                if (tradeTime < (challengeStartTime - 60000)) {
+                    // console.log(`👻 Ignored Ghost Trade ${t.ticket} (Time: ${new Date(tradeTime).toISOString()} < Created: ${challenge.created_at})`);
+                    return null;
+                }
 
                 return {
                     ticket: t.ticket,

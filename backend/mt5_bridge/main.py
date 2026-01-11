@@ -3,11 +3,11 @@ import string
 from datetime import datetime, timedelta
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from mt5_worker import MT5Worker
 from typing import List
 import traceback
 import subprocess
 import os
+import json
 
 app = FastAPI()
 
@@ -19,26 +19,76 @@ def generate_password(length=10):
     chars = string.ascii_letters + string.digits + "!@#$"
     return ''.join(random.choice(chars) for _ in range(length))
 
+# --- SUPABASE CONFIG LOADING ---
+supabase = None
+try:
+    from supabase import create_client, Client
+    # Load envs implicitly or directly
+    from dotenv import load_dotenv
+    load_dotenv()
+    
+    SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("NEXT_PUBLIC_SUPABASE_URL")
+    SUPABASE_KEY = os.getenv("SUPABASE_KEY") or os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+    
+    if SUPABASE_URL and SUPABASE_KEY:
+        print(f"🔹 Initializing Supabase: {SUPABASE_URL[:15]}...")
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+    else:
+        print("⚠️ Missing SUPABASE_URL or SUPABASE_KEY. Using Envs only.")
+except ImportError:
+    print("⚠️ Supabase library not found. Using Envs only.")
+
+def load_server_config():
+    """Fetches MT5 Manager Credentials from Supabase and sets ENVs"""
+    if not supabase: return
+    try:
+        response = supabase.table('mt5_server_config').select("*").order('updated_at', desc=True).limit(1).execute()
+        if response.data:
+            config = response.data[0]
+            print(f"⚙️ Loaded Dynamic Config: {config.get('server_ip')}:{config.get('api_port')}")
+            # Inject into Environment for MT5Worker to pick up
+            os.environ["MT5_HOST"] = str(config.get("server_ip"))
+            os.environ["MT5_LOGIN"] = str(config.get("manager_login"))
+            os.environ["MT5_PASSWORD"] = str(config.get("manager_password"))
+            os.environ["MT5_PORT"] = str(config.get("api_port"))
+            
+            # Inject Poller Config (Custom ENVs for other scripts)
+            if config.get("callback_url"):
+                 os.environ["CRM_TRADE_CALLBACK"] = str(config.get("callback_url"))
+            
+            if config.get("monitored_groups"):
+                 groups = config.get("monitored_groups")
+                 if isinstance(groups, list):
+                      os.environ["TRADE_GROUPS"] = json.dumps(groups)
+                 else:
+                      os.environ["TRADE_GROUPS"] = str(groups)
+
+    except Exception as e:
+        print(f"⚠️ Failed to load dynamic config: {e}")
+
+# Load Config BEFORE Worker Import/Init if possible, or just before Connect
+load_server_config()
+
 # --- WORKER SETUP ---
 try:
     from mt5_worker import MT5Worker, MT5Manager
     
     # DEBUG: Inspect MTRequest and DealerSend
-    print(f"🔎 MTRequest DIR: {[x for x in dir(MT5Manager.MTRequest) if not x.startswith('_')]}")
-    if hasattr(MT5Manager.MTRequest, 'EnTradeActions'):
-         print(f"🔎 MTRequest Actions: {[x for x in dir(MT5Manager.MTRequest.EnTradeActions) if not x.startswith('_')]}")
+    # print(f"🔎 MTRequest DIR: {[x for x in dir(MT5Manager.MTRequest) if not x.startswith('_')]}")
     
-    try:
-        print(f"🔎 DealerSend DOC: {MT5Manager.ManagerAPI.DealerSend.__doc__}")
-    except:
-        pass
-
     worker = MT5Worker() 
     if not worker.connected:
         worker.connect()
 
     if not worker.connected:
         print("❌ API Server: Failed to connect to MT5 Manager")
+    else:
+        # Start Dynamic Trade Poller
+        try:
+            from trade_poller import start_dynamic_polling
+            start_dynamic_polling(worker, interval=10, reload_interval=300)
+        except Exception as e:
+            print(f"⚠️ Failed to start Trade Poller: {e}")
 except ImportError:
     print("❌ mt5_worker module not found. Running in Mock Mode.")
     # Mock Worker for local development without MT5
@@ -47,6 +97,9 @@ except ImportError:
         def connect(self):
             print("MockMT5Worker: connect called (no-op)")
             self.connected = True
+        def disconnect(self):
+            print("MockMT5Worker: disconnect (no-op)")
+            self.connected = False
         def create_account(self, first, last, group, leverage, balance, callback_url):
             print(f"MockMT5Worker: create_account called for {first} {last}")
             return {"login": 12345, "password": "mock_password", "investor_password": "mock_investor_password"}
@@ -55,14 +108,56 @@ except ImportError:
             class MockManager:
                 def DealerBalance(self, login, amount, comment):
                     print(f"MockMT5Worker: DealerBalance called for {login}, amount {amount}")
+                def UserAccountGet(self, login):
+                    return None
+                def UserRequest(self, login):
+                    return None
             return MockManager()
         def get_deals(self, login, from_time, to_time):
-            print(f"MockMT5Worker: get_deals called for {login}")
+            # print(f"MockMT5Worker: get_deals called for {login}")
             return []
         def get_positions(self, login):
-            print(f"MockMT5Worker: get_positions called for {login}")
+            # print(f"MockMT5Worker: get_positions called for {login}")
             return []
     worker = MockMT5Worker()
+
+
+@app.post("/reload-config")
+def reload_config():
+    """Reloads config from DB and reconnects Bridge"""
+    print("🔄 Reloading Configuration...")
+    load_server_config()
+    
+    try:
+        if worker.connected:
+            if hasattr(worker, 'disconnect'):
+                worker.disconnect()
+            worker.connected = False
+        
+        # Re-initialize or Re-connect
+        # MT5Worker reads envs in __init__, so we might need new instance?
+        # Let's see mt5_worker.py code again... it reads in __init__.
+        # So we MUST re-create the worker.
+        global worker
+        # We need to re-import or just re-instantiate
+        # Assuming MT5Worker class is available
+        try:
+             # Re-instantiate to pick up new Envs
+             new_worker = MT5Worker()
+             new_worker.connect()
+             if new_worker.connected:
+                 worker = new_worker # Atomically swap
+                 print("✅ Bridge Reconnected with New Config")
+                 return {"status": "success", "message": "Bridge Reconnected"}
+             else:
+                 print("❌ Bridge Reconnection Failed")
+                 return {"status": "error", "message": "Failed to connect with new config"}
+        except Exception as re:
+             print(f"❌ Re-init failed: {re}")
+             return {"status": "error", "message": str(re)}
+
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 
 class AccountRequest(BaseModel):
@@ -717,18 +812,16 @@ def check_bulk(requests: List[StopOutRequest]):
                  if user:
                      equity = getattr(user, "Equity", 0.0)
                      balance = getattr(user, "Balance", 0.0)
+                     # print(f"DEBUG: UserRequest({req.login}) Eq: {equity}") 
                  else:
                      continue # Account invalid or disconnected
 
             # CRITICAL SAFETY: If account is 0/0 (Race condition or empty), SKIP IT.
-            # Do not stop out an empty account.
             if equity <= 0.001 and balance <= 0.001:
                  continue
 
-            # SAFETY FIX: If Equity is 0.0 but Balance is positive, it's likely a fresh account 
-            # where MT5 hasn't calculated Equity yet. Use Balance as proxy.
             if equity == 0.0 and balance > 0.0:
-                 print(f"⚠️ {req.login}: Equity 0.0 detected with Balance {balance}. Using Balance as Equity.")
+                 # print(f"⚠️ {req.login}: Eq 0.0 with Bal {balance}. Using Balance.")
                  equity = balance
 
             if equity <= req.min_equity_limit:
@@ -738,12 +831,10 @@ def check_bulk(requests: List[StopOutRequest]):
 
                 if req.close_positions:
                     closed = force_close_positions(req.login)
-                    # Also close orders!
                     closed_orders = force_close_orders(req.login)
                     actions.append(f"closed_{closed}_positions")
 
                 if req.disable_account:
-                    # Lazy Load User if we didn't get it above
                     if not user:
                         user = worker.manager.UserRequest(req.login)
                     

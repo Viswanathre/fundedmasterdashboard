@@ -5,6 +5,7 @@ import { CheckCircle2, AlertCircle, RefreshCw, Scale, ShieldAlert, Newspaper, Za
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAccount } from "@/contexts/AccountContext";
+import { fetchFromBackend } from "@/lib/backend-api";
 
 interface BreachDetail {
     ticket: string;
@@ -138,13 +139,7 @@ export default function RiskAnalysis() {
 
         setLoading(true);
         try {
-            const response = await fetch(`/api/dashboard/risk?challenge_id=${selectedAccount.challenge_id}`);
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch risk analysis');
-            }
-
-            const result = await response.json();
+            const result = await fetchFromBackend(`/api/dashboard/risk?challenge_id=${selectedAccount.challenge_id}`);
 
             // Group violations by rule type
             const grouped: ViolationData = {};

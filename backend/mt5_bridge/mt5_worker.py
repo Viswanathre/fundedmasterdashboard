@@ -120,6 +120,7 @@ class MT5Worker:
                         self.Equity = 100000.0
                         self.Balance = 100000.0
                         self.Group = "demo\\pro"
+                        print(f"DEBUG: Mock User Created {login} with Eq {self.Equity}")
                         self.Enable = 1
                         self.Rights = 1
                         self.Comment = ""

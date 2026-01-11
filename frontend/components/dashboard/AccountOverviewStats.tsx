@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { DollarSign, TrendingUp, Calendar, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAccount } from "@/contexts/AccountContext";
+import { fetchFromBackend } from "@/lib/backend-api";
 import { createClient } from "@/utils/supabase/client";
 
 interface StatProps {
@@ -47,10 +48,7 @@ export default function AccountOverviewStats() {
             if (!selectedAccount) return;
 
             try {
-                const response = await fetch(`/api/dashboard/objectives?challenge_id=${selectedAccount.id}`);
-                if (!response.ok) throw new Error('Failed to fetch stats');
-
-                const data = await response.json();
+                const data = await fetchFromBackend(`/api/dashboard/objectives?challenge_id=${selectedAccount.id}`);
 
                 // extract net_pnl from response
                 if (data.objectives?.stats?.net_pnl !== undefined) {

@@ -44,18 +44,23 @@ async function processTradeEvent(data: { login: number, trades: any[], timestamp
     // 1. Fetch Challenge
     const { data: challenge } = await supabase
         .from('challenges')
-        .select('id, user_id, initial_balance, start_of_day_equity, status')
+        .select('id, user_id, initial_balance, start_of_day_equity, status, created_at')
         .eq('login', login)
+
         .single();
 
     if (!challenge || challenge.status !== 'active') return;
 
     // 2. Format & Upsert Trades (Mirroring logic from old webhook)
-    // 2. Format & Upsert Trades (Mirroring logic from old webhook)
     const validIncomingTrades = trades.filter((t: any) => t.volume > 0 && ['0', '1', 'buy', 'sell'].includes(String(t.type).toLowerCase()));
 
-    if (validIncomingTrades.length > 0) {
-        const formattedTrades = validIncomingTrades.map((t: any) => ({
+    // FIX: Filter out Ghost Trades (history from previous users of this Login ID)
+    // Only accept trades that happened AFTER the challenge was created (minus 30s buffer for clock skew)
+    const challengeStartTime = new Date(challenge.created_at).getTime() / 1000;
+    const meaningfulTrades = validIncomingTrades.filter((t: any) => t.time >= (challengeStartTime - 30));
+
+    if (meaningfulTrades.length > 0) {
+        const formattedTrades = meaningfulTrades.map((t: any) => ({
             ticket: t.ticket,
             challenge_id: challenge.id,
             user_id: challenge.user_id,

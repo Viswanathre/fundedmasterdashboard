@@ -141,7 +141,7 @@ router.post('/assign', async (req, res: Response) => {
         }
 
         // 3. Call Python MT5 Bridge to create account
-        const callbackUrl = `${process.env.BACKEND_URL || process.env.FRONTEND_URL}/api/webhooks/mt5`;
+        const callbackUrl = `${process.env.BACKEND_URL || process.env.FRONTEND_URL}/api/mt5/trades/webhook`;
 
         const mt5Data = await createMT5Account({
             name: profile.full_name || 'Trader',
@@ -172,6 +172,7 @@ router.post('/assign', async (req, res: Response) => {
                 investor_password: investorPassword,
                 server: 'Mazi Finance',
                 platform: 'MT5',
+                group: finalGroup, // Save the assigned group
                 leverage: 100,
                 status: 'active',
                 challenge_type: challengeType,
@@ -360,7 +361,7 @@ router.post('/admin/disable', authenticate, async (req: AuthRequest, res: Respon
         // Update local DB status to match
         const { error: dbError } = await supabase
             .from('challenges')
-            .update({ status: 'failed' }) // Or 'banned' / 'disabled'
+            .update({ status: 'breached' }) // Map to 'breached' for consistency
             .eq('login', login);
 
         if (dbError) console.error('Failed to update DB status:', dbError);
@@ -400,7 +401,7 @@ router.post('/admin/stop-out', authenticate, async (req: AuthRequest, res: Respo
         // Update local DB status
         await supabase
             .from('challenges')
-            .update({ status: 'failed' })
+            .update({ status: 'breached' })
             .eq('login', login);
 
         res.json(result);
@@ -409,5 +410,244 @@ router.post('/admin/stop-out', authenticate, async (req: AuthRequest, res: Respo
         res.status(500).json({ error: 'Failed to stop out account' });
     }
 });
+
+// POST /api/mt5/trades/webhook - Receive closed trades (Poller OR Event)
+router.post('/trades/webhook', async (req: Request, res: Response) => {
+    try {
+        const body = req.body;
+        console.log(`📊 [Backend] Received Webhook Payload:`, JSON.stringify(body, null, 2));
+
+        // --- SCHEME C: NEW BATCH EVENT (Production Scale) ---
+        if (body.event === 'trades_closed_batch') {
+            const { trades, count } = body;
+            console.log(`📦 [Backend] Received Batch of ${count} trades`);
+
+            if (!trades || !Array.isArray(trades) || trades.length === 0) {
+                res.json({ processed: 0 });
+                return;
+            }
+
+            // 1. Bulk Fetch Challenges
+            const uniqueLogins = Array.from(new Set(trades.map((t: any) => t.login)));
+            const { data: challenges } = await supabase
+                .from('challenges')
+                .select('id, user_id, login, created_at')
+                .in('login', uniqueLogins)
+                .eq('status', 'active');
+
+            if (!challenges || challenges.length === 0) {
+                console.warn(`No active challenges found for batch logins: ${uniqueLogins.join(', ')}`);
+                res.json({ processed: 0, reason: 'no_challenges' });
+                return;
+            }
+
+            const challengeMap = new Map(challenges.map(c => [c.login, c]));
+
+            // 2. Prepare Trades for DB
+            const validTrades = trades.map((t: any) => {
+                const challenge = challengeMap.get(t.login);
+                if (!challenge) return null;
+
+                // GHOST TRADE PROTECTION
+                // Ignore trades older than challenge creation prevents historical import
+                const challengeStartTime = new Date(challenge.created_at).getTime();
+                const tradeTime = new Date(t.timestamp || t.close_time).getTime();
+
+                // Allow 60s buffer
+                if (tradeTime < (challengeStartTime - 60000)) {
+                    // console.log(`👻 Skipped Ghost Trade ${t.ticket} (Time ${t.timestamp} < Created ${challenge.created_at})`);
+                    return null;
+                }
+
+                return {
+                    challenge_id: challenge.id,
+                    user_id: challenge.user_id,
+                    ticket: Number(t.ticket),
+                    symbol: t.symbol,
+                    type: t.type, // Assuming bridge sends 0/1 or raw MT5 type
+                    lots: t.volume,
+                    open_price: t.open_price || 0,
+                    close_price: t.close_price,
+                    profit_loss: t.profit,
+                    swap: t.swap || 0,
+                    commission: t.commission || 0,
+                    open_time: t.open_time ? new Date(t.open_time * 1000).toISOString() : new Date().toISOString(),
+                    close_time: t.close_time ? new Date(t.close_time).toISOString() : new Date().toISOString(),
+                };
+            }).filter(Boolean);
+
+            if (validTrades.length > 0) {
+                // 3. Bulk Upsert
+                const { error } = await supabase
+                    .from('trades')
+                    .upsert(validTrades, { onConflict: 'challenge_id, ticket' });
+
+                if (error) {
+                    console.error('❌ Batch Upsert Failed:', error);
+                    res.status(500).json({ error: error.message });
+                    return;
+                }
+
+                console.log(`✅ Successfully upserted ${validTrades.length} trades from batch.`);
+            }
+
+            res.json({ success: true, processed: validTrades.length });
+            return;
+        }
+
+        // --- SCHEME A: NEW SINGLE EVENT (User Request) ---
+        if (body.event === 'trade_closed' || body.event === 'trade_opened') {
+            const { login, ticket, symbol, price, profit, type, volume, time } = body;
+
+            if (!login || !ticket) {
+                res.status(400).json({ error: 'Missing login or ticket' });
+                return;
+            }
+
+            // 1. Find Challenge
+            const { data: challenge, error } = await supabase
+                .from('challenges')
+                .select('*')
+                .eq('login', login)
+                .single();
+
+            if (!challenge) {
+                console.warn(`Challenge not found for login ${login}`);
+                res.status(404).json({ error: 'Challenge not found' });
+                return;
+            }
+
+            if (body.event === 'trade_opened') {
+                // User requested to IGNORE open trades and only process closed.
+                console.log(`Open Trade Event (Ignored): ${ticket} for ${login}`);
+                res.json({ success: true, status: 'opened_ignored' });
+                return;
+            }
+
+            // 2. Manual Check for Existence (since upsert constraints are missing)
+            const { data: existingTrade } = await supabase
+                .from('trades')
+                .select('id')
+                .eq('challenge_id', challenge.id)
+                .eq('ticket', Number(ticket))
+                .single();
+
+            const tradeData = {
+                challenge_id: challenge.id,
+                user_id: challenge.user_id,
+                ticket: Number(ticket),
+                symbol: symbol,
+                type: type,
+                lots: volume,
+                open_price: 0,
+                close_price: price,
+                profit_loss: profit,
+                close_time: new Date().toISOString(),
+            };
+
+            let insertError;
+            if (existingTrade) {
+                const { error } = await supabase
+                    .from('trades')
+                    .update(tradeData)
+                    .eq('id', existingTrade.id);
+                insertError = error;
+            } else {
+                const { error } = await supabase
+                    .from('trades')
+                    .insert(tradeData);
+                insertError = error;
+            }
+
+            if (insertError) {
+                console.error('Failed to insert trade:', insertError);
+                res.status(500).json({ error: insertError.message });
+                return;
+            }
+
+            console.log(`✅ Trade ${ticket} saved via Event webhook.`);
+            res.json({ success: true });
+            return;
+        }
+
+        // --- SCHEME B: LEGACY ARRAY (Poller) ---
+        const { login, trades } = body;
+
+        if (!trades || !Array.isArray(trades) || trades.length === 0) {
+            res.json({ processed: 0 });
+            return;
+        }
+
+        // ... (Existing Logic for Array)
+        // 1. Find challenge by MT5 login
+        const { data: challenge, error } = await supabase
+            .from('challenges')
+            .select('*')
+            .eq('login', login)
+            .eq('status', 'active')
+            .single();
+
+        if (!challenge) {
+            console.warn(`Challenge not found or not active for login ${login}`);
+            res.status(404).json({ error: 'Challenge not found' });
+            return;
+        }
+
+        // 2. Save trades to database
+        const newTradesPayload = trades.map((trade: any) => ({
+            challenge_id: challenge.id,
+            user_id: challenge.user_id,
+            symbol: trade.symbol,
+            ticket: Number(trade.ticket),
+            type: trade.type === 0 ? 'buy' : trade.type === 1 ? 'sell' : 'balance',
+            volume: trade.volume,
+            open_price: trade.price,
+            close_price: trade.close_price,
+            profit: trade.profit,
+            commission: trade.commission,
+            swap: trade.swap,
+            open_time: new Date(trade.time * 1000).toISOString(),
+            close_time: trade.close_time ? new Date(trade.close_time * 1000).toISOString() : new Date().toISOString(),
+            is_closed: true
+        }));
+
+        // Upsert
+        const { error: insertError } = await supabase
+            .from('trades')
+            .upsert(newTradesPayload, { onConflict: 'ticket', ignoreDuplicates: true });
+
+        if (insertError) {
+            console.error('Failed to insert trades:', insertError);
+        }
+
+        // 3. Update Challenge Stats (Calculations)
+        const totalProfit = trades.reduce((sum: number, t: any) => sum + (t.profit || 0) + (t.swap || 0) + (t.commission || 0), 0);
+
+        // Try RPC first for atomic increment
+        const { error: rpcError } = await supabase.rpc('increment_challenge_stats', {
+            p_challenge_id: challenge.id,
+            p_trades_count: trades.length,
+            p_profit_add: totalProfit
+        });
+
+        if (rpcError) {
+            // Fallback: Simple update
+            await supabase
+                .from('challenges')
+                .update({
+                    last_trade_at: new Date().toISOString(),
+                })
+                .eq('id', challenge.id);
+        }
+
+        res.json({ success: true, processed: trades.length });
+
+    } catch (error: any) {
+        console.error("Trade webhook error:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 
 export default router;

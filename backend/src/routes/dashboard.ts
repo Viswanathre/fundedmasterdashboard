@@ -468,4 +468,80 @@ router.get('/risk', authenticate, async (req: AuthRequest, res: Response) => {
     }
 });
 
+// GET /api/dashboard/consistency
+router.get('/consistency', authenticate, async (req: AuthRequest, res: Response) => {
+    try {
+        const user = req.user;
+        const { challenge_id } = req.query;
+
+        if (!user) return res.status(401).json({ error: 'Not authenticated' });
+        if (!challenge_id) return res.status(400).json({ error: 'Missing challenge_id' });
+
+        // Fetch trades
+        console.log(`🔍 Consistency Check - Challenge: ${challenge_id}, User: ${user.id}`);
+
+        const { data: trades, error } = await supabase
+            .from('trades')
+            .select('*')
+            .eq('challenge_id', challenge_id)
+            .eq('user_id', user.id); // Implicit tenancy check
+
+        if (error) {
+            console.error('❌ DB Error fetching trades for consistency:', error);
+            throw error;
+        }
+
+        console.log(`✅ Found ${trades?.length || 0} trades for consistency.`);
+
+        // Calculate consistency
+        const winningTrades = (trades || []).filter(t => Number(t.profit_loss) > 0);
+        console.log(`📊 Stats: Total Trades=${trades?.length}, Winning=${winningTrades.length}`);
+
+        const totalProfit = winningTrades.reduce((sum, t) => sum + Number(t.profit_loss), 0);
+        const largestWin = winningTrades.reduce((max, t) => Math.max(max, Number(t.profit_loss)), 0);
+
+        console.log(`💰 Profit: Total=${totalProfit}, Largest=${largestWin}`);
+
+        // Score logic: 100 - (Largest Win / Total Profit * 100)
+        let consistencyScore = 100;
+        let concentration = 0;
+
+        if (totalProfit > 0) {
+            concentration = (largestWin / totalProfit) * 100;
+            consistencyScore = Math.max(0, 100 - concentration);
+        }
+        console.log(`✅ Calculated Score: ${consistencyScore}% (Conc: ${concentration}%)`);
+
+        // Stats
+        const avgWin = winningTrades.length > 0 ? totalProfit / winningTrades.length : 0;
+        const losingTrades = (trades || []).filter(t => Number(t.profit_loss) < 0);
+        const totalLoss = losingTrades.reduce((sum, t) => sum + Math.abs(Number(t.profit_loss)), 0);
+        const avgLoss = losingTrades.length > 0 ? totalLoss / losingTrades.length : 0;
+        const avgTradeSize = (trades || []).reduce((sum, t) => sum + Number(t.lots), 0) / ((trades?.length) || 1);
+
+        // History: placeholder for chart
+        const history = [
+            { date: new Date().toISOString().split('T')[0], score: consistencyScore }
+        ];
+
+        res.json({
+            consistency: {
+                score: consistencyScore,
+                eligible: concentration <= 50 // Rule: Max single win 50%
+            },
+            stats: {
+                avg_trade_size: avgTradeSize,
+                avg_win: avgWin,
+                avg_loss: avgLoss,
+                largest_win: largestWin
+            },
+            history: history
+        });
+
+    } catch (error) {
+        console.error('Consistency API error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 export default router;

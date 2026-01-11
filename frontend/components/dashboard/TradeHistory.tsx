@@ -110,6 +110,13 @@ export default function TradeHistory() {
         });
     };
 
+    const normalizeType = (type: any): string => {
+        const typeStr = String(type).toLowerCase();
+        if (typeStr === '0' || typeStr === 'buy') return 'Buy';
+        if (typeStr === '1' || typeStr === 'sell') return 'Sell';
+        return String(type);
+    };
+
     const formatDuration = (openTime: string, closeTime: string | null) => {
         if (!closeTime) return 'Open';
         const duration = new Date(closeTime).getTime() - new Date(openTime).getTime();
@@ -210,10 +217,10 @@ export default function TradeHistory() {
                                         <span
                                             className={`
                       inline-flex items-center px-2 py-1 rounded-md text-xs font-bold uppercase
-                      ${trade.type === 'buy' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}
+                      ${String(trade.type) === '0' || String(trade.type).toLowerCase() === 'buy' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}
                     `}
                                         >
-                                            {trade.type}
+                                            {normalizeType(trade.type)}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 text-right">

@@ -23,6 +23,8 @@ app.use((req, res, next) => {
     next();
 });
 
+console.log("🔄 Force Restart for Consistency Route");
+
 // Supabase Setup
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -56,8 +58,10 @@ import competitionsRouter from './routes/competitions';
 import webhooksRouter from './routes/webhooks';
 import objectivesRouter from './routes/objectives';
 import rankingRouter from './routes/ranking';
+import adminSettingsRouter from './routes/admin_settings';
 
 app.use('/api/overview', overviewRouter);
+app.use('/api/admin/settings', adminSettingsRouter); // Register Settings Route
 app.use('/api/payouts', payoutsRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/certificates', certificatesRouter);
@@ -152,7 +156,7 @@ import { startTradeSyncScheduler } from './services/trade-sync-scheduler';
 import { startRiskEventWorker } from './workers/risk-event-worker';
 import { startTradeSyncWorker } from './workers/trade-sync-worker';
 
-startRiskMonitor(15); // Risk checks every 15s
+startRiskMonitor(20); // Risk checks every 20s
 startRiskEventWorker(); // Start Event Listener
 startDailyEquityReset(); // Schedule midnight reset
 startTradeSyncScheduler(); // Dispatch jobs every 10s

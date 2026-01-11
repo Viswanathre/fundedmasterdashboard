@@ -13,11 +13,12 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl!, supabaseKey!);
 const BRIDGE_URL = process.env.BRIDGE_URL || 'https://2b267220ca1b.ngrok-free.app';
+console.log("🔍 [Risk Scheduler] Using BRIDGE_URL:", BRIDGE_URL);
 
 // --- CONFIGURATION ---
 // Dynamic Risk Rules are fetched from 'mt5_risk_groups' table.
 
-export function startRiskMonitor(intervalSeconds: number = 5) {
+export function startRiskMonitor(intervalSeconds: number = 20) {
     console.log(`⏰ Risk Monitor Scheduler started. Interval: ${intervalSeconds}s`);
     console.log(`🛡️ Limits: Dynamic based on MT5 Groups`);
 
@@ -84,19 +85,43 @@ async function processBatch(challenges: any[], riskGroups: any[], attempt = 1) {
         const validChallenges = challenges.filter(c => c.login && c.initial_balance);
         if (validChallenges.length === 0) return;
 
-        // Optimization: Create Map for O(1) lookup
+        // Create a mapping of group names for faster lookup
+        const riskGroupMap = new Map(riskGroups.map(g => [g.group_name.replace(/\\\\/g, '\\').toLowerCase(), g]));
+
+        // Restoring challengeMap for O(1) lookup
         const challengeMap = new Map(validChallenges.map(c => [Number(c.login), c]));
 
         const payload = validChallenges.map(c => {
             const initialBalance = Number(c.initial_balance);
-            // c.group is missing from DB, so we use default rules for now
-            // const rule = riskGroups.find(g => g.group_name === c.group)
-            const rule = { max_drawdown_percent: 10, daily_drawdown_percent: 5 }; // Fallback
+
+            // Normalize challenge group name
+            const normalizedGroup = (c.group || '').replace(/\\\\/g, '\\').toLowerCase();
+            let rule = riskGroupMap.get(normalizedGroup);
+
+            if (!rule) {
+                // Try literal match if normalized failed (just in case)
+                rule = riskGroups.find(g => g.group_name === c.group);
+            }
+
+            if (!rule) {
+                // Fallback rules
+                rule = { max_drawdown_percent: 10, daily_drawdown_percent: 5 };
+            }
 
             const startOfDayEquity = Number(c.start_of_day_equity || c.initial_balance);
             const totalLimit = initialBalance * (1 - (rule.max_drawdown_percent / 100));
-            const dailyLimit = startOfDayEquity * (1 - (rule.daily_drawdown_percent / 100));
-            const effectiveLimit = Math.max(totalLimit, dailyLimit);
+            // const dailyLimit = startOfDayEquity * (1 - (rule.daily_drawdown_percent / 100));
+
+            // USER REQUEST FIX: Use Max Drawdown (10%) instead of Daily (5%) for Bridge Stopout
+            // effectively allowing the user to trade down to the Max Drawdown level.
+            const effectiveLimit = totalLimit;
+
+            // Log calculation for debugging if needed (selective to avoid spam)
+            if (c.login === 566971) {
+                console.log(`[Risk Rule] Account ${c.login} (${normalizedGroup || 'no group'}): ` +
+                    `StartDayEq: ${startOfDayEquity}, MinEquityLimit: ${effectiveLimit.toFixed(2)} ` +
+                    `(MaxLoss: ${rule.max_drawdown_percent}%, Daily: ${rule.daily_drawdown_percent}%)`);
+            }
 
             return {
                 login: Number(c.login),
@@ -108,12 +133,15 @@ async function processBatch(challenges: any[], riskGroups: any[], attempt = 1) {
 
         // Use the /check-bulk endpoint with Timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout (faster than trade sync)
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout (increased for production load)
 
         try {
             const response = await fetch(`${BRIDGE_URL}/check-bulk`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true'
+                },
                 body: JSON.stringify(payload),
                 signal: controller.signal
             });
@@ -153,11 +181,12 @@ async function processBatch(challenges: any[], riskGroups: any[], attempt = 1) {
                 };
 
                 // If breached, fail the account
-                if (res.status === 'breached') {
-                    updateData.status = 'failed';
+                const normalizedStatus = res.status?.toLowerCase();
+                if (normalizedStatus === 'breached' || normalizedStatus === 'failed') {
+                    updateData.status = 'breached';
 
-                    // Only log if it wasn't already failed
-                    if (challenge.status !== 'failed') {
+                    // Only log if it wasn't already failed/breached
+                    if (challenge.status !== 'breached' && challenge.status !== 'failed') {
                         console.log(`🛑 BREACH CONFIRMED: Account ${res.login}. Equity: ${res.equity}`);
 
                         systemLogs.push({
@@ -178,9 +207,6 @@ async function processBatch(challenges: any[], riskGroups: any[], attempt = 1) {
                             }
                         });
                     }
-                } else {
-                    // Ensure we don't accidentally set status to 'failed' if it passed this time 
-                    delete updateData.status;
                 }
 
                 updatesToUpsert.push(updateData);

@@ -27,11 +27,10 @@ export default function ProfitabilityGauge({
     const displayLostPct = lostPct ? Number(lostPct.toFixed(1)) : 0;
     const displayWonCount = wonCount;
     const displayLostCount = lostCount;
-    const displayWinRate = winRate ? Number(winRate.toFixed(1)) : 0;
+    // Fix: winRate might be "100.0", convert properly
+    const displayWinRate = winRate !== undefined ? Number(winRate).toFixed(1) : "0.0";
     const avgHoldingPeriod = avgHolding || "0m";
 
-    // Colors from reference: Red Left, Green Right? Or Green Left, Red Right?
-    // Reference Image: Inner Left is Red, Inner Right is Green.
     const colors = { left: "#ef4444", right: "#22c55e" };
 
     return (
@@ -74,48 +73,70 @@ export default function ProfitabilityGauge({
                         {/* Track Background */}
                         <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#1e293b" strokeWidth="8" strokeLinecap="round" opacity="0.5" />
 
-                        {/* Data Segments */}
+                        {/* Data Segments with Overlay Logic */}
                         {(() => {
                             const r = 80;
                             const cx = 100;
                             const cy = 90;
 
-                            const splitAngle = Math.PI - (displayWonPct / 100) * Math.PI;
-                            const splitX = cx + r * Math.cos(splitAngle);
-                            const splitY = cy - r * Math.sin(splitAngle);
+                            // Calculate angles (in radians)
+                            // Start = PI (Left), End = 0 (Right)
+                            const startAngle = Math.PI;
+                            const endAngle = 0;
 
-                            // Adjust start/end points for wider arc
-                            const startX = 20;
-                            // const startY = 90;
-                            const endX = 180;
-                            // const endY = 90;
+                            // Calculate Split Angle based on Win %
+                            const pct = Math.min(Math.max(displayWonPct / 100, 0), 1);
+                            const splitAngle = Math.PI * (1 - pct);
+
+                            // Helper to get coordinates
+                            const getCoords = (angle: number) => {
+                                const clamped = Math.max(0, Math.min(Math.PI, angle));
+                                return {
+                                    x: cx + r * Math.cos(clamped),
+                                    y: cy - r * Math.sin(clamped)
+                                };
+                            };
+
+                            const startCoords = getCoords(startAngle); // PI
+                            const splitCoords = getCoords(splitAngle);
+                            const endCoords = getCoords(endAngle); // 0
+
+                            // Only render arcs if we have trades
+                            if (tradesTaken === 0) return null;
 
                             return (
                                 <>
-                                    {/* Left Arc (Wins, Green) */}
-                                    <motion.path
-                                        d={`M ${startX} 90 A ${r} ${r} 0 0 1 ${splitX} ${splitY}`}
-                                        fill="none"
-                                        stroke={colors.right} // Green
-                                        strokeWidth="10"
-                                        strokeLinecap="round"
-                                        initial={{ pathLength: 0 }}
-                                        animate={{ pathLength: 1 }}
-                                        transition={{ duration: 1, ease: "easeOut" }}
-                                        filter="url(#glow-green)"
-                                    />
-                                    {/* Right Arc (Losses, Red) */}
-                                    <motion.path
-                                        d={`M ${splitX} ${splitY} A ${r} ${r} 0 0 1 ${endX} 90`}
-                                        fill="none"
-                                        stroke={colors.left} // Red
-                                        strokeWidth="8"
-                                        strokeLinecap="round"
-                                        initial={{ pathLength: 0 }}
-                                        animate={{ pathLength: 1 }}
-                                        transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                        opacity="0.8"
-                                    />
+                                    {/* Red Arc (Losses - Right Side) - Background Layer */}
+                                    {/* Drawn first so Green can overlap it */}
+                                    {pct < 0.999 && (
+                                        <motion.path
+                                            d={`M ${splitCoords.x} ${splitCoords.y} A ${r} ${r} 0 0 1 ${endCoords.x} ${endCoords.y}`}
+                                            fill="none"
+                                            stroke={colors.left} // Red
+                                            strokeWidth="8"
+                                            strokeLinecap="round"
+                                            initial={{ pathLength: 0 }}
+                                            animate={{ pathLength: 1 }}
+                                            transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
+                                            opacity="0.8"
+                                        />
+                                    )}
+
+                                    {/* Green Arc (Wins - Left Side) - Foreground Layer */}
+                                    {/* Drawn second to sit on top. Larger stroke width hides Red's start cap */}
+                                    {pct > 0.001 && (
+                                        <motion.path
+                                            d={`M ${startCoords.x} ${startCoords.y} A ${r} ${r} 0 0 1 ${splitCoords.x} ${splitCoords.y}`}
+                                            fill="none"
+                                            stroke={colors.right} // Green
+                                            strokeWidth="10"
+                                            strokeLinecap="round"
+                                            initial={{ pathLength: 0 }}
+                                            animate={{ pathLength: 1 }}
+                                            transition={{ duration: 1, ease: "easeOut" }}
+                                            filter="url(#glow-green)"
+                                        />
+                                    )}
                                 </>
                             );
                         })()}

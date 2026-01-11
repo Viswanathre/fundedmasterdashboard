@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl!, supabaseKey!);
 
 router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
     try {
-        const userId = req.query.userId as string || req.user?.id; // Allow manual override or default to auth user
+        const userId = req.query.userId as string || req.user?.id;
 
         const { data, error } = await supabase
             .from('competitions')

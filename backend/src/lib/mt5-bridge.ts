@@ -16,7 +16,8 @@ export async function createMT5Account(params: MT5AccountParams) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.MT5_API_KEY}`
+            'Authorization': `Bearer ${process.env.MT5_API_KEY}`,
+            'ngrok-skip-browser-warning': 'true'
         },
         body: JSON.stringify(params)
     });
@@ -39,6 +40,7 @@ export async function fetchMT5Trades(login: number) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true'
                 // 'Authorization': `Bearer ${process.env.MT5_API_KEY}` // Uncomment if needed
             },
             body: JSON.stringify({ login })
@@ -70,6 +72,7 @@ export async function fetchMT5History(login: number, fromTimestamp?: number) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true'
             },
             body: JSON.stringify({ login, from, to })
         });
