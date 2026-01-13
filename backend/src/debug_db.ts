@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function debug() {
     console.log('Listing recent challenges with passwords...');
-    const { data: challenges, error } = await supabase.from('challenges').select('id, user_id, login, master_password').limit(20);
+    const { data: challenges, error } = await supabase.from('challenges').select('id, user_id, login, master_password').limit(100);
 
     if (error) {
         console.error('Error fetching challenges:', error);

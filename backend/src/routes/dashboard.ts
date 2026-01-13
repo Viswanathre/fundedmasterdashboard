@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { supabase } from '../lib/supabase';
+import { RulesService } from '../services/rules-service';
 const fs = require('fs');
 
 const router = Router();
@@ -313,6 +314,10 @@ router.get('/objectives', authenticate, async (req: AuthRequest, res: Response) 
             console.log(`   Sample trade:`, trades[0]);
         }
 
+        // Fetch challenge limits and DATA
+        // DYNAMIC RULES
+        const { maxDailyLoss, maxTotalLoss, profitTarget, rules, challenge } = await RulesService.calculateObjectives(String(challenge_id));
+
         // Calculate metrics
         const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
         let totalProfit = 0;
@@ -346,7 +351,41 @@ router.get('/objectives', authenticate, async (req: AuthRequest, res: Response) 
             }
         });
 
-        const totalNetPnL = totalProfit - totalLoss;
+        let totalNetPnL = totalProfit - totalLoss;
+
+        // --- FIX FOR BREACHED ACCOUNTS ---
+        // If account is breached, use EQUITY to determine the final P&L (including open trades)
+        if (challenge && (challenge.status === 'breached' || challenge.status === 'failed')) {
+            console.log(`⚠️ Account ${challenge_id} is BREACHED. Using Equity for Total P&L.`);
+            const initialBalance = Number(challenge.initial_balance);
+            const currentEquity = Number(challenge.current_equity);
+
+            // Net P&L based on Equity
+            const realNetPnL = currentEquity - initialBalance;
+
+            // Update Total Loss / Profit
+            if (realNetPnL >= 0) {
+                totalProfit = realNetPnL;
+                totalLoss = 0;
+            } else {
+                totalLoss = Math.abs(realNetPnL);
+                totalProfit = 0;
+            }
+
+            totalNetPnL = realNetPnL;
+
+            // Update Daily Loss / Profit based on Start of Day Equity
+            const startOfDayEquity = Number(challenge.start_of_day_equity ?? initialBalance);
+            const dailyNet = currentEquity - startOfDayEquity;
+
+            if (dailyNet >= 0) {
+                dailyProfit = dailyNet;
+                dailyLoss = 0;
+            } else {
+                dailyLoss = Math.abs(dailyNet);
+                dailyProfit = 0;
+            }
+        }
 
         console.log(`📊 Objectives calculated for challenge ${challenge_id}:`);
         console.log(`   Total trades: ${trades?.length || 0}`);
@@ -354,25 +393,8 @@ router.get('/objectives', authenticate, async (req: AuthRequest, res: Response) 
         console.log(`   Daily Loss: $${dailyLoss}, Daily Profit: $${dailyProfit}`);
         console.log(`   Total Loss: $${totalLoss}, Total Profit: $${totalProfit}`);
 
-        // Fetch challenge limits
-        // NOTE: max_daily_loss, max_total_loss, profit_target columns don't exist in challenges table
-        // Using default values based on account size instead
-        const { data: challenge, error: challengeError } = await supabase
-            .from('challenges')
-            .select('initial_balance')
-            .eq('id', challenge_id)
-            .single();
-
-        if (challengeError) {
-            console.error('Error fetching challenge:', challengeError);
-            // Proceed with defaults
-        }
-
-        // Calculate risk limits based on account size (industry standard percentages)
-        const accountSize = Number(challenge?.initial_balance) || 100000;
-        const maxDailyLoss = accountSize * 0.05; // 5% daily loss limit
-        const maxTotalLoss = accountSize * 0.10; // 10% total loss limit  
-        const profitTarget = accountSize * 0.08; // 8% profit target
+        // Log for debugging
+        console.log(`🛡️ Rules Applied: Day=${rules.max_daily_loss_percent}%, Total=${rules.max_total_loss_percent}%, Target=${rules.profit_target_percent}%`);
 
         const responseData = {
             objectives: {

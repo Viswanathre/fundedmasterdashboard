@@ -36,13 +36,13 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use((req, res, next) => {
-    // const log = `[${new Date().toISOString()}] ${req.method} ${req.path}\n`;
-    // fs.appendFileSync('backend_request_debug.log', log);
+    const log = `[${new Date().toISOString()}] ${req.method} ${req.path}\n`;
+    fs.appendFileSync('backend_request_debug.log', log);
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
     next();
 });
 
-console.log("🔄 Force Restart for Consistency Route");
+console.log("🔄 Force Restart for Consistency Route - Updated 6 - Debugging Equity");
 
 // Supabase Setup
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;

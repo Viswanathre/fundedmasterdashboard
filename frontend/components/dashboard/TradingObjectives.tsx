@@ -157,23 +157,23 @@ export default function TradingObjectives() {
                 } else {
                     const data = result.objectives;
                     setRules({
-                        max_daily_loss_percent: 5,
-                        max_total_loss_percent: 10,
-                        profit_target_percent: 8,
+                        max_daily_loss_percent: data.rules?.max_daily_loss_percent ?? 5,
+                        max_total_loss_percent: data.rules?.max_total_loss_percent ?? 10,
+                        profit_target_percent: data.rules?.profit_target_percent ?? 8,
                         min_trading_days: 0,
-                        max_daily_loss_amount: data.daily_loss.max_allowed,
-                        max_total_loss_amount: data.total_loss.max_allowed,
-                        profit_target_amount: data.profit_target.target,
+                        max_daily_loss_amount: data.daily_loss.max_allowed ?? 0,
+                        max_total_loss_amount: data.total_loss.max_allowed ?? 0,
+                        profit_target_amount: data.profit_target.target ?? 0,
                         // Store actual current values from backend
-                        current_daily_loss: data.daily_loss.current,
-                        current_total_loss: data.total_loss.current,
-                        current_profit: data.profit_target.current,
+                        current_daily_loss: data.daily_loss.current ?? 0,
+                        current_total_loss: data.total_loss.current ?? 0,
+                        current_profit: data.profit_target.current ?? 0,
                     });
                 }
             } catch (error) {
                 console.error('Error fetching challenge rules:', error);
                 // Fallback to defaults
-                const accountSize = selectedAccount.balance || 100000;
+                const accountSize = selectedAccount.initial_balance || selectedAccount.balance || 100000;
                 setRules({
                     max_daily_loss_percent: 5,
                     max_total_loss_percent: 10,
@@ -253,6 +253,8 @@ export default function TradingObjectives() {
                 </div>
                 <button className="text-xs font-bold text-blue-400 hover:text-blue-300">View Rules</button>
             </div>
+
+
 
             <div className="grid gap-4">
                 <ObjectiveRow

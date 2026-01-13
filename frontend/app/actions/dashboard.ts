@@ -30,8 +30,15 @@ export async function getEquityCurveData(challengeId: string, initialBalance: nu
         default: startDate.setDate(startDate.getDate() - 30);
     }
 
-    // 2. Query DB
+    // 3. Query DB
     const supabase = await createClient();
+
+    // Fetch challenge details (status, current_equity) along with trades
+    const { data: challenge } = await supabase
+        .from('challenges')
+        .select('status, current_equity')
+        .eq('id', challengeId)
+        .single();
 
     // Fetch all closed trades for this account
     // Must select commission and swap too
@@ -48,24 +55,22 @@ export async function getEquityCurveData(challengeId: string, initialBalance: nu
         return [];
     }
 
-    if (!trades || trades.length === 0) {
-        return [];
-    }
-
-    // 3. Compute Cumulative Equity
+    // 3. Compute Cumulative Equity from Closed Trades
     let runningEquity = initialBalance;
     let runningProfit = 0;
 
     // Group trades by day
     const tradesByDay: Record<string, number> = {};
-    trades.forEach(t => {
-        const date = new Date(t.close_time).toISOString().split('T')[0];
-        const grossPnl = t.profit_loss || 0;
-        const fees = (t.commission || 0) + (t.swap || 0);
-        const netPnl = grossPnl + fees;
+    if (trades) {
+        trades.forEach(t => {
+            const date = new Date(t.close_time).toISOString().split('T')[0];
+            const grossPnl = t.profit_loss || 0;
+            const fees = (t.commission || 0) + (t.swap || 0);
+            const netPnl = grossPnl + fees;
 
-        tradesByDay[date] = (tradesByDay[date] || 0) + netPnl;
-    });
+            tradesByDay[date] = (tradesByDay[date] || 0) + netPnl;
+        });
+    }
 
     const sortedDays = Object.keys(tradesByDay).sort();
 
@@ -82,11 +87,38 @@ export async function getEquityCurveData(challengeId: string, initialBalance: nu
         };
     });
 
-    // Add starting point if needed? 
-    // Usually charts look better if they start at 0 days with Initial Balance.
-    // But `daily_account_stats` only has days with trades.
-    // We can prepend the start date if we knew it.
-    // For now, let's just return the active days.
+    // --- MANIPULATION FOR BREACHED ACCOUNTS ---
+    // If account is breached/failed, the Equity Curve should probably end at the BREACH EQUITY
+    // This ensures "Total P&L" matches the Objectives panel.
+    if (challenge && (challenge.status === 'breached' || challenge.status === 'failed')) {
+        const currentEquity = Number(challenge.current_equity);
+        const equityDiff = currentEquity - initialBalance;
+        const today = new Date().toISOString().split('T')[0];
+
+        // Ensure we have a point for today (or replace the last point if it is today)
+        const lastPoint = equityCurve[equityCurve.length - 1];
+
+        // If the calculated equity from closed trades matches currentEquity, we are good.
+        // If not (e.g. open trades caused breach), we must show the drop.
+
+        // Only append/fix if there is a discrepancy > $1 (to ignore floating point noise)
+        // Or simplified: Just push the current equity as the "Latest" status.
+
+        // If we have points, check date
+        if (lastPoint && lastPoint.date === today) {
+            // Overwrite today's point with Real Equity
+            lastPoint.equity = currentEquity;
+            lastPoint.profit = equityDiff;
+        } else {
+            // Append new point for "Now"
+            equityCurve.push({
+                date: today,
+                equity: currentEquity,
+                profit: equityDiff,
+                displayDate: 'Today' // or formatted date
+            });
+        }
+    }
 
     // 4. Set Cache (60 seconds)
     try {
