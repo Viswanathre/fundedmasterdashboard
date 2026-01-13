@@ -440,17 +440,15 @@ def fetch_trades_bulk(data: FetchBulkRequest):
                 t = {
                     "login": login,
                     "ticket": tick,
-                    "symbol": get_val(out_d, "Symbol", default=""),
-                    "type": int(get_val(out_d, "Action", "Type", default=0)),
-                    "lots": float(get_val(out_d, "Volume", default=0)) / 10000.0 if float(get_val(out_d, "Volume", default=0)) > 100 else float(get_val(out_d, "Volume", default=0)), # normalization handle elsewhere? No, keep raw here usually, but TS endpoint expects lots?
-                    # Wait, existing main.py returned "volume", not "lots". TS Worker converted it.
-                    # We will return "volume" and let TS handle it.
-                    "volume": float(get_val(out_d, "Volume", default=0)),
-                    "price": float(get_val(in_d, "Price", default=0.0)) if in_d else float(get_val(out_d, "Price", default=0.0)),
-                    "close_price": float(get_val(out_d, "Price", default=0.0)),
-                    "profit": float(get_val(out_d, "Profit", default=0.0)),
-                    "commission": float(get_val(out_d, "Commission", default=0.0)),
-                    "swap": float(get_val(out_d, "Storage", default=0.0)),
+                    "symbol": get_val(out_d, "Symbol", "symbol", default=""),
+                    "type": int(get_val(out_d, "Action", "Type", "type", default=0)),
+                    "lots": float(get_val(out_d, "Volume", "volume", default=0)) / 10000.0 if float(get_val(out_d, "Volume", "volume", default=0)) > 100 else float(get_val(out_d, "Volume", "volume", default=0)), 
+                    "volume": float(get_val(out_d, "Volume", "volume", default=0)),
+                    "price": float(get_val(in_d, "Price", "price", default=0.0)) if in_d else float(get_val(out_d, "Price", "price", default=0.0)),
+                    "close_price": float(get_val(out_d, "Price", "price", default=0.0)),
+                    "profit": float(get_val(out_d, "Profit", "profit", default=0.0)),
+                    "commission": float(get_val(out_d, "Commission", "commission", default=0.0)),
+                    "swap": float(get_val(out_d, "Storage", "Swap", "swap", default=0.0)),
                     "time": ot,
                     "close_time": ct,
                     "is_closed": True
@@ -466,15 +464,16 @@ def fetch_trades_bulk(data: FetchBulkRequest):
                     t = {
                         "login": login,
                         "ticket": tick,
-                        "symbol": get_val(d, "Symbol", default=""),
-                        "type": int(get_val(d, "Action", "Type", "Cmd", default=0)),
-                        "volume": float(get_val(d, "Volume", default=0)),
-                        "price": float(get_val(d, "PriceOpen", "Price", default=0.0)),
-                        "close_price": float(get_val(d, "PriceCurrent", "Price", default=0.0)),
-                        "profit": float(get_val(d, "Profit", default=0.0)),
-                        "commission": float(get_val(d, "Commission", default=0.0)),
-                        "swap": float(get_val(d, "Storage", "Swap", default=0.0)),
-                        "time": int(get_val(d, "TimeCreate", "Time", default=0)),
+                        "ticket": tick,
+                        "symbol": get_val(d, "Symbol", "symbol", default=""),
+                        "type": int(get_val(d, "Action", "Type", "Cmd", "type", default=0)),
+                        "volume": float(get_val(d, "Volume", "volume", default=0)),
+                        "price": float(get_val(d, "PriceOpen", "Price", "price_open", "price", default=0.0)),
+                        "close_price": float(get_val(d, "PriceCurrent", "Price", "price_current", "price", default=0.0)),
+                        "profit": float(get_val(d, "Profit", "profit", default=0.0)),
+                        "commission": float(get_val(d, "Commission", "commission", default=0.0)),
+                        "swap": float(get_val(d, "Storage", "Swap", "swap", default=0.0)),
+                        "time": int(get_val(d, "TimeCreate", "Time", "time_setup", "time", default=0)),
                         "close_time": None,
                         "is_closed": False
                     }
