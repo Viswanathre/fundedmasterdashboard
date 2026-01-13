@@ -208,7 +208,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
     }
 }
 
-const processAffiliateCommission = async (userId: string, amount: number, orderId: string) => {
+async function processAffiliateCommission(userId: string, amount: number, orderId: string) {
     // 1. Check if user was referred
     const { data: profile } = await supabase
         .from('profiles')
