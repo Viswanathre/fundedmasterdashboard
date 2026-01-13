@@ -310,15 +310,15 @@ def fetch_trades(data: FetchRequest):
             t = {
                 "login": data.login,
                 "ticket": ticket,
-                "symbol": get_val(out_deal, "Symbol", default=""),
-                "type": int(get_val(out_deal, "Action", "Type", default=0)),
-                "entry": int(get_val(out_deal, "Entry", default=1)),
-                "volume": float(get_val(out_deal, "Volume", default=0)),
-                "price": float(get_val(in_deal, "Price", default=0.0)) if in_deal else float(get_val(out_deal, "Price", default=0.0)),
-                "close_price": float(get_val(out_deal, "Price", default=0.0)),
-                "profit": float(get_val(out_deal, "Profit", default=0.0)),
-                "commission": float(get_val(out_deal, "Commission", default=0.0)),
-                "swap": float(get_val(out_deal, "Storage", default=0.0)),
+                "symbol": get_val(out_deal, "Symbol", "symbol", default=""),
+                "type": int(get_val(out_deal, "Action", "Type", "type", default=0)),
+                "entry": int(get_val(out_deal, "Entry", "entry", default=1)),
+                "volume": float(get_val(out_deal, "Volume", "volume", default=0)),
+                "price": float(get_val(in_deal, "Price", "price", default=0.0)) if in_deal else float(get_val(out_deal, "Price", "price", default=0.0)),
+                "close_price": float(get_val(out_deal, "Price", "price", default=0.0)),
+                "profit": float(get_val(out_deal, "Profit", "profit", default=0.0)),
+                "commission": float(get_val(out_deal, "Commission", "commission", default=0.0)),
+                "swap": float(get_val(out_deal, "Storage", "Swap", "swap", default=0.0)),
                 "time": open_time,  # Open time from IN deal
                 "close_time": close_time,  # Close time from OUT deal
                 "duration": duration,  # Duration in seconds
@@ -347,15 +347,15 @@ def fetch_trades(data: FetchRequest):
             t = {
                 "login": data.login,
                 "ticket": ticket,
-                "symbol": get_val(d, "Symbol", default=""),
-                "type": int(get_val(d, "Action", "Type", "Cmd", default=0)), # Open positions use Action
-                "entry": int(get_val(d, "Entry", default=0)),
-                "volume": float(get_val(d, "Volume", default=0)),
-                "price": float(get_val(d, "PriceOpen", "Price", default=0.0)),
-                "close_price": float(get_val(d, "PriceCurrent", "Price", default=0.0)), 
-                "profit": float(get_val(d, "Profit", default=0.0)),
-                "commission": float(get_val(d, "Commission", default=0.0)),
-                "swap": float(get_val(d, "Storage", "Swap", default=0.0)),
+                "symbol": get_val(d, "Symbol", "symbol", default=""),
+                "type": int(get_val(d, "Action", "Type", "Cmd", "type", default=0)), # Open positions use Action
+                "entry": int(get_val(d, "Entry", "entry", default=0)),
+                "volume": float(get_val(d, "Volume", "volume", default=0)),
+                "price": float(get_val(d, "PriceOpen", "Price", "price_open", "price", default=0.0)),
+                "close_price": float(get_val(d, "PriceCurrent", "Price", "price_current", "price", default=0.0)), 
+                "profit": float(get_val(d, "Profit", "profit", default=0.0)),
+                "commission": float(get_val(d, "Commission", "commission", default=0.0)),
+                "swap": float(get_val(d, "Storage", "Swap", "swap", default=0.0)),
                 "time": open_time,  # Open time
                 "close_time": None,  # No close time for open trades
                 "duration": None,  # No duration for open trades yet

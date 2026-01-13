@@ -148,6 +148,17 @@ async function handlePaymentWebhook(req: Request, res: Response) {
             callback_url: `${process.env.BACKEND_URL}/api/webhooks/mt5`
         });
 
+        // ---------------------------------------------------------
+        // AFFILIATE COMMISSION LOGIC
+        // ---------------------------------------------------------
+        try {
+            await processAffiliateCommission(order.user_id, order.amount, order.order_id);
+        } catch (affError) {
+            console.error('⚠️ Failed to process affiliate commission:', affError);
+            // Don't fail the webhook, just log it. Manual fix possible later.
+        }
+        // ---------------------------------------------------------
+
         // Determine challenge type
         let challengeType = 'Phase 1';
         if (accountTypeName.includes('instant')) challengeType = 'Instant';
@@ -196,5 +207,61 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+const processAffiliateCommission = async (userId: string, amount: number, orderId: string) => {
+    // 1. Check if user was referred
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('referred_by')
+        .eq('id', userId)
+        .single();
+
+    if (!profile || !profile.referred_by) {
+        console.log(`ℹ️ Affiliate: User ${userId} was not referred. Skipping.`);
+        return;
+    }
+
+    const referrerId = profile.referred_by;
+
+    // 2. Calculate Commission (15%)
+    // Allow logic to check referrer's tier later (e.g. 20% for partners)
+    const commissionRate = 0.15;
+    const commissionAmount = Number((amount * commissionRate).toFixed(2));
+
+    if (commissionAmount <= 0) return;
+
+    console.log(`💰 Crediting ${commissionAmount} commission to ${referrerId} for order ${orderId}`);
+
+    // 3. Insert Earnings Record
+    const { error } = await supabase.from('affiliate_earnings').insert({
+        referrer_id: referrerId,
+        referred_user_id: userId,
+        amount: commissionAmount,
+        commission_type: 'purchase',
+        status: 'pending', // Pending until payout request or auto-process
+        metadata: {
+            order_id: orderId,
+            order_amount: amount,
+            rate: commissionRate
+        }
+    });
+
+    if (error) {
+        console.error('❌ Failed to insert affiliate earnings:', error);
+        throw error; // Rethrow to be caught by main handler
+    }
+
+    // 4. Update Profile Totals (Optional robust counter)
+    const { error: rpcError } = await supabase.rpc('increment_affiliate_commission', {
+        p_user_id: referrerId,
+        p_amount: commissionAmount
+    });
+
+    if (rpcError) {
+        console.warn('⚠️ increment_affiliate_commission RPC failing (non-critical):', rpcError.message);
+    }
+
+    console.log('✅ Commission credited successfully.');
+};
 
 export default router;
