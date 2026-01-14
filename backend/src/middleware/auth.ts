@@ -55,7 +55,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
             return;
         }
 
-        console.log(`[Auth] Authenticated User: ${user.id}`);
+        // console.log(`[Auth] Authenticated User: ${user.id}`);
         req.user = user;
         next();
     } catch (error) {

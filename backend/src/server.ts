@@ -36,9 +36,12 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use((req, res, next) => {
-    const log = `[${new Date().toISOString()}] ${req.method} ${req.path}\n`;
+    // const log = `[${new Date().toISOString()}] ${req.method} ${req.path}\n`;
     // fs.appendFileSync('backend_request_debug.log', log);
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    // Only log in development
+    if (process.env.NODE_ENV === 'development') {
+        console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    }
     next();
 });
 
