@@ -29,6 +29,7 @@ interface ChallengeRules {
     current_daily_loss?: number;
     current_total_loss?: number;
     current_profit?: number;
+    start_of_day_equity?: number;
 }
 
 function ObjectiveRow({ title, timer, max, current, threshold, status, isLossLimit }: ObjectiveRowProps) {
@@ -168,6 +169,7 @@ export default function TradingObjectives() {
                         current_daily_loss: data.daily_loss.current ?? 0,
                         current_total_loss: data.total_loss.current ?? 0,
                         current_profit: data.profit_target.current ?? 0,
+                        start_of_day_equity: data.daily_loss.start_of_day_equity ?? 0,
                     });
                 }
             } catch (error) {
@@ -262,7 +264,7 @@ export default function TradingObjectives() {
                     timer={`Resets In: ${resetTimer}`}
                     max={rules.max_daily_loss_amount}
                     current={currentDailyLoss}
-                    threshold={initialBalance - rules.max_daily_loss_amount}
+                    threshold={(rules.start_of_day_equity || initialBalance) - rules.max_daily_loss_amount}
                     status={getDailyLossStatus()}
                     isLossLimit={true}
                 />

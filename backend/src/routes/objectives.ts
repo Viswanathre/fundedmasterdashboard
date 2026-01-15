@@ -142,6 +142,11 @@ router.post('/calculate', authenticate, async (req: AuthRequest, res: Response) 
 
         // Use Realized PnL (Closed Trades Sum) to match Trade History (~-807)
         // instead of Equity which includes open PnL/credits (~-899)
+
+        // Define start_of_day_equity explicitly here for use in response
+        const safeInitialBalance = Number(challenge?.initial_balance ?? 0);
+        const startOfDayEquity = Number(challenge?.start_of_day_equity ?? safeInitialBalance);
+
         // 1. Total Loss (Drawdown) = -realizedPnL (if negative)
         // 1. Total Loss (Drawdown) = -realizedPnL (if negative)
         let realizedPnL = netPnL;
@@ -224,6 +229,7 @@ router.post('/calculate', authenticate, async (req: AuthRequest, res: Response) 
                     max_allowed: maxDailyLoss,
                     remaining: Math.max(0, maxDailyLoss - currentDailyLoss),
                     threshold: maxDailyLoss * 0.95,
+                    start_of_day_equity: startOfDayEquity, // Pass this to frontend for correct calculation
                     status: currentDailyLoss >= maxDailyLoss ? 'breached' : currentDailyLoss >= maxDailyLoss * 0.8 ? 'warning' : 'passed'
                 },
                 total_loss: {

@@ -11,7 +11,8 @@ import { motion, AnimatePresence } from "framer-motion";
 const menuItems = [
     { icon: PieChart, label: "Overview", href: "/overview" },
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-    { icon: Trophy, label: "Challenges", href: "/challenges" },
+    { icon: Trophy, label: "Challenges", href: "/accounts" },
+    { icon: Trophy, label: "Passed Accounts", href: "/passed-accounts" },
     { icon: Trophy, label: "Competitions", href: "/competitions" },
     { icon: UserCheck, label: "KYC", href: "/kyc" },
     { icon: Gift, label: "Rewards", href: "/rewards" },
@@ -19,7 +20,7 @@ const menuItems = [
     { icon: BarChart2, label: "Ranking", href: "/ranking" },
     { icon: Calendar, label: "Calendar", href: "/economics" },
     { icon: Wallet, label: "Payouts", href: "/payouts" },
-    { icon: Users, label: "Affiliate", href: "/affiliate" },
+    { icon: Users, label: "Affiliate", href: "/affiliates" },
     { icon: Ticket, label: "Coupons", href: "/coupons" },
 ];
 

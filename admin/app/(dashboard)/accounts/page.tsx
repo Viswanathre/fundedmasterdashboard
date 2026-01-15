@@ -156,7 +156,7 @@ export default async function AccountsListPage({
                                         <StatusBadge status={account.status} />
                                     </td>
                                     <td className="px-6 py-4">
-                                        <AccountActions login={account.login} currentStatus={account.status} />
+                                        <AccountActions accountId={account.id} login={account.login} currentStatus={account.status} />
                                     </td>
                                     <td className="px-6 py-4 text-gray-600 text-xs">
                                         {new Date(account.created_at).toLocaleDateString()}

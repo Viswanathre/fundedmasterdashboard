@@ -61,6 +61,16 @@ export class RulesService {
             profitTargetPercent = 8;
         }
 
+        // --- NEW: Dynamic Profit Target from DB ---
+        if (dbRule && dbRule.profit_target_percent !== undefined && dbRule.profit_target_percent !== null) {
+            profitTargetPercent = Number(dbRule.profit_target_percent);
+        }
+
+        // CRITICAL FIX: Instant/Funded accounts should NEVER have a profit target for "passing".
+        if (typeStr.includes('funded') || typeStr.includes('master') || typeStr.includes('instant') || groupStr.includes('funded') || groupStr.includes('master') || groupStr.includes('instant')) {
+            profitTargetPercent = 0;
+        }
+
         return {
             max_daily_loss_percent: maxDailyLossPercent,
             max_total_loss_percent: maxTotalLossPercent,
