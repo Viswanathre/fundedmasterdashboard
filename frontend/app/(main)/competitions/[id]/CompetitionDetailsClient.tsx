@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import PageLoader from "@/components/ui/PageLoader";
 import { fetchFromBackend } from "@/lib/backend-api";
+import { useSocket } from "@/contexts/SocketContext";
 
 interface Competition {
     id: string;
@@ -47,11 +48,40 @@ export default function CompetitionDetailsClient({ competitionId }: { competitio
     const [tradesLoading, setTradesLoading] = useState(false);
     const [selectedUserName, setSelectedUserName] = useState("");
 
-    const [userId, setUserId] = useState<string | null>(null); // New state for current user
+    const [userId, setUserId] = useState<string | null>(null);
+    const { socket } = useSocket();
 
     useEffect(() => {
         fetchData();
     }, [competitionId]);
+
+    // WebSocket Effect
+    useEffect(() => {
+        if (!socket) return;
+
+        // Subscribe
+        socket.emit('subscribe_competition', competitionId);
+        console.log(`📡 Subscribed to competition: ${competitionId}`);
+
+        const handleLeaderboardUpdate = (data: any[]) => {
+            console.log(`🏆 WebSocket Leaderboard Update: ${data.length} participants`);
+            const enriched = data.map((p: any) => ({
+                ...p,
+                trades_count: p.trades_count || 0,
+                win_ratio: p.win_ratio || 0,
+                profit: p.profit || 0
+            }));
+            setLeaderboard(enriched);
+        };
+
+        socket.on('leaderboard_update', handleLeaderboardUpdate);
+
+        return () => {
+            socket.off('leaderboard_update');
+            socket.emit('unsubscribe_competition', competitionId);
+            console.log(`📴 Unsubscribed from competition: ${competitionId}`);
+        };
+    }, [socket, competitionId]);
 
     const fetchData = async () => {
         try {

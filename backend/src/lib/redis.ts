@@ -16,7 +16,7 @@ export const redis = new Redis(REDIS_URL || '', {
     maxRetriesPerRequest: null, // Required for BullMQ
     enableReadyCheck: false,
     retryStrategy(times) {
-        const delay = Math.min(times * 50, 2000);
+        const delay = Math.min(times * 500, 5000); // Slower retry (500ms -> 5s) to reduce spam
         return delay;
     },
 });

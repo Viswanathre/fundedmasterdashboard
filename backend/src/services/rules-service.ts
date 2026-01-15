@@ -66,8 +66,9 @@ export class RulesService {
             profitTargetPercent = Number(dbRule.profit_target_percent);
         }
 
-        // CRITICAL FIX: Instant/Funded accounts should NEVER have a profit target for "passing".
-        if (typeStr.includes('funded') || typeStr.includes('master') || typeStr.includes('instant') || groupStr.includes('funded') || groupStr.includes('master') || groupStr.includes('instant')) {
+        // CRITICAL FIX: Instant/Funded/Competition accounts should NEVER have a profit target for "passing".
+        if (typeStr.includes('funded') || typeStr.includes('master') || typeStr.includes('instant') || typeStr.includes('competition') ||
+            groupStr.includes('funded') || groupStr.includes('master') || groupStr.includes('instant') || groupStr.includes('competition')) {
             profitTargetPercent = 0;
         }
 

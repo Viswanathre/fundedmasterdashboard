@@ -92,7 +92,7 @@ function RiskGroupsTab() {
 
     // Helper to add new group local row
     const addRow = () => {
-        setGroups([...groups, { group_name: "demo\\NewGroup", max_drawdown_percent: 10, daily_drawdown_percent: 5 }]);
+        setGroups([...groups, { group_name: "demo\\NewGroup", max_drawdown_percent: 10, daily_drawdown_percent: 5, profit_target_percent: 8 }]);
     };
 
     if (loading) return <div>Loading...</div>;
@@ -111,6 +111,7 @@ function RiskGroupsTab() {
                             <th className="px-4 py-3">Group Name (MT5)</th>
                             <th className="px-4 py-3">Max DD (%)</th>
                             <th className="px-4 py-3">Daily DD (%)</th>
+                            <th className="px-4 py-3">Profit Target (%)</th>
                             <th className="px-4 py-3">Action</th>
                         </tr>
                     </thead>
@@ -148,6 +149,18 @@ function RiskGroupsTab() {
                                         onChange={(e) => {
                                             const newG = [...groups];
                                             newG[idx].daily_drawdown_percent = parseFloat(e.target.value);
+                                            setGroups(newG);
+                                        }}
+                                    />
+                                </td>
+                                <td className="px-4 py-2">
+                                    <input
+                                        type="number"
+                                        className="bg-transparent border border-gray-200 rounded px-2 py-1 text-gray-900 w-24"
+                                        value={g.profit_target_percent ?? ''}
+                                        onChange={(e) => {
+                                            const newG = [...groups];
+                                            newG[idx].profit_target_percent = e.target.value === '' ? null : parseFloat(e.target.value);
                                             setGroups(newG);
                                         }}
                                     />

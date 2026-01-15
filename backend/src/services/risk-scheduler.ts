@@ -183,8 +183,9 @@ async function processBatch(challenges: any[], riskGroups: any[], attempt = 1) {
                 const typeStr = (challenge.challenge_type || '').toLowerCase();
                 const groupStr = (challenge.group || '').toLowerCase();
 
-                if (typeStr.includes('funded') || typeStr.includes('master') || typeStr.includes('instant') || groupStr.includes('funded') || groupStr.includes('master')) {
-                    profitTargetPercent = 0; // No target for funded/master/instant
+                if (typeStr.includes('funded') || typeStr.includes('master') || typeStr.includes('instant') || typeStr.includes('competition') ||
+                    groupStr.includes('funded') || groupStr.includes('master') || groupStr.includes('competition')) {
+                    profitTargetPercent = 0; // No target for funded/master/instant/competition
                 } else if (typeStr.includes('phase 2') || typeStr.includes('step 2') || groupStr.includes('phase 2')) {
                     profitTargetPercent = 5;
                 } else if (typeStr.includes('phase 1') || typeStr.includes('step 1') || groupStr.includes('phase 1')) {

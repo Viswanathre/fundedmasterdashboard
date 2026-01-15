@@ -18,7 +18,9 @@ export async function startTradeSyncWorker() {
         await syncAccountTrades(job.data);
     }, {
         connection: redis as any,
-        concurrency: 10 // Process 10 accounts in parallel per server instance!
+        concurrency: 10, // Process 10 accounts in parallel per server instance!
+        removeOnComplete: { count: 100 }, // Keep only last 100 completed jobs
+        removeOnFail: { count: 500 } // Keep last 500 failed for debugging
     });
 
     worker.on('failed', (job, err) => {

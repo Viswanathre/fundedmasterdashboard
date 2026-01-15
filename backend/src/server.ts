@@ -169,6 +169,23 @@ app.post('/api/risk/validate', async (req, res) => {
     }
 });
 
+// Debug Route for Memory
+import v8 from 'v8';
+app.get('/debug/memory', (req, res) => {
+    const memory = process.memoryUsage();
+    const heap = v8.getHeapStatistics();
+
+    res.json({
+        usage: {
+            rss: `${Math.round(memory.rss / 1024 / 1024)} MB`, // Total Physical Ram used
+            heapTotal: `${Math.round(memory.heapTotal / 1024 / 1024)} MB`,
+            heapUsed: `${Math.round(memory.heapUsed / 1024 / 1024)} MB`, // Actual Object usage
+        },
+        limits: {
+            max_heap_size: `${Math.round(heap.heap_size_limit / 1024 / 1024)} MB` // What Node thinks is its limit
+        }
+    });
+});
 // Error handling middleware
 app.use((err: any, req: any, res: any, next: any) => {
     const logMessage = `[${new Date().toISOString()}] ERROR: ${err.message}\n${err.stack}\n\n`;
@@ -183,10 +200,15 @@ import { startTradeSyncScheduler } from './services/trade-sync-scheduler';
 import { startRiskEventWorker } from './workers/risk-event-worker';
 import { startTradeSyncWorker } from './workers/trade-sync-worker';
 
+import { startCompetitionScheduler } from './services/competition-scheduler';
+import { startLeaderboardBroadcaster } from './services/leaderboard-service';
+
 startRiskMonitor(60); // Risk checks every 60s (optimized from 20s)
 startRiskEventWorker(); // Start Event Listener
 startDailyEquityReset(); // Schedule midnight reset
 startTradeSyncScheduler(); // Dispatch jobs every 10s
+startCompetitionScheduler(); // Schedule competition status checks
+startLeaderboardBroadcaster(); // Broadcasts every 30s
 startTradeSyncWorker(); // Keep Worker active for manual syncs if needed
 
 

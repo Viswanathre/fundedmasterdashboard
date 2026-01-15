@@ -21,21 +21,27 @@ router.get('/groups', authenticate, async (req: any, res: any) => {
 });
 
 router.post('/groups', authenticate, async (req: any, res: any) => {
-    const { id, group_name, max_drawdown_percent, daily_drawdown_percent } = req.body;
+    const { id, group_name, max_drawdown_percent, daily_drawdown_percent, profit_target_percent } = req.body;
+    console.log("📝 [Admin Risk] Saving Group:", { id, group_name, profit_target_percent });
     try {
         const { data, error } = await supabase
             .from('mt5_risk_groups')
             .upsert({
-                id, // If ID provided, update. If not, insert (but need logic, usually Upsert works if PK known)
+                id,
                 group_name,
                 max_drawdown_percent,
                 daily_drawdown_percent,
+                profit_target_percent,
                 updated_at: new Date()
             })
             .select()
             .single();
 
-        if (error) throw error;
+        if (error) {
+            console.error("❌ [Admin Risk] Save Error:", error.message);
+            throw error;
+        }
+        console.log("✅ [Admin Risk] Saved Group:", data);
         res.json(data);
     } catch (e: any) {
         res.status(500).json({ error: e.message });

@@ -5,6 +5,7 @@
     "main": "dist/server.js",
     "scripts": {
         "start": "node dist/server.js",
+        "start:prod": "node --max-old-space-size=12000 dist/server.js",
         "dev": "npx tsx watch src/server.ts",
         "build": "tsc"
     },

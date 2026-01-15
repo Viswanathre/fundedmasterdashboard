@@ -80,6 +80,19 @@ export function initializeSocket(httpServer: HTTPServer) {
             if (DEBUG) console.log(`📴 Socket ${socket.id} unsubscribed from ${roomName}`);
         });
 
+        // Handle Competition Room Join
+        socket.on('subscribe_competition', (competitionId: string) => {
+            const roomName = `competition_${competitionId}`;
+            socket.join(roomName);
+            if (DEBUG) console.log(`🏆 Socket ${socket.id} joined competition room: ${roomName}`);
+        });
+
+        socket.on('unsubscribe_competition', (competitionId: string) => {
+            const roomName = `competition_${competitionId}`;
+            socket.leave(roomName);
+            if (DEBUG) console.log(`👋 Socket ${socket.id} left competition room: ${roomName}`);
+        });
+
         socket.on('disconnect', () => {
             // if (DEBUG) console.log(`🔌 WebSocket disconnected: ${socket.id}`);
         });
@@ -151,4 +164,17 @@ export function broadcastToUser(userId: string, event: string, data: any) {
 
     io.to(`user_${userId}`).emit(event, data);
     if (DEBUG) console.log(`📤 Broadcasted ${event} to user: ${userId}`);
+}
+
+export function broadcastLeaderboard(competitionId: string, leaderboard: any[]) {
+    if (!io) {
+        console.warn('⚠️ Socket.IO not initialized, cannot broadcast leaderboard');
+        return;
+    }
+
+    // Broadcast to a specific competition room (e.g., 'competition_123')
+    // Clients viewing that competition will join this room.
+    const roomName = `competition_${competitionId}`;
+    io.to(roomName).emit('leaderboard_update', leaderboard);
+    if (DEBUG) console.log(`🏆 Broadcasted leaderboard update for ${competitionId} (Rows: ${leaderboard.length})`);
 }
