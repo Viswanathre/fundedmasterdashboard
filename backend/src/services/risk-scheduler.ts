@@ -178,6 +178,17 @@ async function processBatch(challenges: any[], riskGroups: any[], attempt = 1) {
                     status: challenge.status // maintain existing status by default
                 };
 
+
+                // Recalculate limits for logging
+                const normalizedGroup = (challenge.group || '').replace(/\\/g, '\\').toLowerCase();
+                let rule = riskGroupMap.get(normalizedGroup);
+                if (!rule) rule = riskGroups.find(g => g.group_name === challenge.group);
+                if (!rule) rule = { max_drawdown_percent: 10, daily_drawdown_percent: 5 };
+
+                const initialLimitLog = Number(challenge.initial_balance) * (1 - (rule.max_drawdown_percent / 100));
+                const dailyLimitLog = Number(challenge.current_balance) * (1 - (rule.daily_drawdown_percent / 100));
+                const effectiveLimit = Math.max(initialLimitLog, dailyLimitLog);
+
                 // DEBUG: Inspect limits for troubleshooting breach latency
                 // if (res.equity < Number(challenge.initial_balance)) {
                 console.log(`🔍 [RiskDebug] Account: ${res.login} | Equity: ${res.equity} | Balance: ${res.balance} | Limit: ${effectiveLimit} | BridgeStatus: ${res.status}`);
