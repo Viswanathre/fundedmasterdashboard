@@ -91,10 +91,7 @@ export default function CompetitionsClient() {
                             <div className="flex items-center gap-2 uppercase">
                                 {featuredCompetition.platform || 'MetaTrader 5'}
                             </div>
-                            <div className="flex items-center gap-2">
-                                <Users size={12} className="text-slate-400 sm:w-[14px] sm:h-[14px]" />
-                                {featuredCompetition.participant_count || 0} Participants
-                            </div>
+
                         </div>
 
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-8 pt-2 sm:pt-4">
@@ -170,10 +167,7 @@ export default function CompetitionsClient() {
                                 <Tag size={10} className="sm:w-3 sm:h-3" />
                                 {comp.entry_fee > 0 ? 'Paid' : 'Free'}
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <Users size={10} className="sm:w-3 sm:h-3" />
-                                {(comp.participant_count || 0).toLocaleString()}
-                            </div>
+
                         </div>
 
                         <div className="flex items-center justify-between mt-auto">
