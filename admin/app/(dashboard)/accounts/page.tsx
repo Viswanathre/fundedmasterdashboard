@@ -43,6 +43,19 @@ export default async function AccountsListPage({
         // Always search text fields
         filters.push(`challenge_type.ilike.%${query}%`);
 
+        // NEW: Search by Email (via Profiles)
+        if (query.includes('@') || query.length > 3) {
+            const { data: profiles } = await supabase
+                .from('profiles')
+                .select('id')
+                .ilike('email', `%${query}%`);
+
+            if (profiles && profiles.length > 0) {
+                const userIds = profiles.map(p => p.id).join(',');
+                filters.push(`user_id.in.(${userIds})`);
+            }
+        }
+
         if (filters.length > 0) {
             challengeQuery = challengeQuery.or(filters.join(','));
         }
@@ -95,7 +108,7 @@ export default async function AccountsListPage({
 
             <div className="bg-white rounded-lg border border-gray-200 p-4">
                 <div className="w-full max-w-md">
-                    <SearchInput placeholder="Search by Account ID or Login..." />
+                    <SearchInput placeholder="Search by Email, Login, or ID..." />
                 </div>
             </div>
 
@@ -110,6 +123,7 @@ export default async function AccountsListPage({
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Type</th>
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Plan / Group</th>
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Balance</th>
+                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Equity</th>
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Status</th>
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Actions</th>
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Created</th>
@@ -152,11 +166,20 @@ export default async function AccountsListPage({
                                     <td className="px-6 py-4 font-medium text-gray-900">
                                         ${account.initial_balance?.toLocaleString()}
                                     </td>
+                                    <td className="px-6 py-4 font-medium text-blue-600">
+                                        ${account.current_equity?.toLocaleString() ?? '-'}
+                                    </td>
                                     <td className="px-6 py-4">
                                         <StatusBadge status={account.status} />
                                     </td>
                                     <td className="px-6 py-4">
-                                        <AccountActions accountId={account.id} login={account.login} currentStatus={account.status} />
+                                        <AccountActions
+                                            accountId={account.id}
+                                            login={account.login}
+                                            currentStatus={account.status}
+                                            userId={account.profile?.id}
+                                            currentEmail={account.profile?.email}
+                                        />
                                     </td>
                                     <td className="px-6 py-4 text-gray-600 text-xs">
                                         {new Date(account.created_at).toLocaleDateString()}

@@ -368,6 +368,41 @@ router.post('/sync-trades', async (req: Request, res: Response) => {
             return;
         }
 
+        // --- RECONCILIATION STEP ---
+        // Identify trades that are Open in DB but missing from Bridge (meaning they closed)
+        const bridgeTickets = new Set(allTrades.map((t: any) => Number(t.ticket)));
+
+        // Fetch all currently OPEN trades from DB
+        const { data: dbOpenTrades } = await supabase
+            .from('trades')
+            .select('id, ticket')
+            .eq('challenge_id', challenge.id)
+            .is('close_time', null);
+
+        if (dbOpenTrades && dbOpenTrades.length > 0) {
+            const tradesToClose = dbOpenTrades.filter(t => !bridgeTickets.has(t.ticket));
+
+            if (tradesToClose.length > 0) {
+                console.log(`🧹 Auto-closing ${tradesToClose.length} trades not found in bridge...`);
+
+                const ticketIdsToClose = tradesToClose.map(t => t.id);
+                const { error: closeError } = await supabase
+                    .from('trades')
+                    .update({
+                        close_time: new Date().toISOString(),
+                        // We assume close_price is unknown, sticking to last known or null. 
+                        // ideally we'd fetch history but endpoint is broken.
+                    })
+                    .in('id', ticketIdsToClose);
+
+                if (closeError) {
+                    console.error("Failed to auto-close trades:", closeError);
+                } else {
+                    console.log(`✅ Closed ${tradesToClose.length} stale trades.`);
+                }
+            }
+        }
+
         res.json({ success: true, count: allTrades.length, trades: formattedTrades });
 
     } catch (error: any) {
@@ -508,7 +543,7 @@ router.post('/admin/enable', authenticate, async (req: AuthRequest, res: Respons
 router.post('/trades/webhook', async (req: Request, res: Response) => {
     try {
         const body = req.body;
-        console.log(`📊 [Backend] Received Webhook Payload:`, JSON.stringify(body, null, 2));
+        // console.log(`📊 [Backend] Received Webhook Payload:`, JSON.stringify(body, null, 2));
 
         // --- SCHEME C: NEW BATCH EVENT (Production Scale) ---
         if (body.event === 'trades_closed_batch') {
@@ -558,7 +593,7 @@ router.post('/trades/webhook', async (req: Request, res: Response) => {
                     ticket: Number(t.ticket),
                     symbol: t.symbol,
                     type: t.type, // Assuming bridge sends 0/1 or raw MT5 type
-                    lots: t.volume,
+                    lots: t.volume / 10000,
                     open_price: t.open_price || 0,
                     close_price: t.close_price,
                     profit_loss: t.profit,
@@ -711,7 +746,7 @@ router.post('/trades/webhook', async (req: Request, res: Response) => {
             symbol: trade.symbol,
             ticket: Number(trade.ticket),
             type: trade.type === 0 ? 'buy' : trade.type === 1 ? 'sell' : 'balance',
-            volume: trade.volume,
+            lots: trade.volume / 10000,
             open_price: trade.price,
             close_price: trade.close_price,
             profit: trade.profit,

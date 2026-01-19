@@ -14,6 +14,7 @@ const leaderboardCache: Record<string, { data: any[], timestamp: number }> = {};
 const CACHE_TTL = 30 * 1000; // 30 seconds
 
 export async function getLeaderboard(competitionId: string) {
+    console.log("!!! LEADERBOARD SERVICE CALL DETECTED !!!");
     // Check Cache
     const cached = leaderboardCache[competitionId];
     if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
@@ -59,7 +60,7 @@ export async function getLeaderboard(competitionId: string) {
         if (challengeIds.length > 0) {
             const { data: challenges } = await supabase
                 .from('challenges')
-                .select('id, initial_balance, status')
+                .select('id, initial_balance, status, current_equity')
                 .in('id', challengeIds);
 
             if (challenges) {
@@ -87,7 +88,11 @@ export async function getLeaderboard(competitionId: string) {
 
             const challenge = p.challenge_id ? challengeMap[p.challenge_id] : null;
             const initialBalance = challenge?.initial_balance || 100000; // Default to 100k if missing
-            const gain = initialBalance > 0 ? (profit / initialBalance) * 100 : 0;
+
+            // DYNAMIC SCORE CALCULATION
+            const currentEquity = challenge?.current_equity ?? initialBalance;
+            const equityProfit = currentEquity - initialBalance;
+            const gain = initialBalance > 0 ? (equityProfit / initialBalance) * 100 : 0;
 
             // Prefer challenge status (e.g. 'failed') if available, otherwise participant status
             const effectiveStatus = challenge?.status || p.status;
@@ -100,19 +105,34 @@ export async function getLeaderboard(competitionId: string) {
                 status: effectiveStatus,
                 avatar_url: profile?.avatar_url,
                 trades_count,
-                profit,
+                profit: equityProfit, // Use Equity Profit (Floating) instead of Closed Profit
                 win_ratio,
                 challenge_id: p.challenge_id
             };
         });
 
+        // DEBUG: Inspect Types
+        if (leaderboard.length > 0) {
+            console.log("DEBUG SORT: First Item Score Type:", typeof leaderboard[0].score, "Value:", leaderboard[0].score);
+            console.log("DEBUG SORT: Before Sort (Slice 5):", leaderboard.slice(0, 5).map(p => `${p.username}: ${p.score}`));
+        }
+
+        // CUSTOM RULE: user says "breached accounts are out of race" -> Filter them out completely
+        const activeLeaderboard = leaderboard.filter((p: any) => p.status !== 'breached' && p.status !== 'failed');
+
+        // Sort by Score (Desc)
+        activeLeaderboard.sort((a: any, b: any) => (b.score || 0) - (a.score || 0));
+
+        // Re-assign rank
+        activeLeaderboard.forEach((p: any, i: number) => p.rank = i + 1);
+
         // Update Cache
         leaderboardCache[competitionId] = {
-            data: leaderboard,
+            data: activeLeaderboard,
             timestamp: Date.now()
         };
 
-        return leaderboard;
+        return activeLeaderboard;
 
     } catch (error) {
         console.error("Leaderboard Service Error:", error);
@@ -122,6 +142,103 @@ export async function getLeaderboard(competitionId: string) {
 
 // Polling Service for Broadcasting
 let interval: NodeJS.Timeout | null = null;
+
+// Helper to update scores in DB so sorting is correct
+export async function updateLeaderboardScores(competitionId: string) {
+    try {
+        // 1. Fetch all participants with their challenge IDs
+        const { data: participants, error } = await supabase
+            .from('competition_participants')
+            .select('user_id, challenge_id')
+            .eq('competition_id', competitionId);
+
+        if (error || !participants) return;
+
+        const challengeIds = participants.map(p => p.challenge_id).filter(id => id !== null);
+        if (challengeIds.length === 0) return;
+
+        const { data: challenges } = await supabase
+            .from('challenges')
+            .select('id, initial_balance, current_equity, status')
+            .in('id', challengeIds);
+
+        const challengeMap = new Map(challenges?.map(c => [c.id, c]));
+
+        // Fetch Trades for these challenges
+        let tradesMap: Record<string, any[]> = {};
+        if (challengeIds.length > 0) {
+            const { data: trades, error: tradesError } = await supabase
+                .from('trades')
+                .select('challenge_id, profit_loss')
+                .in('challenge_id', challengeIds)
+                .not('close_time', 'is', null) // Only closed trades
+                .gt('lots', 0); // Exclude deposits
+
+            if (!tradesError && trades) {
+                trades.forEach((t: any) => {
+                    if (!tradesMap[t.challenge_id]) tradesMap[t.challenge_id] = [];
+                    tradesMap[t.challenge_id].push(t);
+                });
+            }
+        }
+
+        // 3. Calculate Scores based on Equity (Floating PnL)
+        const updates = participants.map(p => {
+            if (!p.challenge_id) return { user_id: p.user_id, score: -999999, rank: 9999 };
+
+            const challenge = challengeMap.get(p.challenge_id);
+            if (!challenge) return { user_id: p.user_id, score: -999999, rank: 9999 };
+
+            const initialBalance = challenge.initial_balance || 100000;
+            // const currentEquity = challenge.current_equity ?? initialBalance;
+
+            const userTrades = tradesMap[p.challenge_id] || [];
+            const profit = userTrades.reduce((sum, t) => sum + (t.profit_loss || 0), 0);
+
+            // Calculate Gain based on Closed Profit Only
+            const gain = initialBalance > 0 ? (profit / initialBalance) * 100 : 0;
+            const status = challenge.status;
+
+            return {
+                user_id: p.user_id,
+                score: gain,
+                status: status,
+                competition_id: competitionId
+            };
+        });
+
+        // 4. Sort by Score (Desc) to determine Rank (Breached at bottom)
+        updates.sort((a, b) => {
+            const isBadA = a.status === 'breached' || a.status === 'failed';
+            const isBadB = b.status === 'breached' || b.status === 'failed';
+
+            if (isBadA && !isBadB) return 1;
+            if (!isBadA && isBadB) return -1;
+
+            return b.score - a.score;
+        });
+
+        // 5. Assign Rank and Prepare Bulk Update
+        const bulkUpdatePayload = updates.map((u, index) => ({
+            user_id: u.user_id,
+            competition_id: competitionId,
+            score: u.score,
+            rank: index + 1
+        }));
+
+        // 6. Perform Bulk Upsert
+        if (bulkUpdatePayload.length > 0) {
+            const { error: upsertError } = await supabase
+                .from('competition_participants')
+                .upsert(bulkUpdatePayload, { onConflict: 'competition_id, user_id' });
+
+            if (upsertError) console.error("❌ Failed to update leaderboard scores:", upsertError);
+        }
+
+    } catch (e) {
+        console.error("Error updating leaderboard scores:", e);
+    }
+}
 
 export function startLeaderboardBroadcaster(intervalMs = 30000) {
     if (interval) return;
@@ -139,12 +256,11 @@ export function startLeaderboardBroadcaster(intervalMs = 30000) {
             if (!activeCompetitions) return;
 
             for (const comp of activeCompetitions) {
-                // Force Refresh Cache? No, let getLeaderboard handle it naturally via TTL.
-                // Optionally we can invalidate cache here if we want "Fresh push".
-                // For now, respect TTL or just call it.
+                // 1. UPDATE DB SCORES FIRST
+                await updateLeaderboardScores(comp.id);
 
-                // We invalidate cache to ensure we are pushing FRESH data every cycle
-                delete leaderboardCache[comp.id];
+                // 2. Fetch fresh leaderboard
+                delete leaderboardCache[comp.id]; // Invalidate cache
 
                 const data = await getLeaderboard(comp.id);
                 broadcastLeaderboard(comp.id, data);

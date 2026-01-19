@@ -7,6 +7,9 @@ import AuthCard from '@/components/auth/AuthCard'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
+
+import { createClient } from '@/utils/supabase/client'
+
 export default function ResetPasswordPage() {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -16,6 +19,7 @@ export default function ResetPasswordPage() {
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
     const router = useRouter()
+    const supabase = createClient()
 
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -29,23 +33,25 @@ export default function ResetPasswordPage() {
         }
 
         try {
-            const response = await fetch('/api/auth/reset-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ password }),
+            // Check session first
+            const { data: { session } } = await supabase.auth.getSession()
+            if (!session) {
+                throw new Error("Session invalid or expired. Please request a new password reset link.")
+            }
+
+            // Update password directly via Client SDK
+            const { error: updateError } = await supabase.auth.updateUser({
+                password: password
             })
 
-            const data = await response.json()
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to reset password')
+            if (updateError) {
+                throw updateError
             }
 
             setSuccess(true)
         } catch (err: any) {
-            setError(err.message)
+            console.error("Reset Password Error:", err)
+            setError(err.message || "Failed to update password")
         } finally {
             setLoading(false)
         }

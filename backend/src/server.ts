@@ -83,8 +83,10 @@ import rankingRouter from './routes/ranking';
 import adminSettingsRouter from './routes/admin_settings';
 import adminPaymentRouter from './routes/admin_payments';
 import adminHealthRouter from './routes/admin_health';
+import adminUsersRouter from './routes/admin_users';
 
 app.use('/api/overview', overviewRouter);
+app.use('/api/admin/users', adminUsersRouter); // Register Admin Users Route
 app.use('/api/admin/settings', adminSettingsRouter); // Register Settings Route
 app.use('/api/admin/payments', adminPaymentRouter); // Register Payments Route
 
@@ -206,7 +208,8 @@ import { startLeaderboardBroadcaster } from './services/leaderboard-service';
 
 // startRiskMonitor(5); // DISABLED: Using Python Bridge Push
 // startRiskEventWorker(); // Start Event Listener
-console.log('🛑 [Risk Monitor] Polling Disabled (Bridge Push Mode)');
+console.log('🔄 [Risk Monitor] Polling Enabled (Fallback Mode) - 10s Interval');
+startRiskMonitor(10); // Re-enabled to ensure DB equity is fresh
 startDailyEquityReset(); // Schedule midnight reset
 startTradeSyncScheduler(); // Dispatch jobs every 10s
 startCompetitionScheduler(); // Schedule competition status checks
