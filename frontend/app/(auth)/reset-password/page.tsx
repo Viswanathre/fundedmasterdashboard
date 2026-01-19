@@ -7,6 +7,7 @@ import { Loader2, Lock, ArrowRight, CheckCircle, Eye, EyeOff } from 'lucide-reac
 import AuthCard from '@/components/auth/AuthCard'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { resetPasswordAction } from "@/app/actions/auth-actions"
 
 export default function ResetPasswordPage() {
     const [password, setPassword] = useState('')
@@ -16,22 +17,28 @@ export default function ResetPasswordPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
-    const [verifying, setVerifying] = useState(true) // New state
+    const [verifying, setVerifying] = useState(false) // No longer blocking
     const router = useRouter()
     const supabase = createClient()
 
     useEffect(() => {
         const checkSession = async () => {
+            console.log("🔍 [ResetPassword] Checking session...");
             const { data: { session } } = await supabase.auth.getSession()
+
             if (session) {
+                console.log("✅ [ResetPassword] Session found:", session.user.email);
                 setVerifying(false)
             } else {
+                console.log("⚠️ [ResetPassword] Session not found initially. Retrying...");
                 // Wait a bit, maybe it's setting up?
                 setTimeout(async () => {
                     const { data: { session: retrySession } } = await supabase.auth.getSession()
                     if (retrySession) {
+                        console.log("✅ [ResetPassword] Session found on retry:", retrySession.user.email);
                         setVerifying(false)
                     } else {
+                        console.error("❌ [ResetPassword] Session check failed after retry.");
                         setError("Session invalid or expired. Please request a new password reset link.")
                         setVerifying(false)
                     }
