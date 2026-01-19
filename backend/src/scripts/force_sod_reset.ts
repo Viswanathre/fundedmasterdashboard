@@ -44,7 +44,10 @@ async function main() {
     console.log("Fetching live data from Bridge...");
     const response = await fetch(`${BRIDGE_URL}/check-bulk`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': process.env.BRIDGE_API_KEY || 'shark-bridge-secret'
+        },
         body: JSON.stringify(payload)
     });
 
