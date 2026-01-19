@@ -1,14 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { createClient } from '@/utils/supabase/client'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, Lock, ArrowRight, CheckCircle, Eye, EyeOff } from 'lucide-react'
 import AuthCard from '@/components/auth/AuthCard'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-
-
-import { createClient } from '@/utils/supabase/client'
 
 export default function ResetPasswordPage() {
     const [password, setPassword] = useState('')
@@ -18,8 +16,31 @@ export default function ResetPasswordPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
+    const [verifying, setVerifying] = useState(true) // New state
     const router = useRouter()
     const supabase = createClient()
+
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session) {
+                setVerifying(false)
+            } else {
+                // Wait a bit, maybe it's setting up?
+                setTimeout(async () => {
+                    const { data: { session: retrySession } } = await supabase.auth.getSession()
+                    if (retrySession) {
+                        setVerifying(false)
+                    } else {
+                        setError("Session invalid or expired. Please request a new password reset link.")
+                        setVerifying(false)
+                    }
+                }, 1000)
+            }
+        }
+
+        checkSession()
+    }, [supabase])
 
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -33,12 +54,6 @@ export default function ResetPasswordPage() {
         }
 
         try {
-            // Check session first
-            const { data: { session } } = await supabase.auth.getSession()
-            if (!session) {
-                throw new Error("Session invalid or expired. Please request a new password reset link.")
-            }
-
             // Update password directly via Client SDK
             const { error: updateError } = await supabase.auth.updateUser({
                 password: password
@@ -52,6 +67,10 @@ export default function ResetPasswordPage() {
         } catch (err: any) {
             console.error("Reset Password Error:", err)
             setError(err.message || "Failed to update password")
+            // If error is session related, hint user
+            if (err.message.includes("session")) {
+                setError("Session expired. Please request a new link.")
+            }
         } finally {
             setLoading(false)
         }
