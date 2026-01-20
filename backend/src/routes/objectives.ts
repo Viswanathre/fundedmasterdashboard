@@ -30,14 +30,14 @@ router.post('/calculate', authenticate, async (req: AuthRequest, res: Response) 
         // fs.appendFileSync('backend_request_debug.log', `[OBJ-ENTRY] Body: ${JSON.stringify(req.body)}\n`);
 
         if (!challenge_id) {
-            fs.appendFileSync('backend_request_debug.log', `[OBJ-ERROR] Missing Challenge ID\n`);
+            // fs.appendFileSync('backend_request_debug.log', `[OBJ-ERROR] Missing Challenge ID\n`);
             return res.status(400).json({ error: 'Challenge ID required' });
         }
 
         // Fetch all trades for this challenge
         const { data: trades, error } = await supabase
             .from('trades')
-            .select('*')
+            .select('type, lots, profit_loss, commission, swap, close_time, ticket, comment, symbol, open_time')
             .eq('challenge_id', challenge_id);
 
         if (error) {
@@ -84,7 +84,7 @@ router.post('/calculate', authenticate, async (req: AuthRequest, res: Response) 
             }
 
             // Calculate Net P&L for this trade including costs
-            const profit = Number(trade.profit_loss ?? trade.profit ?? 0);
+            const profit = Number(trade.profit_loss ?? 0);
             const commission = Number(trade.commission ?? 0);
             const swap = Number(trade.swap ?? 0);
             const tradeNet = profit + commission + swap;

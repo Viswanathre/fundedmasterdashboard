@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "SharkFunded CRM",
-    description: "SharkFunded Admin Portal",
+    title: "SharkFunded ",
+    description: "SharkFunded ",
 };
 
 export default function RootLayout({

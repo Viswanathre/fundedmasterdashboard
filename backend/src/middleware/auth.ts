@@ -21,6 +21,9 @@ export interface AuthRequest extends Request {
     user?: any;
 }
 
+const CACHE_TTL = 60 * 1000; // 60 seconds
+const authCache = new Map<string, { user: any; expires: number }>();
+
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         // 1. Check for Admin API Key (Backend-to-Backend/Admin Panel)
@@ -52,7 +55,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
         }
 
         const authHeader = req.headers.authorization;
-        console.log(`🔐 [AuthDebug] Header: ${authHeader ? 'Present' : 'Missing'}, Value: ${authHeader?.substring(0, 20)}...`);
+        // console.log(`🔐 [AuthDebug] Header: ${authHeader ? 'Present' : 'Missing'}, Value: ${authHeader?.substring(0, 20)}...`);
 
         if (!authHeader) {
             res.status(401).json({ error: 'Missing Authorization header' });
@@ -66,6 +69,16 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
             return;
         }
 
+        // --- CACHE CHECK ---
+        const now = Date.now();
+        const cached = authCache.get(token);
+        if (cached && cached.expires > now) {
+            // console.log('[Auth] Cache HIT');
+            req.user = cached.user;
+            next();
+            return;
+        }
+
         const { data: { user }, error } = await getSupabase().auth.getUser(token);
 
         if (error || !user) {
@@ -74,7 +87,15 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
             return;
         }
 
-        // console.log(`[Auth] Authenticated User: ${user.id}`);
+        // --- CACHE SET ---
+        authCache.set(token, { user, expires: now + CACHE_TTL });
+        // Prune cache if too big (simple guard)
+        if (authCache.size > 1000) {
+            const firstKey = authCache.keys().next().value;
+            if (firstKey) authCache.delete(firstKey);
+        }
+
+        // console.log(`[Auth] Authenticated User: ${user.id} (Cache Miss)`);
         req.user = user;
         next();
     } catch (error) {

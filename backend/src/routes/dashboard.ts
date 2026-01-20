@@ -20,7 +20,7 @@ router.get('/calendar', authenticate, async (req: AuthRequest, res: Response) =>
 
         let query = supabase
             .from('trades')
-            .select('*')
+            .select('close_time, profit_loss')
             .eq('user_id', user.id)
             .order('close_time', { ascending: true, nullsFirst: false });
 
@@ -105,7 +105,7 @@ router.get('/trades', authenticate, async (req: AuthRequest, res: Response) => {
 
         let query = supabase
             .from('trades')
-            .select('*')
+            .select('id, ticket, symbol, type, lots, open_price, close_price, open_time, close_time, profit_loss, commission, swap, comment')
             .eq('user_id', user.id)
             .order('open_time', { ascending: false }); // Latest first
 
@@ -134,8 +134,7 @@ router.get('/trades', authenticate, async (req: AuthRequest, res: Response) => {
         const { data: trades, error } = await query;
 
         if (error) {
-            const fs = require('fs');
-            fs.appendFileSync('backend_debug.log', `[${new Date().toISOString()}] DB Error: ${JSON.stringify(error)}\n`);
+            // fs.appendFileSync('backend_debug.log', `[${new Date().toISOString()}] DB Error: ${JSON.stringify(error)}\n`);
             console.error('Error fetching trades:', error);
             res.status(500).json({ error: 'Failed to fetch trades' });
             return;
@@ -192,7 +191,7 @@ router.get('/trades/analysis', authenticate, async (req: AuthRequest, res: Respo
 
         let query = supabase
             .from('trades')
-            .select('*')
+            .select('id, ticket, symbol, type, lots, open_price, close_price, open_time, close_time, profit_loss, comment')
             .eq('user_id', user.id);
 
         if (accountId) {
@@ -486,7 +485,7 @@ router.get('/consistency', authenticate, async (req: AuthRequest, res: Response)
 
         const { data: trades, error } = await supabase
             .from('trades')
-            .select('*')
+            .select('profit_loss, lots')
             .eq('challenge_id', challenge_id)
             .eq('user_id', user.id); // Implicit tenancy check
 
