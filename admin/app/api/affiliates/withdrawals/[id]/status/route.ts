@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const body = await request.json();
-        const { id } = params;
+        const { id } = await params;
 
         const response = await fetch(`${BACKEND_URL}/api/admin/affiliates/withdrawals/${id}/status`, {
             method: 'POST',
