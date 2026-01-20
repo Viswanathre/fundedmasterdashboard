@@ -120,6 +120,7 @@ export default async function AccountsListPage({
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Account ID</th>
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">User</th>
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Login</th>
+                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Password</th>
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Type</th>
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Plan / Group</th>
                                 <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Balance</th>
@@ -149,6 +150,11 @@ export default async function AccountsListPage({
                                     </td>
                                     <td className="px-6 py-4 font-mono text-gray-900">
                                         {account.login || "-"}
+                                    </td>
+                                    <td className="px-6 py-4 font-mono text-gray-900">
+                                        <div className="flex flex-col">
+                                            <span title="Master Password">{account.master_password || "-"}</span>
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4 text-gray-900 capitalize">
                                         <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700">
@@ -188,7 +194,7 @@ export default async function AccountsListPage({
                             ))}
                             {accountsWithProfiles.length === 0 && (
                                 <tr>
-                                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
+                                    <td colSpan={11} className="px-6 py-12 text-center text-gray-500">
                                         No accounts found.
                                     </td>
                                 </tr>

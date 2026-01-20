@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "SharkFunded CRM",
-    description: "Premium Prop Firm Trading Dashboard",
+    description: "SharkFunded Trading Platform",
 };
 
 export default function RootLayout({
