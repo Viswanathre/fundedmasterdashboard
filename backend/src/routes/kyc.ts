@@ -136,12 +136,26 @@ router.post('/update-status', async (req: Request, res: Response) => {
 
         console.log('Received KYC update data:', kycData);
 
-        // Extract the session ID and status
-        const { didit_session_id, status, raw_response, ...otherData } = kycData;
+        // Extract the session ID and status (Handle various Didit formats)
+        let didit_session_id = kycData.didit_session_id || kycData.session_id || kycData.sessionId || kycData.verificationSessionId;
+        let status = kycData.status || kycData.decision;
+        const { raw_response, ...otherData } = kycData;
+
+        // If nested in payload/data (common in some webhooks)
+        if (!didit_session_id && kycData.payload) {
+            didit_session_id = kycData.payload.session_id;
+            status = kycData.payload.status;
+        }
 
         if (!didit_session_id) {
+            console.error("❌ KYC Webhook missing Session ID:", kycData);
             res.status(400).json({ error: 'Session ID is required' });
             return;
+        }
+
+        // Normalize Status
+        if (status) {
+            status = status.toLowerCase();
         }
 
         // Prepare update data
@@ -179,10 +193,14 @@ router.post('/update-status', async (req: Request, res: Response) => {
         }
 
         // If status is approved, set completed_at
-        if (status === 'approved' || status === 'verified') {
+        if (status === 'approved' || status === 'verified' || status === 'accepted') {
             updateData.completed_at = new Date().toISOString();
-            // Ensure status is normalized to 'approved' if it came in as 'verified'
+            // Ensure status is normalized to 'approved'
             updateData.status = 'approved';
+        } else if (status === 'declined' || status === 'rejected') {
+            updateData.status = 'declined';
+        } else if (status === 'review' || status === 'requires_review') {
+            updateData.status = 'requires_review';
         }
 
         // Update the session
