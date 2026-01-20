@@ -12,37 +12,50 @@ export async function loginAdmin(formData: FormData) {
         return { error: "Email and password are required" };
     }
 
-    const supabase = createAdminClient();
+    try {
+        console.log("DEBUG LOGIN: Starting login for", email);
+        console.log("DEBUG LOGIN: URL Length", process.env.NEXT_PUBLIC_SUPABASE_URL?.length);
+        console.log("DEBUG LOGIN: Key Length", process.env.SUPABASE_SERVICE_ROLE_KEY?.length);
 
-    // Direct query to admin_users table (Service Role bypasses RLS)
-    // Checking plain text password as per requirements
-    const { data: user, error } = await supabase
-        .from("admin_users")
-        .select("id, email, full_name, role, password")
-        .eq("email", email)
-        .maybeSingle();
+        const supabase = createAdminClient();
 
-    if (error) {
-        console.error("Database error during login:", error);
-        return { error: "An error occurred during login." };
+        // Direct query to admin_users table (Service Role bypasses RLS)
+        // Checking plain text password as per requirements
+        const { data: user, error } = await supabase
+            .from("admin_users")
+            .select("id, email, full_name, role, password")
+            .eq("email", email)
+            .maybeSingle();
+
+        if (error) {
+            console.error("Database error during login:", error);
+            // Return actual error for debugging
+            return { error: `DB Error: ${error.message} (${error.code})` };
+        }
+
+        if (!user || user.password !== password) {
+            // User not found or password incorrect
+            console.log("DEBUG LOGIN: Invalid credentials. User found:", !!user);
+            return { error: "Invalid credentials" };
+        }
+
+        // Set a session cookie
+        const cookieStore = await cookies();
+        // Use an explicit type cast or optional chaining if necessary, though 'user' is typed from RPC return
+        const userId = (user as { id: string }).id;
+
+        cookieStore.set("admin_session", userId, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 60 * 60 * 24, // 1 day
+            path: "/",
+        });
+
+        console.log("DEBUG LOGIN: Success. Redirecting...");
+    } catch (e: any) {
+        console.error("CRITICAL LOGIN ERROR:", e);
+        return { error: `Critical Error: ${e.message}` };
     }
-
-    if (!user || user.password !== password) {
-        // User not found or password incorrect
-        return { error: "Invalid credentials" };
-    }
-
-    // Set a session cookie
-    const cookieStore = await cookies();
-    // Use an explicit type cast or optional chaining if necessary, though 'user' is typed from RPC return
-    const userId = (user as { id: string }).id;
-
-    cookieStore.set("admin_session", userId, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 60 * 24, // 1 day
-        path: "/",
-    });
 
     redirect("/dashboard");
 }
