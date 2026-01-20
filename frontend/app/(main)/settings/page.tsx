@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { User, Lock, Wallet, Shield, Save, Camera, Mail, Phone, Globe, Key, MapPin, Hash, Loader2, AlertTriangle, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -84,8 +84,13 @@ export default function SettingsPage() {
         phone: "",
         country: "",
         address: "",
-        pincode: ""
+        pincode: "",
+        avatarUrl: ""
     });
+
+    // File Input Ref
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [uploading, setUploading] = useState(false);
 
     const [security, setSecurity] = useState({
         current: "",
@@ -115,7 +120,8 @@ export default function SettingsPage() {
                     phone: profileData.profile?.phone || "",
                     country: profileData.profile?.country || "",
                     address: profileData.profile?.address || "",
-                    pincode: profileData.profile?.pincode || ""
+                    pincode: profileData.profile?.pincode || "",
+                    avatarUrl: profileData.profile?.avatar_url || ""
                 });
 
                 // Fetch wallet from API
@@ -170,6 +176,7 @@ export default function SettingsPage() {
                         country: profile.country,
                         address: profile.address,
                         pincode: profile.pincode,
+                        avatar_url: profile.avatarUrl
                     })
                 });
                 setSaveMessage({ type: 'success', text: 'Profile updated successfully!' });
@@ -180,6 +187,64 @@ export default function SettingsPage() {
             setSaveMessage({ type: 'error', text: err.message || 'Failed to save changes' });
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        try {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            setUploading(true);
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random()}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            // Lazy import supabase client
+            const { createClient } = await import('@/utils/supabase/client');
+            const supabase = createClient();
+
+            // 1. Upload to Supabase Storage
+            const { error: uploadError } = await supabase.storage
+                .from('avatars')
+                .upload(filePath, file);
+
+            if (uploadError) {
+                // Try creating bucket if it doesn't exist (though usually done via dashboard/migration)
+                // If bucket doesn't exist, this will fail. User needs to ensure bucket exists.
+                throw uploadError;
+            }
+
+            // 2. Get Public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from('avatars')
+                .getPublicUrl(filePath);
+
+            // 3. Update local state
+            setProfile(prev => ({ ...prev, avatarUrl: publicUrl }));
+
+            // 4. Trigger Save to persist immediately
+            // We'll just updated local state, user can click save, OR we can auto-save.
+            // Let's auto-save the avatar URL to backend for better UX.
+            await fetchFromBackend('/api/user/profile', {
+                method: 'PUT',
+                body: JSON.stringify({
+                    avatar_url: publicUrl
+                })
+            });
+
+            setSaveMessage({ type: 'success', text: 'Profile picture updated!' });
+            setTimeout(() => setSaveMessage(null), 3000);
+
+        } catch (error: any) {
+            console.error('Error uploading avatar:', error);
+            setSaveMessage({ type: 'error', text: 'Error uploading image. Make sure "avatars" bucket exists.' });
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -253,13 +318,34 @@ export default function SettingsPage() {
 
                                 {/* Avatar Section */}
                                 <div className="flex items-center gap-6 p-6 bg-card border border-border rounded-xl">
-                                    <div className="relative">
+                                    <div className="relative group">
                                         <div className="w-20 h-20 rounded-full bg-muted border-2 border-border overflow-hidden">
-                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Avatar" className="w-full h-full object-cover" />
+                                            {uploading ? (
+                                                <div className="flex items-center justify-center w-full h-full bg-black/50">
+                                                    <Loader2 className="w-6 h-6 text-white animate-spin" />
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.displayName || 'User'}`}
+                                                    alt="Avatar"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            )}
                                         </div>
-                                        <button className="absolute -bottom-2 -right-2 p-1.5 bg-primary text-primary-foreground rounded-full border-4 border-card hover:scale-110 transition-transform">
+                                        <button
+                                            onClick={handleAvatarClick}
+                                            disabled={uploading}
+                                            className="absolute -bottom-2 -right-2 p-1.5 bg-primary text-primary-foreground rounded-full border-4 border-card hover:scale-110 transition-transform cursor-pointer disabled:opacity-50"
+                                        >
                                             <Camera size={14} />
                                         </button>
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            onChange={handleFileChange}
+                                            className="hidden"
+                                            accept="image/png, image/jpeg, image/gif"
+                                        />
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-sm">{profile.displayName || profile.fullName || 'User'}</h4>

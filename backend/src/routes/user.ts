@@ -51,7 +51,7 @@ router.put('/profile', authenticate, async (req: AuthRequest, res: Response) => 
         const updates = req.body;
 
         // Validate and sanitize updates
-        const allowedFields = ['full_name', 'phone', 'country', 'city', 'address', 'pincode', 'display_name'];
+        const allowedFields = ['full_name', 'phone', 'country', 'city', 'address', 'pincode', 'display_name', 'avatar_url'];
         const sanitizedUpdates: any = {};
 
         allowedFields.forEach(field => {

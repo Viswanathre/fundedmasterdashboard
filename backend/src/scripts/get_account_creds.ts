@@ -40,4 +40,5 @@ async function getCreds(login: string) {
     }
 }
 
-getCreds('889224450');
+const login = process.argv[2] || '889224192';
+getCreds(login);

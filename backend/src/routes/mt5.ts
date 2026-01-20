@@ -605,10 +605,19 @@ router.post('/trades/webhook', async (req: Request, res: Response) => {
             }).filter(Boolean);
 
             if (validTrades.length > 0) {
+                // Deduplicate
+                const uniqueTrades = Array.from(
+                    validTrades.reduce((map: Map<string, any>, trade: any) => {
+                        const key = `${trade.challenge_id}-${trade.ticket}`;
+                        map.set(key, trade);
+                        return map;
+                    }, new Map()).values()
+                );
+
                 // 3. Bulk Upsert
                 const { error } = await supabase
                     .from('trades')
-                    .upsert(validTrades, { onConflict: 'challenge_id, ticket' });
+                    .upsert(uniqueTrades, { onConflict: 'challenge_id, ticket' });
 
                 if (error) {
                     console.error('❌ Batch Upsert Failed:', error);

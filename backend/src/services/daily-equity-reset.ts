@@ -49,7 +49,10 @@ async function performDailyReset() {
         // 3. Call Bridge
         const response = await fetch(`${BRIDGE_URL}/check-bulk`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': process.env.MT5_API_KEY || 'shark-bridge-secret'
+            },
             body: JSON.stringify(payload)
         });
 

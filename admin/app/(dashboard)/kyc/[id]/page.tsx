@@ -91,7 +91,7 @@ export default function AdminKYCDetailsPage() {
         return (
             <div className="mx-auto max-w-5xl space-y-6">
                 <div className="mb-4">
-                    <Link href="/admin/kyc" className="inline-flex items-center text-sm text-gray-500 hover:text-gray-900">
+                    <Link href="/kyc" className="inline-flex items-center text-sm text-gray-500 hover:text-gray-900">
                         <ChevronLeft className="mr-1 h-4 w-4" />
                         Back to KYC Requests
                     </Link>
@@ -106,7 +106,7 @@ export default function AdminKYCDetailsPage() {
     return (
         <div className="mx-auto max-w-5xl space-y-8 pb-12">
             <div className="flex items-center gap-4">
-                <Link href="/admin/kyc" className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2 text-gray-500 shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <Link href="/kyc" className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2 text-gray-500 shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-colors">
                     <ChevronLeft className="h-5 w-5" />
                 </Link>
                 <div>

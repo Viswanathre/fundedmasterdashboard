@@ -76,7 +76,16 @@ async function processTradeEvent(data: { login: number, trades: any[], timestamp
             close_time: t.close_time ? new Date(t.close_time * 1000).toISOString() : null,
         }));
 
-        await supabase.from('trades').upsert(formattedTrades, { onConflict: 'challenge_id, ticket' });
+        // Deduplicate to prevent "ON CONFLICT DO UPDATE" errors
+        const uniqueTrades = Array.from(
+            formattedTrades.reduce((map: Map<string, any>, trade: any) => {
+                const key = `${trade.challenge_id}-${trade.ticket}`;
+                map.set(key, trade);
+                return map;
+            }, new Map()).values()
+        );
+
+        await supabase.from('trades').upsert(uniqueTrades, { onConflict: 'challenge_id, ticket' });
     }
 
     // 3. Recalculate Equity (In-Memory if possible, or simple query)

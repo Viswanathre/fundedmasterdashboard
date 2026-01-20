@@ -52,7 +52,7 @@ export default async function AdminKYCPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <Link
-                                            href={`/admin/kyc/${req.id}`}
+                                            href={`/kyc/${req.id}`}
                                             className="inline-flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-400"
                                         >
                                             Review

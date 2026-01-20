@@ -124,15 +124,24 @@ async function processBatch(challenges: any[], attempt = 1) {
         }).filter((t: any) => t !== null);
 
         if (formattedTrades.length > 0) {
+            // Deduplicate trades locally to prevent "ON CONFLICT DO UPDATE command cannot affect row a second time"
+            // This happens if the bridge returns duplicates or if we process the same login multiple times in a batch
+            const uniqueTradesMap = new Map();
+            formattedTrades.forEach((t: any) => {
+                const key = `${t.challenge_id}-${t.ticket}`;
+                uniqueTradesMap.set(key, t);
+            });
+            const uniqueTrades = Array.from(uniqueTradesMap.values());
+
             // Upsert to Supabase
-            const { error } = await supabase.from('trades').upsert(formattedTrades, { onConflict: 'challenge_id, ticket' });
+            const { error } = await supabase.from('trades').upsert(uniqueTrades, { onConflict: 'challenge_id, ticket' });
 
             if (error) {
                 console.error("❌ Bulk Upsert Failed:", error);
             } else {
                 const uniqueLogins = new Set(trades.map((t: any) => t.login));
                 for (const login of Array.from(uniqueLogins)) {
-                    const accountTrades = formattedTrades.filter((ft: any) => {
+                    const accountTrades = uniqueTrades.filter((ft: any) => {
                         const c = challengeMap.get(Number(login));
                         return c && ft.challenge_id === c.id;
                     });

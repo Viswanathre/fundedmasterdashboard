@@ -130,8 +130,8 @@ router.post('/create-session', async (req: Request, res: Response) => {
 // POST /api/kyc/update-status - Update KYC session status (called from callback)
 router.post('/update-status', async (req: Request, res: Response) => {
     try {
-        const user = await getUserFromAuth(req.headers.authorization);
-
+        // NOTE: Webhooks from Didit do NOT provide user auth headers.
+        // We trust the didit_session_id (which is a UUID known only to the provider and us)
         const kycData = req.body;
 
         console.log('Received KYC update data:', kycData);
@@ -149,28 +149,28 @@ router.post('/update-status', async (req: Request, res: Response) => {
             updated_at: new Date().toISOString(),
             raw_response: raw_response || kycData, // Ensure we save the full payload
 
-            // Map Identity Data (handling both camelCase and snake_case)
-            first_name: kycData.first_name || kycData.firstName,
-            last_name: kycData.last_name || kycData.lastName,
-            date_of_birth: kycData.date_of_birth || kycData.dateOfBirth || kycData.dob,
-            nationality: kycData.nationality,
+            // Map Identity Data (handling both camelCase and snake_case + nested didit structure)
+            first_name: kycData.id_document?.extracted_data?.first_name || kycData.first_name || kycData.firstName,
+            last_name: kycData.id_document?.extracted_data?.last_name || kycData.last_name || kycData.lastName,
+            date_of_birth: kycData.id_document?.extracted_data?.date_of_birth || kycData.date_of_birth || kycData.dateOfBirth,
+            nationality: kycData.nationality, // Often in 'extracted_data.nationality' too
 
             // Map Document Data
-            document_type: kycData.document_type || kycData.documentType,
-            document_number: kycData.document_number || kycData.documentNumber,
-            document_country: kycData.document_country || kycData.documentCountry,
+            document_type: kycData.id_document?.extracted_data?.document_type || kycData.document_type || kycData.documentType,
+            document_number: kycData.id_document?.extracted_data?.document_number || kycData.document_number || kycData.documentNumber,
+            document_country: kycData.id_document?.extracted_data?.issuing_country || kycData.document_country || kycData.documentCountry,
 
-            // Map Address Data
-            address_line1: kycData.address_line1 || kycData.addressLine1 || kycData.address,
-            address_line2: kycData.address_line2 || kycData.addressLine2,
-            city: kycData.city,
-            state: kycData.state || kycData.province || kycData.region,
-            postal_code: kycData.postal_code || kycData.postalCode || kycData.zipCode,
-            country: kycData.country,
+            // Map Address Data (Prefer POA)
+            address_line1: kycData.poa?.extracted_data?.address_line_1 || kycData.address_line1 || kycData.addressLine1 || kycData.address,
+            address_line2: kycData.poa?.extracted_data?.address_line_2 || kycData.address_line2 || kycData.addressLine2,
+            city: kycData.poa?.extracted_data?.city || kycData.city,
+            state: kycData.poa?.extracted_data?.state || kycData.state || kycData.province,
+            postal_code: kycData.poa?.extracted_data?.zip_code || kycData.postal_code || kycData.postalCode,
+            country: kycData.id_document?.extracted_data?.issuing_country || kycData.country, // Fallback to ID country if POA missing
 
             // Map Risk/Biometric Data
             aml_status: kycData.aml_status || kycData.amlStatus,
-            face_match_score: kycData.face_match_score || kycData.faceMatchScore,
+            face_match_score: kycData.face_match?.score || kycData.face_match_score || kycData.faceMatchScore,
             liveness_score: kycData.liveness_score || kycData.livenessScore,
         };
 
@@ -190,7 +190,7 @@ router.post('/update-status', async (req: Request, res: Response) => {
             .from('kyc_sessions')
             .update(updateData)
             .eq('didit_session_id', didit_session_id)
-            .eq('user_id', user.id)
+            // .eq('user_id', user.id) // Removed user check for webhook
             .select()
             .single();
 

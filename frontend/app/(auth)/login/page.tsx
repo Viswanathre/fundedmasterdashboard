@@ -18,6 +18,18 @@ export default function LoginPage() {
     const supabase = createClient()
 
     // Prefetch dashboard for instant transition
+    useEffect(() => {
+        router.prefetch('/dashboard')
+
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session) {
+                router.replace('/dashboard')
+            }
+        }
+
+        checkSession()
+    }, [router, supabase])
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
