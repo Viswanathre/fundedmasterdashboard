@@ -181,6 +181,8 @@ router.get('/trades', authenticate, async (req: AuthRequest, res: Response) => {
         const from = (pageNum - 1) * limitNum;
         const to = from + limitNum - 1;
 
+        console.time('stats_fetch'); // START TIMER
+
         let paginatedQuery = supabase
             .from('trades')
             .select('id, ticket, symbol, type, lots, open_price, close_price, open_time, close_time, profit_loss, commission, swap, comment')
@@ -193,6 +195,8 @@ router.get('/trades', authenticate, async (req: AuthRequest, res: Response) => {
         else if (filter === 'closed') paginatedQuery = paginatedQuery.not('close_time', 'is', null);
 
         const { data: trades, error } = await paginatedQuery;
+
+        console.timeEnd('stats_fetch'); // END TIMER - prints to console
 
         if (error) {
             console.error('Error fetching trades:', error);

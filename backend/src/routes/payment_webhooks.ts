@@ -204,15 +204,17 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         console.log('✅ Account created successfully for order:', internalOrderId);
 
         // Send Email Credentials
+        // Send Email Credentials (Async - do not await to prevent gateway timeout)
         if (email) {
-            await EmailService.sendAccountCredentials(
+            console.log(`📧 Queuing async email to ${email} for order ${internalOrderId}...`);
+            EmailService.sendAccountCredentials(
                 email,
                 fullName,
                 String(mt5Data.login),
                 mt5Data.password,
                 mt5Data.server || 'ALFX Limited',
                 mt5Data.investor_password
-            );
+            ).catch(err => console.error(`🔥 Async Email Error for ${email}:`, err));
         }
 
         if (req.method === 'GET') {

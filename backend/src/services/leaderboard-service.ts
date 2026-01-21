@@ -14,7 +14,7 @@ const leaderboardCache: Record<string, { data: any[], timestamp: number }> = {};
 const CACHE_TTL = 30 * 1000; // 30 seconds
 
 export async function getLeaderboard(competitionId: string) {
-    console.log("!!! LEADERBOARD SERVICE CALL DETECTED !!!");
+    // console.log("!!! LEADERBOARD SERVICE CALL DETECTED !!!");
     // Check Cache
     const cached = leaderboardCache[competitionId];
     if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
