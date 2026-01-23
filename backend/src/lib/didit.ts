@@ -3,7 +3,7 @@ import axios from 'axios';
 const DIDIT_API_BASE_URL = 'https://verification.didit.me';
 const DIDIT_API_KEY = process.env.DIDIT_CLIENT_SECRET;
 const DIDIT_WORKFLOW_ID = process.env.DIDIT_WORKFLOW_ID;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 
 interface CreateSessionPayload {
     workflow_id: string;
@@ -33,7 +33,7 @@ export async function createDiditSession(userId: string): Promise<DiditSessionRe
 
     const payload: CreateSessionPayload = {
         workflow_id: DIDIT_WORKFLOW_ID,
-        callback: `${FRONTEND_URL}/kyc/callback`,
+        callback: `${BACKEND_URL}/api/kyc-webhooks/didit`,
         vendor_data: userId,
         callback_method: 'both',
     };

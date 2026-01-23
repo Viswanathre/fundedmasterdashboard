@@ -142,7 +142,7 @@ export default function CompetitionsClient() {
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors text-sm font-medium"
+                    className="flex items-center gap-2 px-4 py-2 bg-[#d9e838] hover:bg-[#c9d828] text-black rounded-lg transition-colors text-sm font-bold shadow-lg shadow-[#d9e838]/10"
                 >
                     <Plus size={16} />
                     Create Competition
@@ -150,9 +150,9 @@ export default function CompetitionsClient() {
             </div>
 
             {/* Competitions List */}
-            <div className="bg-[#111629] border border-gray-800/50 rounded-xl overflow-hidden">
+            <div className="bg-[#042f24] border border-white/5 rounded-xl overflow-hidden shadow-sm">
                 <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-900/50 text-gray-400 border-b border-gray-800/50">
+                    <thead className="bg-[#011d16] text-gray-500 border-b border-white/5">
                         <tr>
                             <th className="px-6 py-4 font-medium">Competition</th>
                             <th className="px-6 py-4 font-medium">Platform</th>
@@ -162,13 +162,13 @@ export default function CompetitionsClient() {
                             <th className="px-6 py-4 font-medium text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-800/50 text-gray-300">
+                    <tbody className="divide-y divide-white/5 text-gray-300">
                         {competitions.map((comp) => (
                             <tr key={comp.id} className="hover:bg-white/[0.02] transition-colors">
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-blue-500/10 rounded-lg">
-                                            <Trophy className="w-4 h-4 text-blue-400" />
+                                        <div className="p-2 bg-[#d9e838]/10 rounded-lg">
+                                            <Trophy className="w-4 h-4 text-[#d9e838]" />
                                         </div>
                                         <div>
                                             <div className="font-medium text-white">{comp.title}</div>
@@ -216,7 +216,7 @@ export default function CompetitionsClient() {
                                 <td className="px-6 py-4 text-right">
                                     <button
                                         onClick={() => fetchParticipants(comp.id)}
-                                        className="text-blue-400 hover:text-blue-300 transition-colors text-xs flex items-center gap-1 ml-auto"
+                                        className="text-[#d9e838] hover:text-[#c9d828] transition-colors text-xs flex items-center gap-1 ml-auto font-bold"
                                     >
                                         <Users size={14} /> Participants
                                     </button>

@@ -136,9 +136,9 @@ export default function AccountSwitcher({ isOpen, onClose, className }: AccountS
 
     if (loading && !isMobileModal) {
         return (
-            <div className={cn("flex flex-col h-full bg-[#050923] border border-white/5 rounded-2xl p-4 min-w-[280px]", className)}>
+            <div className={cn("flex flex-col h-full bg-[#042f24] border border-white/5 rounded-2xl p-4 min-w-[280px]", className)}>
                 <div className="flex-1 flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                    <Loader2 className="w-8 h-8 text-[#d9e838] animate-spin" />
                 </div>
             </div>
         );
@@ -163,7 +163,7 @@ export default function AccountSwitcher({ isOpen, onClose, className }: AccountS
                     animate={{ y: 0 }}
                     exit={{ y: "100%" }}
                     transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                    className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] bg-[#050923] rounded-t-3xl border-t border-white/5 overflow-hidden flex flex-col"
+                    className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] bg-[#042f24] rounded-t-3xl border-t border-white/5 overflow-hidden flex flex-col"
                 >
                     {/* Drag Handle */}
                     <div className="flex justify-center pt-2 pb-1">
@@ -172,7 +172,7 @@ export default function AccountSwitcher({ isOpen, onClose, className }: AccountS
 
                     {loading ? (
                         <div className="flex-1 flex items-center justify-center min-h-[300px]">
-                            <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                            <Loader2 className="w-8 h-8 text-[#d9e838] animate-spin" />
                         </div>
                     ) : (
                         <AccountSwitcherContent
@@ -208,7 +208,7 @@ export default function AccountSwitcher({ isOpen, onClose, className }: AccountS
     // Desktop version
     return (
         <div className={cn(
-            "flex flex-col h-full bg-[#050923] border border-white/5 rounded-2xl overflow-hidden",
+            "flex flex-col h-full bg-[#042f24] border border-white/5 rounded-2xl overflow-hidden",
             className
         )}>
             {/* Header Section */}
@@ -264,7 +264,7 @@ function AccountSwitcherContent({
         <>
             <div className="p-4 sm:p-6 pb-4">
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                    <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-[#d9e838]/10 flex items-center justify-center overflow-hidden">
                         <Image
                             src="/shark-icon.svg"
                             alt="SharkFunded"
@@ -308,12 +308,12 @@ function AccountSwitcherContent({
                                 setShowStateDropdown(false);
                                 setShowPhaseDropdown(false);
                             }}
-                            className="flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap bg-[#13161C] border border-white/5 px-3 py-1.5 rounded-lg"
+                            className="flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap bg-[#011d16] border border-white/5 px-3 py-1.5 rounded-lg"
                         >
                             <span className="text-gray-500">Type:</span> <span className="text-white">{typeFilter}</span> <ChevronDown size={12} className={cn("transition-transform ml-1", showTypeDropdown && "rotate-180")} />
                         </button>
                         {showTypeDropdown && (
-                            <div className="absolute top-full left-0 mt-2 w-32 bg-[#131E29] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
+                            <div className="absolute top-full left-0 mt-2 w-32 bg-[#011d16] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
                                 {["All Types", "Challenge", "Funded"].map((option) => (
                                     <button
                                         key={option}
@@ -323,7 +323,7 @@ function AccountSwitcherContent({
                                         }}
                                         className={cn(
                                             "w-full px-3 py-2 text-left text-xs hover:bg-white/5 transition-colors block",
-                                            typeFilter === option ? "text-blue-400 bg-blue-500/10" : "text-gray-400"
+                                            typeFilter === option ? "text-[#d9e838] bg-[#d9e838]/10" : "text-gray-400"
                                         )}
                                     >
                                         {option}
@@ -341,12 +341,12 @@ function AccountSwitcherContent({
                                 setShowTypeDropdown(false);
                                 setShowPhaseDropdown(false);
                             }}
-                            className="flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap bg-[#13161C] border border-white/5 px-3 py-1.5 rounded-lg"
+                            className="flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap bg-[#011d16] border border-white/5 px-3 py-1.5 rounded-lg"
                         >
                             <span className="text-gray-500">State:</span> <span className="text-white">{stateFilter}</span> <ChevronDown size={12} className={cn("transition-transform ml-1", showStateDropdown && "rotate-180")} />
                         </button>
                         {showStateDropdown && (
-                            <div className="absolute top-full left-0 mt-2 w-32 bg-[#131E29] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
+                            <div className="absolute top-full left-0 mt-2 w-32 bg-[#011d16] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
                                 {["All States", "Open", "Closed", "Pending"].map((option) => (
                                     <button
                                         key={option}
@@ -356,7 +356,7 @@ function AccountSwitcherContent({
                                         }}
                                         className={cn(
                                             "w-full px-3 py-2 text-left text-xs hover:bg-white/5 transition-colors block",
-                                            stateFilter === option ? "text-blue-400 bg-blue-500/10" : "text-gray-400"
+                                            stateFilter === option ? "text-[#d9e838] bg-[#d9e838]/10" : "text-gray-400"
                                         )}
                                     >
                                         {option}
@@ -374,12 +374,12 @@ function AccountSwitcherContent({
                                 setShowTypeDropdown(false);
                                 setShowStateDropdown(false);
                             }}
-                            className="flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap bg-[#13161C] border border-white/5 px-3 py-1.5 rounded-lg"
+                            className="flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap bg-[#011d16] border border-white/5 px-3 py-1.5 rounded-lg"
                         >
                             <span className="text-gray-500">Phase:</span> <span className="text-white">{phaseFilter}</span> <ChevronDown size={12} className={cn("transition-transform ml-1", showPhaseDropdown && "rotate-180")} />
                         </button>
                         {showPhaseDropdown && (
-                            <div className="absolute top-full left-0 mt-2 w-32 bg-[#131E29] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
+                            <div className="absolute top-full left-0 mt-2 w-32 bg-[#011d16] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
                                 {["All Phases", "Phase 1", "Phase 2", "Funded"].map((option) => (
                                     <button
                                         key={option}
@@ -389,7 +389,7 @@ function AccountSwitcherContent({
                                         }}
                                         className={cn(
                                             "w-full px-3 py-2 text-left text-xs hover:bg-white/5 transition-colors block",
-                                            phaseFilter === option ? "text-blue-400 bg-blue-500/10" : "text-gray-400"
+                                            phaseFilter === option ? "text-[#d9e838] bg-[#d9e838]/10" : "text-gray-400"
                                         )}
                                     >
                                         {option}
@@ -408,7 +408,7 @@ function AccountSwitcherContent({
                         placeholder="Search accounts..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-[#13161C] border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500/50 transition-colors"
+                        className="w-full bg-[#011d16] border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#d9e838]/50 transition-colors"
                     />
                 </div>
             </div>
@@ -433,15 +433,15 @@ function AccountSwitcherContent({
                                 className={cn(
                                     "p-4 rounded-xl border cursor-pointer transition-all relative group overflow-hidden active:scale-98 touch-manipulation",
                                     isSelected
-                                        ? "bg-[#131E29] border-blue-500/30"
-                                        : "bg-[#13161C] border-transparent active:border-white/10"
+                                        ? "bg-[#011d16] border-[#d9e838]/30"
+                                        : "bg-[#011d16] border-transparent active:border-white/10"
                                 )}
                             >
                                 <div className="flex justify-between items-start mb-4">
                                     <div className="flex items-center gap-3 min-w-0">
                                         <div className={cn(
                                             "w-10 h-10 rounded-lg flex items-center justify-center transition-colors shrink-0",
-                                            isSelected ? "bg-blue-500/20 text-blue-400" : "bg-[#1C212B] text-gray-500"
+                                            isSelected ? "bg-[#d9e838]/20 text-[#d9e838]" : "bg-[#023d2f] text-gray-500"
                                         )}>
                                             <TrendingUp size={20} />
                                         </div>
@@ -457,7 +457,7 @@ function AccountSwitcherContent({
                                     </div>
                                     <span className={cn(
                                         "text-[10px] font-bold px-2.5 py-1 rounded-md capitalize shrink-0 ml-2",
-                                        status.toLowerCase() === 'active' ? "bg-blue-500/10 text-blue-400" :
+                                        status.toLowerCase() === 'active' ? "bg-[#d9e838]/10 text-[#d9e838]" :
                                             status.toLowerCase() === 'passed' ? "bg-green-500/10 text-green-400" :
                                                 (status.toLowerCase() === 'failed' || status.toLowerCase() === 'not passed') ? "bg-red-500/10 text-red-400" :
                                                     "bg-white/5 text-gray-400"

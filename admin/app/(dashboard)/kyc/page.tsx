@@ -20,12 +20,12 @@ export default async function AdminKYCPage() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold">Pending KYC Requests</h1>
+            <h1 className="text-3xl font-bold text-white">Pending KYC Requests</h1>
 
-            <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-950">
+            <div className="rounded-xl border border-white/5 bg-[#042f24] shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-50 text-gray-500 dark:bg-gray-900 dark:text-gray-400">
+                        <thead className="bg-[#011d16] text-gray-500">
                             <tr>
                                 <th className="px-6 py-4 font-medium">User</th>
                                 <th className="px-6 py-4 font-medium">Type</th>
@@ -34,16 +34,16 @@ export default async function AdminKYCPage() {
                                 <th className="px-6 py-4 font-medium">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                        <tbody className="divide-y divide-white/5">
                             {requests?.map((req: any) => (
-                                <tr key={req.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50">
+                                <tr key={req.id} className="hover:bg-white/5 transition-colors">
                                     <td className="px-6 py-4">
-                                        <div className="font-medium text-gray-900 dark:text-gray-100">
+                                        <div className="font-bold text-white">
                                             {req.profiles?.full_name || req.profiles?.email?.split('@')[0] || "Unknown User"}
                                         </div>
                                         <div className="text-xs text-gray-500">{req.profiles?.email}</div>
                                     </td>
-                                    <td className="px-6 py-4 capitalize">{req.document_type}</td>
+                                    <td className="px-6 py-4 capitalize text-gray-300">{req.document_type}</td>
                                     <td className="px-6 py-4">
                                         <StatusBadge status={req.status} />
                                     </td>
@@ -53,7 +53,7 @@ export default async function AdminKYCPage() {
                                     <td className="px-6 py-4">
                                         <Link
                                             href={`/kyc/${req.id}`}
-                                            className="inline-flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-400"
+                                            className="inline-flex items-center gap-1 text-[#d9e838] hover:underline transition-all"
                                         >
                                             Review
                                             <ChevronRight className="h-4 w-4" />

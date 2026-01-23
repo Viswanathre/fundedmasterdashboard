@@ -30,13 +30,13 @@ export default async function CertificatesPage() {
         <div className="space-y-12 max-w-6xl mx-auto p-6 min-h-screen font-sans">
 
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-gray-200 pb-8">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/10 pb-8">
                 <div>
-                    <h1 className="text-4xl font-black text-black flex items-center gap-3 tracking-tight mb-2">
-                        <Award className="text-[#00E5FF] drop-shadow-[0_0_15px_rgba(0,229,255,0.5)]" size={36} />
+                    <h1 className="text-4xl font-black text-white flex items-center gap-3 tracking-tight mb-2">
+                        <Award className="text-[#d9e838] drop-shadow-[0_0_15px_rgba(217,232,56,0.5)]" size={36} />
                         Certificates
                     </h1>
-                    <p className="text-black font-medium">Your official proof of payouts and trading achievements.</p>
+                    <p className="text-gray-400 font-medium">Your official proof of payouts and trading achievements.</p>
                 </div>
             </div>
 

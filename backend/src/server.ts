@@ -38,17 +38,6 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-app.use((req, res, next) => {
-    // const log = `[${new Date().toISOString()}] ${req.method} ${req.path}\n`;
-    // fs.appendFileSync('backend_request_debug.log', log);
-    // Only log in development
-    if (process.env.NODE_ENV === 'development') {
-        console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-    }
-    next();
-});
-
-console.log("🔄 Force Restart for Consistency Route - Updated 6 - Debugging Equity");
 
 // Supabase Setup
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
@@ -75,20 +64,22 @@ import userRouter from './routes/user';
 import couponsRouter from './routes/coupons';
 import mt5Router from './routes/mt5';
 import kycRouter from './routes/kyc';
+import kycWebhooksRouter from './routes/kyc-webhooks';
 import adminsRouter from './routes/admins';
 import adminAffiliateRouter from './routes/admin_affiliate';
 import adminRiskRouter from './routes/admin_risk';
 import adminCouponsRouter from './routes/admin_coupons';
-import competitionsRouter from './routes/competitions';
+// import competitionsRouter from './routes/competitions';
 import webhooksRouter from './routes/webhooks';
 import objectivesRouter from './routes/objectives';
-import rankingRouter from './routes/ranking';
+// import rankingRouter from './routes/ranking';
 import adminSettingsRouter from './routes/admin_settings';
 import adminPaymentRouter from './routes/admin_payments';
 import adminHealthRouter from './routes/admin_health';
 import adminUsersRouter from './routes/admin_users';
+import otpRouter from './routes/otp';
 
-app.use('/api/overview', overviewRouter);
+// app.use('/api/overview', overviewRouter);
 app.use('/api/admin/users', adminUsersRouter); // Register Admin Users Route
 app.use('/api/admin/settings', adminSettingsRouter); // Register Settings Route
 app.use('/api/admin/payments', adminPaymentRouter); // Register Payments Route
@@ -102,14 +93,16 @@ app.use('/api/user', userRouter);
 app.use('/api/coupons', couponsRouter);
 app.use('/api/mt5', mt5Router);
 app.use('/api/kyc', kycRouter);
+app.use('/api/kyc-webhooks', kycWebhooksRouter);
 app.use('/api/admins', adminsRouter);
 app.use('/api/admin/affiliates', adminAffiliateRouter);
 app.use('/api/admin/risk', adminRiskRouter);
 app.use('/api/admin/coupons', adminCouponsRouter);
-app.use('/api/competitions', competitionsRouter);
+// app.use('/api/competitions', competitionsRouter);
 app.use('/api/webhooks', webhooksRouter);
 app.use('/api/objectives', objectivesRouter);
-app.use('/api/ranking', rankingRouter);
+app.use('/api/otp', otpRouter); // OTP 2FA routes
+// app.use('/api/ranking', rankingRouter);
 
 
 app.get('/health', (req, res) => {
@@ -209,15 +202,14 @@ import { startCompetitionScheduler } from './services/competition-scheduler';
 import { startLeaderboardBroadcaster } from './services/leaderboard-service';
 
 
-// startRiskMonitor(5); // DISABLED: Using Python Bridge Push
-// startRiskEventWorker(); // Start Event Listener
-console.log('🔄 [Risk Monitor] Polling Enabled (Fallback Mode) - 10s Interval');
+// Redis-dependent workers disabled
+// startRiskEventWorker(); // DISABLED: Redis removed
+// startTradeSyncWorker(); // DISABLED: Redis removed
 startRiskMonitor(10); // Re-enabled to ensure DB equity is fresh
 startDailyEquityReset(); // Schedule midnight reset
-startTradeSyncScheduler(); // Dispatch jobs every 10s
+startTradeSyncScheduler(); // Backup polling for trades
 startCompetitionScheduler(); // Schedule competition status checks
 startLeaderboardBroadcaster(); // Broadcasts every 30s
-startTradeSyncWorker(); // Keep Worker active for manual syncs if needed
 
 
 // Initialize Socket.IO
@@ -229,7 +221,6 @@ initializeSocket(httpServer);
 
 const server = httpServer.listen(PORT, () => {
     console.log(`Risk Engine Backend running on port ${PORT}`);
-    console.log(`✅ WebSocket server ready`);
 });
 
 // GLOBAL ERROR HANDLERS (Prevent Crashes)

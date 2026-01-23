@@ -101,7 +101,7 @@ export default function EquityCurveChart() {
         if (active && payload && payload.length) {
             const data = payload[0].payload;
             return (
-                <div className="bg-gray-900 border border-white/20 rounded-lg p-3 shadow-xl">
+                <div className="bg-[#042f24] border border-white/20 rounded-lg p-3 shadow-xl">
                     <p className="text-xs text-gray-400 mb-1">{data.displayDate}</p>
                     <p className="text-lg font-bold text-white">${data.equity.toLocaleString()}</p>
                     <p className={`text-xs font-medium ${data.profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
@@ -115,7 +115,7 @@ export default function EquityCurveChart() {
 
     if (loading) {
         return (
-            <div className="bg-gray-900 border border-white/10 rounded-xl p-6 h-[400px] animate-pulse">
+            <div className="bg-[#042f24] border border-white/10 rounded-xl p-6 h-[400px] animate-pulse">
                 <div className="h-6 bg-white/5 rounded w-1/4 mb-4"></div>
                 <div className="h-64 bg-white/5 rounded"></div>
             </div>
@@ -127,13 +127,13 @@ export default function EquityCurveChart() {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.05 }}
-            className="bg-gray-900 border border-white/10 rounded-xl overflow-hidden"
+            className="bg-[#042f24] border border-white/10 rounded-xl overflow-hidden"
         >
             {/* Header */}
             <div className="flex justify-between items-center p-6 pb-4">
                 <div>
                     <div className="flex items-center gap-2 mb-3">
-                        <Activity size={20} className="text-blue-400" />
+                        <Activity size={20} className="text-[#d9e838]" />
                         <h3 className="font-bold text-lg text-white">Equity Curve</h3>
                     </div>
                     <div className="flex items-baseline gap-4">
@@ -161,7 +161,7 @@ export default function EquityCurveChart() {
                 </div>
 
                 {/* Time Period Selector */}
-                <div className="flex bg-black/20 p-1 rounded-lg border border-white/5">
+                <div className="flex bg-[#011d16] p-1 rounded-lg border border-white/5">
                     {(['1D', '1W', '1M', '3M', 'ALL'] as TimePeriod[]).map((period) => (
                         <button
                             key={period}
@@ -169,7 +169,7 @@ export default function EquityCurveChart() {
                             className={cn(
                                 "px-3 py-1.5 rounded-md text-xs font-bold transition-all",
                                 selectedPeriod === period
-                                    ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
+                                    ? "bg-[#d9e838] text-black shadow-lg shadow-[#d9e838]/20"
                                     : "text-gray-400 hover:text-gray-300 hover:bg-white/5"
                             )}
                         >
@@ -185,8 +185,8 @@ export default function EquityCurveChart() {
                     <AreaChart data={data}>
                         <defs>
                             <linearGradient id="equityGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                <stop offset="5%" stopColor="#d9e838" stopOpacity={0.3} />
+                                <stop offset="95%" stopColor="#d9e838" stopOpacity={0} />
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />
@@ -206,7 +206,7 @@ export default function EquityCurveChart() {
                         <Area
                             type="monotone"
                             dataKey="equity"
-                            stroke="#3b82f6"
+                            stroke="#d9e838"
                             strokeWidth={2}
                             fill="url(#equityGradient)"
                             animationDuration={1000}
@@ -217,15 +217,15 @@ export default function EquityCurveChart() {
 
             {/* Stats Bar */}
             <div className="grid grid-cols-3 gap-px bg-white/5 border-t border-white/10">
-                <div className="bg-gray-900 p-4 text-center">
+                <div className="bg-[#042f24] p-4 text-center">
                     <p className="text-xs text-gray-400 mb-1">Peak Balance</p>
                     <p className="text-sm font-bold text-white">${stats.highestEquity.toLocaleString()}</p>
                 </div>
-                <div className="bg-gray-900 p-4 text-center">
+                <div className="bg-[#042f24] p-4 text-center">
                     <p className="text-xs text-gray-400 mb-1">Total Trades</p>
                     <p className="text-sm font-bold text-white">{data.length - 1}</p>
                 </div>
-                <div className="bg-gray-900 p-4 text-center">
+                <div className="bg-[#042f24] p-4 text-center">
                     <p className="text-xs text-gray-400 mb-1">Avg per Trade</p>
                     <p className={`text-sm font-bold ${stats.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         ${data.length > 1 ? Math.abs(Math.round(stats.totalProfit / (data.length - 1))).toLocaleString() : 0}

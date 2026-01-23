@@ -73,19 +73,19 @@ export default async function AdminDashboardPage() {
             title: "Phase 1 Accounts",
             value: stats.phase1Count,
             icon: TrendingUp, // or BarChart
-            color: "blue",
-            bgColor: "bg-blue-50",
-            iconColor: "text-blue-600",
-            textColor: "text-blue-600"
+            color: "yellow",
+            bgColor: "bg-[#d9e838]/10",
+            iconColor: "text-[#d9e838]",
+            textColor: "text-[#d9e838]"
         },
         {
             title: "Phase 2 Accounts",
             value: stats.phase2Count,
             icon: TrendingUp,
-            color: "indigo",
-            bgColor: "bg-indigo-50",
-            iconColor: "text-indigo-600",
-            textColor: "text-indigo-600"
+            color: "green",
+            bgColor: "bg-green-500/10",
+            iconColor: "text-green-400",
+            textColor: "text-green-400"
         },
         {
             title: "Live Accounts",
@@ -137,17 +137,17 @@ export default async function AdminDashboardPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-semibold text-gray-900">Dashboard Overview</h1>
-                <p className="text-sm text-gray-600 mt-1">Monitor your platform's key metrics</p>
+                <h1 className="text-2xl font-semibold text-white">Dashboard Overview</h1>
+                <p className="text-sm text-gray-500 mt-1">Monitor your platform's key metrics</p>
             </div>
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
                 {statCards.map((stat) => (
-                    <div key={stat.title} className="bg-white rounded-lg border border-gray-200 p-6">
+                    <div key={stat.title} className="bg-[#042f24] rounded-lg border border-white/10 p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                                <p className="text-2xl font-semibold text-gray-900 mt-2">{stat.value}</p>
+                                <p className="text-sm font-medium text-gray-400">{stat.title}</p>
+                                <p className="text-2xl font-semibold text-white mt-2">{stat.value}</p>
                             </div>
                             <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${stat.bgColor}`}>
                                 <stat.icon className={`h-6 w-6 ${stat.iconColor}`} />
@@ -158,28 +158,28 @@ export default async function AdminDashboardPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+            <div className="bg-[#042f24] rounded-lg border border-white/10 p-6">
+                <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <a href="/admin/users" className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors">
-                        <Users className="h-5 w-5 text-indigo-600" />
+                    <a href="/admin/users" className="flex items-center gap-3 p-4 rounded-lg border border-white/10 hover:border-[#d9e838]/30 hover:bg-[#d9e838]/5 transition-colors">
+                        <Users className="h-5 w-5 text-[#d9e838]" />
                         <div>
-                            <p className="font-medium text-gray-900">Manage Users</p>
-                            <p className="text-sm text-gray-600">View all users</p>
+                            <p className="font-medium text-white">Manage Users</p>
+                            <p className="text-sm text-gray-500">View all users</p>
                         </div>
                     </a>
-                    <a href="/admin/kyc" className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-amber-300 hover:bg-amber-50 transition-colors">
-                        <FileText className="h-5 w-5 text-amber-600" />
+                    <a href="/admin/kyc" className="flex items-center gap-3 p-4 rounded-lg border border-white/10 hover:border-amber-300/30 hover:bg-amber-500/5 transition-colors">
+                        <FileText className="h-5 w-5 text-amber-500" />
                         <div>
-                            <p className="font-medium text-gray-900">Review KYC</p>
-                            <p className="text-sm text-gray-600">Pending requests</p>
+                            <p className="font-medium text-white">Review KYC</p>
+                            <p className="text-sm text-gray-500">Pending requests</p>
                         </div>
                     </a>
-                    <a href="/admin/payouts" className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-colors">
-                        <CreditCard className="h-5 w-5 text-purple-600" />
+                    <a href="/admin/payouts" className="flex items-center gap-3 p-4 rounded-lg border border-white/10 hover:border-purple-300/30 hover:bg-purple-500/5 transition-colors">
+                        <CreditCard className="h-5 w-5 text-purple-400" />
                         <div>
-                            <p className="font-medium text-gray-900">Process Payouts</p>
-                            <p className="text-sm text-gray-600">Manage withdrawals</p>
+                            <p className="font-medium text-white">Process Payouts</p>
+                            <p className="text-sm text-gray-500">Manage withdrawals</p>
                         </div>
                     </a>
                 </div>

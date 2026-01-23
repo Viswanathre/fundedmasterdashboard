@@ -54,7 +54,7 @@ const GaugeCard = ({ title, centerLabel, centerValue, centerSubValue, centerValu
     const rightDash = (percentages.right / 100) * arcLength;
 
     return (
-        <div className="bg-[#050923] border border-white/5 rounded-2xl p-6 flex flex-col justify-between h-full relative overflow-hidden group hover:border-white/10 transition-colors">
+        <div className="bg-[#042f24] border border-white/5 rounded-2xl p-6 flex flex-col justify-between h-full relative overflow-hidden group hover:border-white/10 transition-colors">
             <h3 className="text-white font-semibold text-lg mb-6 z-10">{title}</h3>
 
             <div className="flex flex-col items-center z-10 relative h-[120px] justify-end">
@@ -62,7 +62,7 @@ const GaugeCard = ({ title, centerLabel, centerValue, centerSubValue, centerValu
                 <div className="w-[180px] h-[90px] flex items-end justify-center relative">
                     <svg width="180" height="90" viewBox="0 0 180 90" className="overflow-visible">
                         {/* Track Background */}
-                        <path d="M 10 90 A 80 80 0 0 1 170 90" fill="none" stroke="#1e293b" strokeWidth="12" strokeLinecap="round" />
+                        <path d="M 10 90 A 80 80 0 0 1 170 90" fill="none" stroke="#011d16" strokeWidth="12" strokeLinecap="round" />
 
                         {/* Data Segments - Split based on percentage */}
                         {(() => {
@@ -217,7 +217,7 @@ export default function TradeAnalysis() {
     const longStats = calculateStats('buy');
     const allStats = calculateStats('all');
 
-    if (loading) return <div className="h-64 animate-pulse bg-[#050923] rounded-xl" />;
+    if (loading) return <div className="h-64 animate-pulse bg-[#042f24] rounded-xl border border-white/5" />;
 
     // Only render if we have data, otherwise placeholders
     const safeShort = shortStats || { total: 0, totalProfit: 0, winsCount: 0, lossesCount: 0, winsProfit: 0, lossesCost: 0, winRate: 0, lossRate: 0 };

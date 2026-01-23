@@ -75,7 +75,7 @@ export default function CouponsClient() {
     return (
         <div className="space-y-6">
             {/* Actions Bar */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-[#042f24] rounded-xl border border-white/5 p-4 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="relative max-w-md w-full">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
@@ -84,12 +84,12 @@ export default function CouponsClient() {
                             placeholder="Search coupons..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9 pr-3 py-1.5 w-full border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500"
+                            className="pl-9 pr-3 py-1.5 w-full border border-white/10 bg-[#111629] rounded-lg text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#d9e838]/20 focus:border-[#d9e838]"
                         />
                     </div>
 
                     <button
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-[#d9e838] text-black text-sm font-bold rounded-lg hover:bg-[#c9d828] transition-colors"
                         onClick={() => setIsCreateModalOpen(true)}
                     >
                         <Plus className="h-4 w-4" />
@@ -99,21 +99,21 @@ export default function CouponsClient() {
             </div>
 
             {/* Coupons Table */}
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-[#042f24] rounded-xl border border-white/5 overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-50 border-b border-gray-200">
+                        <thead className="bg-[#011d16] border-b border-white/5">
                             <tr>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Code</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Discount</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Type</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Usage Limit</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Valid Until</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Status</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase text-right">Actions</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">Code</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">Discount</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">Type</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">Usage Limit</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">Valid Until</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">Status</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-white/5">
                             {loading ? (
                                 <tr>
                                     <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
@@ -128,16 +128,16 @@ export default function CouponsClient() {
                                 </tr>
                             ) : (
                                 filteredCoupons.map((coupon) => (
-                                    <tr key={coupon.id} className="hover:bg-gray-50 transition-colors">
+                                    <tr key={coupon.id} className="hover:bg-white/5 transition-colors">
                                         <td className="px-6 py-4">
-                                            <div className="font-mono font-medium text-indigo-600">
+                                            <div className="font-mono font-bold text-[#d9e838]">
                                                 {coupon.code}
                                             </div>
                                             <div className="text-xs text-gray-500 mt-0.5">
                                                 {coupon.description}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 font-medium text-gray-900">
+                                        <td className="px-6 py-4 font-bold text-white">
                                             {coupon.discount_type === 'percentage'
                                                 ? `${coupon.discount_value}%`
                                                 : `$${coupon.discount_value}`

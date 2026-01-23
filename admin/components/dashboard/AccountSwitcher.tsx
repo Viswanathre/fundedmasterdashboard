@@ -53,9 +53,9 @@ export default function AccountSwitcher({ isOpen, onClose }: AccountSwitcherProp
 
     if (loading) {
         return (
-            <div className="hidden md:flex flex-col h-full bg-gray-900 border-r border-white/5 min-w-[320px] max-w-[320px]">
+            <div className="hidden md:flex flex-col h-full bg-[#042f24] border-r border-white/5 min-w-[320px] max-w-[320px]">
                 <div className="flex-1 flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                    <Loader2 className="w-8 h-8 text-[#d9e838] animate-spin" />
                 </div>
             </div>
         );
@@ -74,7 +74,7 @@ export default function AccountSwitcher({ isOpen, onClose }: AccountSwitcherProp
             }
 
             <div className={cn(
-                "flex-col h-full bg-gray-900 border-r border-white/5 min-w-[320px] max-w-[320px] transition-transform duration-300 z-50",
+                "flex-col h-full bg-[#042f24] border-r border-white/5 min-w-[320px] max-w-[320px] transition-transform duration-300 z-50",
                 "hidden md:flex", // Desktop: always flex
                 // Mobile: Fixed position, slide in/out based on isOpen
                 "md:relative md:translate-x-0",
@@ -96,14 +96,14 @@ export default function AccountSwitcher({ isOpen, onClose }: AccountSwitcherProp
 
                     <Link
                         href="/challenges"
-                        className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm transition-all shadow-lg shadow-blue-500/20"
+                        className="w-full bg-[#d9e838] hover:bg-[#c9d828] text-black font-bold py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm transition-all shadow-lg shadow-[#d9e838]/20"
                     >
                         <ShoppingCart size={16} /> BUY CHALLENGE
                     </Link>
                 </div>
 
                 {/* Filters */}
-                <div className="px-3 py-2 grid grid-cols-3 gap-1 border-b border-white/5 bg-black/20">
+                <div className="px-3 py-2 grid grid-cols-3 gap-1 border-b border-white/5 bg-[#011d16]">
                     {["Type", "State", "Phase"].map((filter, i) => (
                         <button key={i} className="flex items-center justify-center gap-1 text-[11px] font-semibold text-gray-400 hover:text-white hover:bg-white/5 py-1.5 rounded-lg transition-all border border-transparent hover:border-white/5">
                             {filter} <ChevronDown size={10} />
@@ -114,13 +114,13 @@ export default function AccountSwitcher({ isOpen, onClose }: AccountSwitcherProp
                 {/* Search Bar */}
                 <div className="p-3 border-b border-white/5">
                     <div className="relative group">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-hover:text-blue-400 transition-colors" size={14} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-hover:text-[#d9e838] transition-colors" size={14} />
                         <input
                             type="text"
                             placeholder="Search accounts..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-black/20 border border-white/5 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 rounded-xl py-2 pl-9 pr-3 text-sm outline-none transition-all placeholder:text-gray-600 text-white"
+                            className="w-full bg-[#011d16] border border-white/5 focus:border-[#d9e838]/50 focus:ring-1 focus:ring-[#d9e838]/20 rounded-xl py-2 pl-9 pr-3 text-sm outline-none transition-all placeholder:text-gray-600 text-white"
                         />
                     </div>
                 </div>
@@ -136,7 +136,7 @@ export default function AccountSwitcher({ isOpen, onClose }: AccountSwitcherProp
                             {accounts.length === 0 && (
                                 <Link
                                     href="/challenges"
-                                    className="mt-3 text-blue-400 hover:text-blue-300 text-sm font-medium"
+                                    className="mt-3 text-[#d9e838] hover:text-[#c9d828] text-sm font-medium"
                                 >
                                     Get your first challenge →
                                 </Link>
@@ -167,7 +167,7 @@ export default function AccountSwitcher({ isOpen, onClose }: AccountSwitcherProp
                                         <div className="flex items-center gap-2.5">
                                             <div className={cn(
                                                 "w-8 h-8 rounded-lg flex items-center justify-center border",
-                                                isSelected ? "bg-blue-500/20 text-blue-400 border-blue-500/20" : "bg-white/5 text-gray-500 border-white/5 group-hover:border-white/10"
+                                                isSelected ? "bg-[#d9e838]/20 text-[#d9e838] border-[#d9e838]/20" : "bg-white/5 text-gray-500 border-white/5 group-hover:border-white/10"
                                             )}>
                                                 <AccountIcon size={16} />
                                             </div>
@@ -182,7 +182,7 @@ export default function AccountSwitcher({ isOpen, onClose }: AccountSwitcherProp
                                             "text-[10px] font-bold px-2 py-0.5 rounded-full border",
                                             status === "Passed" ? "bg-green-500/10 text-green-400 border-green-500/20" :
                                                 status === "Not Passed" ? "bg-red-500/10 text-red-400 border-red-500/20" :
-                                                    status === "Active" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
+                                                    status === "Active" ? "bg-[#d9e838]/10 text-[#d9e838] border-[#d9e838]/20" :
                                                         "bg-white/10 text-gray-400 border-white/10"
                                         )}>
                                             {status}

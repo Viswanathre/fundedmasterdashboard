@@ -8,6 +8,142 @@ const router = Router();
 // const MT5_BRIDGE_URL = process.env.MT5_BRIDGE_URL || 'http://localhost:8000';
 const MT5_BRIDGE_URL = process.env.MT5_BRIDGE_URL || 'https://bridge.sharkfunded.co';
 
+// POST /api/mt5/purchase-challenge - Handle challenge purchase and payment flow
+router.post('/purchase-challenge', authenticate, async (req: AuthRequest, res: Response) => {
+    try {
+        const { userId, challengeType, model, accountSize, platform, paymentGateway, couponCode, amount, currency } = req.body;
+
+        if (!req.user || req.user.id !== userId) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        // Get user profile for email/name
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('email, full_name')
+            .eq('id', userId)
+            .single();
+
+        if (!profile) {
+            return res.status(404).json({ error: 'User profile not found' });
+        }
+
+        // Generate unique order ID
+
+        const orderId = `SF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+
+        // Validate coupon if provided
+        let discount = 0;
+        let couponData = null;
+        if (couponCode) {
+            const { data: coupon } = await supabase
+                .from('coupons')
+                .select('*')
+                .eq('code', couponCode)
+                .eq('is_active', true)
+                .single();
+
+            if (coupon) {
+                if (coupon.discount_type === 'percentage') {
+                    discount = (amount * coupon.discount_value) / 100;
+                } else {
+                    discount = coupon.discount_value;
+                }
+                couponData = coupon;
+            }
+        }
+
+        const finalAmount = Math.max(amount - discount, 0);
+
+        // Get account type name based on model and challengeType
+        const accountTypeName = `${model} ${challengeType}`.trim();
+
+        // Create payment order
+        const { data: order, error: orderError } = await supabase
+            .from('payment_orders')
+            .insert({
+                order_id: orderId,
+                user_id: userId,
+                account_type_name: accountTypeName,
+                account_size: accountSize,
+                amount: finalAmount,
+                currency: currency,
+                status: 'pending',
+                platform: platform,
+                payment_gateway: paymentGateway,
+                model: model,
+                metadata: {
+                    challenge_type: challengeType,
+                    coupon_code: couponCode,
+                    original_amount: amount,
+                    discount: discount
+                }
+            })
+            .select()
+            .single();
+
+        if (orderError) {
+            console.error('Order creation error:', orderError);
+            return res.status(500).json({ error: 'Failed to create order' });
+        }
+
+        // If using SharkPay, call SharkPay API to create order
+        if (paymentGateway === 'sharkpay') {
+            const amountINR = Math.round(finalAmount * 84); // Convert USD to INR
+            const frontendUrl = process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+            const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+            const sharkpayUrl = process.env.SHARKPAY_API_URL || 'https://sharkpay-o9zz.vercel.app';
+
+            const payload = {
+                amount: amountINR,
+                name: profile.full_name || 'Trader',
+                email: profile.email,
+                reference_id: orderId,
+                success_url: `${frontendUrl}/payment/success?orderId=${orderId}`,
+                failed_url: `${frontendUrl}/payment/failed`,
+                callback_url: `${backendUrl}/api/webhooks/payment`,
+            };
+
+            const apiKey = process.env.SHARKPAY_API_KEY || '';
+            const apiSecret = process.env.SHARKPAY_API_SECRET || '';
+
+            const response = await fetch(`${sharkpayUrl}/api/create-order`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${Buffer.from(`${apiKey}:${apiSecret}`).toString('base64')}`,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('SharkPay API error:', response.status, errorText);
+                return res.status(500).json({ error: `Payment gateway error: ${errorText}` });
+            }
+
+            const data = await response.json() as any;
+            const paymentUrl = data.checkoutUrl || data.checkout_url || data.url;
+
+            return res.json({ success: true, paymentUrl });
+        }
+
+        // If using Cregis (crypto), integrate with Cregis
+        if (paymentGateway === 'cregis') {
+            // TODO: Integrate with Cregis API
+            const paymentUrl = `${process.env.CREGIS_URL || 'https://cregis.com'}/checkout?orderId=${orderId}&amount=${finalAmount}&currency=${currency}`;
+            return res.json({ success: true, paymentUrl });
+        }
+
+        // For instant funding or free challenges, create account immediately
+        res.json({ success: true, message: 'Order created', orderId });
+
+    } catch (error: any) {
+        console.error('Purchase error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Helper function to generate random MT5 login (7-9 digits)
 function generateMT5Login(): number {
     return Math.floor(10000000 + Math.random() * 900000000);
@@ -223,7 +359,7 @@ router.post('/assign', async (req, res: Response) => {
                 investor_password: investorPassword,
                 server: 'ALFX Limited',
                 platform: 'MT5',
-                group: finalGroup, // Save the assigned group
+                mt5_group: finalGroup, // Save the assigned group
                 leverage: 100,
                 status: 'active',
                 challenge_type: challengeType,

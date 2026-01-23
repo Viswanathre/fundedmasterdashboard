@@ -161,4 +161,34 @@ Shark Funded Team
 
         await this.sendEmail(email, subject, html, text);
     }
+
+    /**
+     * Send OTP Code for Two-Factor Authentication
+     */
+    static async sendOTP(email: string, name: string, code: string, purpose: string) {
+        const subject = `Your Verification Code - ${this.FROM_NAME}`;
+
+        const html = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #0d47a1;">Verification Code</h2>
+                <p>Hi ${name},</p>
+                <p>Your verification code for <strong>${purpose}</strong> is:</p>
+                
+                <div style="background-color: #f3f7ff; padding: 20px; border-radius: 8px; text-align: center; margin: 25px 0;">
+                    <h1 style="font-size: 36px; letter-spacing: 10px; color: #0d47a1; margin: 0;">${code}</h1>
+                </div>
+
+                <p style="color: #666;">This code expires in <strong>10 minutes</strong>.</p>
+                <p style="color: #666;">If you didn't request this code, please ignore this email.</p>
+                
+                <p style="margin-top: 30px; font-size: 12px; color: #888;">
+                    This is an automated security message from ${this.FROM_NAME}.
+                </p>
+            </div>
+        `;
+
+        const text = `Hi ${name},\n\nYour verification code for ${purpose} is: ${code}\n\nThis code expires in 10 minutes.\n\nIf you didn't request this code, please ignore this email.`;
+
+        await this.sendEmail(email, subject, html, text);
+    }
 }

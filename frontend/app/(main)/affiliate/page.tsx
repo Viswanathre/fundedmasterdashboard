@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchFromBackend } from "@/lib/backend-api";
+import OTPModal from "@/components/OTPModal";
 
 // --- Types ---
 
@@ -62,7 +63,7 @@ const StatCard = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay, duration: 0.4 }}
-        className="relative group overflow-hidden rounded-2xl border border-white/10 bg-[#050923] p-6 hover:border-white/20 transition-all duration-300"
+        className="relative group overflow-hidden rounded-2xl border border-white/10 bg-[#042f24] p-6 hover:border-white/20 transition-all duration-300"
     >
         <div className={cn("absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-300 pointer-events-none")}>
             <Icon size={120} />
@@ -96,7 +97,7 @@ const TabButton = ({ active, label, onClick }: { active: boolean, label: string,
         {active && (
             <motion.div
                 layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#d9e838] rounded-full shadow-[0_0_10px_rgba(217,232,56,0.5)]"
             />
         )}
     </button>
@@ -133,6 +134,10 @@ export default function AffiliatePage() {
     const [withdrawError, setWithdrawError] = useState("");
     const [withdrawSuccess, setWithdrawSuccess] = useState("");
 
+    // OTP Modal
+    const [showOTPModal, setShowOTPModal] = useState(false);
+    const [otpToken, setOtpToken] = useState("");
+
     useEffect(() => {
         fetchAffiliateData();
     }, []);
@@ -168,29 +173,47 @@ export default function AffiliatePage() {
         setTimeout(() => setCopiedState(false), 2000);
     };
 
-    const handleWithdraw = async (e: React.FormEvent) => {
+    const handleWithdrawSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validate form first
+        const amount = parseFloat(withdrawAmount);
+        if (isNaN(amount) || amount <= 0) {
+            setWithdrawError("Invalid amount");
+            return;
+        }
+        if (amount > stats.availableBalance) {
+            setWithdrawError("Insufficient balance");
+            return;
+        }
+
+        // Show OTP modal for verification
+        setShowOTPModal(true);
+    };
+
+    const handleOTPVerified = async (token: string) => {
+        setOtpToken(token);
         setWithdrawLoading(true);
         setWithdrawError("");
         setWithdrawSuccess("");
 
         try {
             const amount = parseFloat(withdrawAmount);
-            if (isNaN(amount) || amount <= 0) throw new Error("Invalid amount");
-            if (amount > stats.availableBalance) throw new Error("Insufficient balance");
 
             await fetchFromBackend('/api/affiliate/withdraw', {
                 method: 'POST',
                 body: JSON.stringify({
                     amount,
                     payout_method: withdrawMethod,
-                    payout_details: { address: withdrawDetails }
+                    payout_details: { address: withdrawDetails },
+                    otp_token: token
                 })
             });
 
             setWithdrawSuccess("Withdrawal requested successfully!");
             setWithdrawAmount("");
             setWithdrawDetails("");
+            setOtpToken("");
 
             // Refresh Data
             await fetchAffiliateData();
@@ -209,17 +232,17 @@ export default function AffiliatePage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-transparent flex items-center justify-center">
-                <Loader2 className="animate-spin text-blue-500 h-10 w-10" />
+                <Loader2 className="animate-spin text-[#d9e838] h-10 w-10" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-transparent text-slate-900 font-sans selection:bg-blue-500/30">
+        <div className="min-h-screen bg-transparent text-white font-sans selection:bg-blue-500/30">
             {/* Background Effects */}
             <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px]" />
-                <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px]" />
+                <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#d9e838]/5 rounded-full blur-[120px]" />
+                <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-[#042f24]/20 rounded-full blur-[100px]" />
             </div>
 
             <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-20">
@@ -231,14 +254,14 @@ export default function AffiliatePage() {
                         animate={{ opacity: 1, x: 0 }}
                         className="space-y-4"
                     >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wide">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d9e838]/10 border border-[#d9e838]/20 text-[#d9e838] text-xs font-bold uppercase tracking-wide">
                             <Gift size={12} />
                             <span>Partner Program</span>
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-bold text-black tracking-tight">
-                            Affiliate <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Dashboard</span>
+                        <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                            Affiliate <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d9e838] to-[#c9d828]">Dashboard</span>
                         </h1>
-                        <p className="text-black max-w-lg text-lg leading-relaxed font-medium">
+                        <p className="text-gray-400 max-w-lg text-lg leading-relaxed font-medium">
                             Monitor your performance, track referrals, and withdraw your earnings directly to your preferred payment method.
                         </p>
                     </motion.div>
@@ -252,7 +275,7 @@ export default function AffiliatePage() {
                             onClick={() => setShowWithdrawModal(true)}
                             disabled={stats.availableBalance <= 0}
                             className={cn(
-                                "group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-semibold text-white shadow-lg shadow-blue-900/40 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none overflow-hidden"
+                                "group relative inline-flex items-center gap-3 px-8 py-4 bg-[#d9e838] rounded-xl font-semibold text-black shadow-lg shadow-[#d9e838]/20 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none overflow-hidden"
                             )}
                         >
                             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
@@ -278,7 +301,7 @@ export default function AffiliatePage() {
                         value={`$${stats.totalEarnings.toLocaleString()}`}
                         subValue="Lifetime commissions"
                         icon={DollarSign}
-                        colorClass="bg-blue-500 text-blue-400"
+                        colorClass="bg-[#d9e838] text-[#d9e838]"
                         delay={0.3}
                     />
                     <StatCard
@@ -286,7 +309,7 @@ export default function AffiliatePage() {
                         value={stats.activeReferrals}
                         subValue={`${stats.totalReferrals} Total Signups`}
                         icon={Users}
-                        colorClass="bg-indigo-500 text-indigo-400"
+                        colorClass="bg-[#d9e838]/50 text-[#d9e838]"
                         delay={0.4}
                     />
                     <StatCard
@@ -308,18 +331,18 @@ export default function AffiliatePage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6 }}
-                            className="bg-[#050923] border border-white/10 rounded-2xl p-6 backdrop-blur-xl"
+                            className="bg-[#042f24] border border-white/10 rounded-2xl p-6 backdrop-blur-xl"
                         >
                             <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                                <Gift className="text-blue-400" size={20} />
+                                <Gift className="text-[#d9e838]" size={20} />
                                 Referral Tools
                             </h3>
 
                             {/* Code */}
                             <div className="space-y-4 mb-6">
                                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Your Unique Code</label>
-                                <div className="group relative bg-white/5 border border-white/10 rounded-xl p-4 flex items-center justify-between transition-colors hover:border-blue-500/50">
-                                    <code className="font-mono text-xl font-bold text-blue-400 tracking-wide">{referralCode}</code>
+                                <div className="group relative bg-[#011d16] border border-white/10 rounded-xl p-4 flex items-center justify-between transition-colors hover:border-[#d9e838]/50">
+                                    <code className="font-mono text-xl font-bold text-[#d9e838] tracking-wide">{referralCode}</code>
                                     <button
                                         onClick={() => handleCopy(referralCode, setCodeCopied)}
                                         className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
@@ -332,13 +355,13 @@ export default function AffiliatePage() {
                             {/* Link */}
                             <div className="space-y-4">
                                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Share Link</label>
-                                <div className="group bg-white/5 border border-white/10 rounded-xl p-1 pr-1 flex items-center transition-colors hover:border-blue-500/50">
+                                <div className="group bg-[#011d16] border border-white/10 rounded-xl p-1 pr-1 flex items-center transition-colors hover:border-[#d9e838]/50">
                                     <div className="flex-1 px-4 py-3 text-sm text-gray-400 truncate font-mono">
                                         {`${typeof window !== 'undefined' ? window.location.origin : ''}/signup?ref=${referralCode}`}
                                     </div>
                                     <button
                                         onClick={() => handleCopy(`${window.location.origin}/signup?ref=${referralCode}`, setLinkCopied)}
-                                        className="p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-white"
+                                        className="p-3 bg-[#042f24] hover:bg-white/10 rounded-lg transition-colors text-white"
                                     >
                                         {linkCopied ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
                                     </button>
@@ -346,7 +369,7 @@ export default function AffiliatePage() {
                             </div>
 
                             {/* Info */}
-                            <div className="mt-8 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 text-sm text-blue-200/80 leading-relaxed">
+                            <div className="mt-8 p-4 rounded-xl bg-[#d9e838]/5 border border-[#d9e838]/10 text-sm text-[#d9e838]/80 leading-relaxed">
                                 Share your unique link with traders. You earn commissions when they purchase a challenge using your code.
                             </div>
                         </motion.div>
@@ -360,7 +383,7 @@ export default function AffiliatePage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.7 }}
-                            className="bg-[#050923] border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl min-h-[500px] flex flex-col"
+                            className="bg-[#042f24] border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl min-h-[500px] flex flex-col"
                         >
                             {/* Tabs Header */}
                             <div className="flex items-center gap-2 border-b border-white/5 px-4 pt-2">
@@ -486,7 +509,7 @@ export default function AffiliatePage() {
                                 </button>
                             </div>
 
-                            <form onSubmit={handleWithdraw} className="p-6 pt-2 space-y-5">
+                            <form onSubmit={handleWithdrawSubmit} className="p-6 pt-2 space-y-5">
                                 {/* Amount Input */}
                                 <div className="space-y-2">
                                     <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Amount</label>
@@ -590,6 +613,14 @@ export default function AffiliatePage() {
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* OTP Modal */}
+            <OTPModal
+                isOpen={showOTPModal}
+                onClose={() => setShowOTPModal(false)}
+                onVerify={handleOTPVerified}
+                purpose="withdrawal"
+            />
         </div>
     );
 }

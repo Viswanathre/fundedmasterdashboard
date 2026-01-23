@@ -25,23 +25,13 @@ router.post('/mt5', async (req: Request, res: Response) => {
             return;
         }
 
-        // PHASE 4 EVENT-DRIVEN ARCHITECTURE
-        // Instead of processing everything here (slow), we publish the event to Redis.
-        // The Worker will handle DB upsert and Risk Checks.
+        // Direct processing without Redis
+        // TODO: Add direct trade processing logic here if needed
 
-        const { redis } = await import('../lib/redis');
+        console.log(`📊 Received ${trades.length} trades for login ${login}`);
 
-        const eventData = {
-            login,
-            trades,
-            timestamp: Date.now()
-        };
-
-        // Publish to 'events:trade_update' channel
-        await redis.publish('events:trade_update', JSON.stringify(eventData));
-
-        // Respond immediately (High Performance)
-        res.json({ success: true, queued: true });
+        // Respond immediately
+        res.json({ success: true, received: true });
 
     } catch (error: any) {
         console.error('Webhook error:', error);
@@ -245,7 +235,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
                 server: mt5Data.server || 'ALFX Limited',
                 platform: order.platform,
                 leverage: leverage,
-                group: mt5Group, // Store actual used group
+                mt5_group: mt5Group, // Store actual used group
                 metadata: order.metadata || {}, // Pass through all metadata (including competition details)
             })
             .select()

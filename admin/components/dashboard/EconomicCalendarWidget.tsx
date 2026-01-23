@@ -23,15 +23,15 @@ export default function EconomicCalendarWidget() {
         <div className="w-full">
             <div className="flex items-center justify-between mb-4 px-1">
                 <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-                    <CalendarDays className="text-blue-500" size={18} />
+                    <CalendarDays className="text-[#d9e838]" size={18} />
                     Economic Calendar
                 </h2>
                 <div className="text-xs font-medium text-gray-500">Today</div>
             </div>
 
-            <div className="bg-gray-900 border border-white/10 rounded-xl overflow-hidden">
+            <div className="bg-[#042f24] border border-white/10 rounded-xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-white/5 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                    <thead className="bg-[#011d16] text-[10px] font-bold text-gray-500 uppercase tracking-wider">
                         <tr>
                             <th className="px-5 py-3">Time</th>
                             <th className="px-5 py-3">Cur</th>

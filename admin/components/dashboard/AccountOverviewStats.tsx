@@ -13,7 +13,7 @@ interface StatProps {
 
 function StatBox({ label, value, icon: Icon, isNegative }: StatProps) {
     return (
-        <div className="bg-[#1e293b]/50 border border-white/5 rounded-xl p-5 flex flex-col gap-3 min-w-[200px] hover:bg-[#1e293b] transition-colors">
+        <div className="bg-[#042f24] border border-white/5 rounded-xl p-5 flex flex-col gap-3 min-w-[200px] hover:bg-[#011d16] transition-colors">
             <div className="flex items-center gap-2 text-gray-400">
                 <Icon size={14} className="opacity-70" />
                 <span className="text-xs font-medium tracking-wide">{label}</span>
@@ -32,8 +32,8 @@ export default function AccountOverviewStats() {
         return (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                 {[...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-[#1e293b]/50 border border-white/5 rounded-xl p-5 flex items-center justify-center min-h-[100px]">
-                        <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+                    <div key={i} className="bg-[#042f24] border border-white/5 rounded-xl p-5 flex items-center justify-center min-h-[100px]">
+                        <Loader2 className="w-6 h-6 text-[#d9e838] animate-spin" />
                     </div>
                 ))}
             </div>

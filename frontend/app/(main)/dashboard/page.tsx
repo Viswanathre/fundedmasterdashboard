@@ -21,7 +21,7 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 
 function DashboardContent() {
-    const { selectedAccount, loading } = useAccount();
+    const { selectedAccount, loading, accounts } = useAccount();
     const [syncing, setSyncing] = useState(false);
     const [showCredentials, setShowCredentials] = useState(false);
 
@@ -80,8 +80,53 @@ function DashboardContent() {
     //     }
     // }, [selectedAccount?.id]);
 
+    // Show loading state
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
+
+    // Show empty state when no accounts exist
+    if (!loading && accounts.length === 0) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center space-y-4 max-w-md px-6">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-800 flex items-center justify-center">
+                        <svg
+                            className="w-8 h-8 text-slate-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                            />
+                        </svg>
+                    </div>
+                    <h2 className="text-2xl font-bold text-white">No Accounts Yet</h2>
+                    <p className="text-slate-400">
+                        You haven't started any trading challenges. Get started by purchasing a challenge to begin your funded trading journey.
+                    </p>
+                    <Link
+                        href="/challenges"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 mt-4 text-sm font-medium text-white bg-gradient-to-b from-[#1d4ed8] to-[#1e40af] rounded-lg hover:from-[#1e40af] hover:to-[#1d4ed8] transition-all shadow-lg"
+                    >
+                        <Plus size={16} />
+                        Start a Challenge
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="flex h-screen overflow-hidden bg-transparent text-slate-900 relative">
+        <div className="flex h-screen overflow-hidden bg-transparent text-white relative">
             {/* Loading Overlay */}
             {/* Loading Overlay */}
             <PageLoader isLoading={isLoading} text="SYNCING DATA..." />
@@ -98,16 +143,16 @@ function DashboardContent() {
 
                     {/* Top Header Row: Breadcrumbs & Actions */}
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4 mb-6 md:mb-8">
-                        <div className="flex items-center gap-2 text-xs md:text-sm text-slate-500 font-medium overflow-x-auto">
+                        <div className="flex items-center gap-2 text-xs md:text-sm text-gray-400 font-medium overflow-x-auto">
                             <span className="whitespace-nowrap">Dashboard</span>
-                            <ChevronRight size={12} className="text-slate-400 flex-shrink-0" />
+                            <ChevronRight size={12} className="text-gray-500 flex-shrink-0" />
                             <span className="whitespace-nowrap">All Challenges</span>
-                            <ChevronRight size={12} className="text-slate-400 flex-shrink-0" />
-                            <span className="text-black font-semibold whitespace-nowrap">Account {selectedAccount?.account_number || "..."}</span>
+                            <ChevronRight size={12} className="text-gray-500 flex-shrink-0" />
+                            <span className="text-white font-semibold whitespace-nowrap">Account {selectedAccount?.account_number || "..."}</span>
                         </div>
 
                         <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto">
-                            {/* HIDING NEW CHALLENGE BUTTON AS REQUESTED
+                            {/* NEW CHALLENGE BUTTON RE-ENABLED */}
                             <Link
                                 href="/challenges"
                                 className="flex items-center gap-1.5 bg-gradient-to-b from-[#1d4ed8] to-[#1e40af] active:from-[#1E3A8A] active:to-[#1d4ed8] text-white text-xs md:text-sm font-medium px-3 md:px-4 py-2 md:py-2.5 rounded-full shadow-lg shadow-blue-900/20 transition-all border border-blue-500/20 active:scale-95 touch-manipulation whitespace-nowrap"
@@ -116,7 +161,6 @@ function DashboardContent() {
                                 <span className="hidden sm:inline">New Challenge</span>
                                 <span className="sm:hidden">New</span>
                             </Link>
-                            */}
 
                             {/* User Profile Dropdown */}
                             <div className="relative">
@@ -139,9 +183,9 @@ function DashboardContent() {
                                             exit={{ opacity: 0, y: 10 }}
                                             className="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 text-slate-800"
                                         >
-                                            <div className="p-3 border-b border-slate-100">
-                                                <p className="text-xs font-bold text-black truncate">{user?.email}</p>
-                                                <p className="text-[10px] text-slate-500">Logged In</p>
+                                            <div className="p-3 border-b border-white/5">
+                                                <p className="text-xs font-bold text-white truncate">{user?.email}</p>
+                                                <p className="text-[10px] text-gray-500">Logged In</p>
                                             </div>
                                             <button
                                                 onClick={handleLogout}
@@ -157,8 +201,8 @@ function DashboardContent() {
                     </div>
 
                     {/* Page Title Row */}
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-6 md:mb-8 border-b border-slate-200 pb-6 md:pb-8">
-                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-6 md:mb-8 border-b border-white/10 pb-6 md:pb-8">
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
                             Account {selectedAccount?.account_number || "-------"}
                         </h1>
                         <button
@@ -301,10 +345,8 @@ function DashboardContent() {
                                 <RiskAnalysis />
                             </div>
 
-                            {/* Consistency Score */}
-                            <div className="shrink-0">
-                                <ConsistencyScore />
-                            </div>
+                            {/* Consistency Score Hidden */}
+                            {/* <ConsistencyScore /> */}
 
                             {/* Detailed Stats */}
                             <div className="shrink-0">

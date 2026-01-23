@@ -96,8 +96,8 @@ export default function PayoutsPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-black tracking-tight">Payouts</h1>
-                    <p className="text-black mt-1 font-medium">Manage your withdrawals and view transaction history</p>
+                    <h1 className="text-2xl font-bold text-white tracking-tight">Payouts</h1>
+                    <p className="text-gray-400 mt-1 font-medium">Manage your withdrawals and view transaction history</p>
                 </div>
             </div>
 
@@ -136,10 +136,10 @@ export default function PayoutsPage() {
                     />
 
                     {/* Eligibility / Rules Card */}
-                    <div className="bg-[#050923] rounded-xl p-6 border border-white/10 shadow-xl transition-all duration-300 hover:border-shark-blue/30">
+                    <div className="bg-[#042f24] rounded-xl p-6 border border-white/10 shadow-xl transition-all duration-300 hover:border-[#d9e838]/30">
                         <h3 className="font-bold text-white mb-6 flex items-center gap-3 uppercase tracking-wider text-sm">
-                            <div className="p-2 bg-shark-blue/10 rounded-lg">
-                                <AlertCircle size={18} className="text-shark-blue" />
+                            <div className="p-2 bg-[#d9e838]/10 rounded-lg">
+                                <AlertCircle size={18} className="text-[#d9e838]" />
                             </div>
                             Eligibility Checklist
                         </h3>

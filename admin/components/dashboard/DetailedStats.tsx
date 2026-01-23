@@ -51,8 +51,8 @@ export default function DetailedStats() {
                 <h2 className="text-lg font-bold text-white">Detailed Stats</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[...Array(5)].map((_, i) => (
-                        <div key={i} className="p-5 rounded-xl border border-white/10 bg-gray-900 flex items-center justify-center min-h-[100px]">
-                            <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+                        <div key={i} className="p-5 rounded-xl border border-white/10 bg-[#042f24] flex items-center justify-center min-h-[100px]">
+                            <Loader2 className="w-6 h-6 text-[#d9e838] animate-spin" />
                         </div>
                     ))}
                 </div>
@@ -72,9 +72,9 @@ export default function DetailedStats() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {stats.map((stat, i) => (
-                    <div key={i} className="p-5 rounded-xl border border-white/10 bg-gray-900 group hover:border-white/20 transition-all">
+                    <div key={i} className="p-5 rounded-xl border border-white/10 bg-[#042f24] group hover:border-white/20 transition-all">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 rounded-lg bg-white/5 text-gray-400 group-hover:text-blue-400 group-hover:bg-blue-500/10 transition-colors border border-transparent group-hover:border-blue-500/20">
+                            <div className="p-2 rounded-lg bg-white/5 text-gray-400 group-hover:text-[#d9e838] group-hover:bg-[#d9e838]/10 transition-colors border border-transparent group-hover:border-[#d9e838]/20">
                                 <stat.icon size={16} />
                             </div>
                             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{stat.label}</span>

@@ -52,15 +52,15 @@ export default function RankingPage() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
-                    <h1 className="text-4xl font-black text-black flex items-center gap-3 tracking-tight mb-2">
-                        <Trophy className="text-blue-600 drop-shadow-[0_0_15px_rgba(37,99,235,0.2)]" size={36} />
+                    <h1 className="text-4xl font-black text-white flex items-center gap-3 tracking-tight mb-2">
+                        <Trophy className="text-[#d9e838] drop-shadow-[0_0_15px_rgba(217,232,56,0.2)]" size={36} />
                         Global Leaderboard
                     </h1>
-                    <p className="text-slate-500 font-medium">Top performers proving their edge in the market.</p>
+                    <p className="text-gray-400 font-medium">Top performers proving their edge in the market.</p>
                 </div>
 
                 {/* Filter Tabs */}
-                <div className="flex bg-slate-100 p-1.5 rounded-xl border border-slate-200 overflow-x-auto max-w-full no-scrollbar">
+                <div className="flex bg-[#011d16] p-1.5 rounded-xl border border-white/5 overflow-x-auto max-w-full no-scrollbar">
                     {filters.map((filter) => (
                         <button
                             key={filter}
@@ -68,8 +68,8 @@ export default function RankingPage() {
                             className={cn(
                                 "px-5 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
                                 activeFilter === filter
-                                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-                                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-200"
+                                    ? "bg-[#d9e838] text-black shadow-lg shadow-[#d9e838]/20"
+                                    : "text-gray-500 hover:text-white hover:bg-white/5"
                             )}
                         >
                             {filter}
@@ -80,7 +80,7 @@ export default function RankingPage() {
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+                    <Loader2 className="w-12 h-12 text-[#d9e838] animate-spin" />
                 </div>
             ) : (
                 <>
@@ -94,26 +94,26 @@ export default function RankingPage() {
                                         initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
                                         className="w-full relative group"
                                     >
-                                        <div className="bg-[#050923] p-8 rounded-[40px] border border-white/10 text-center relative z-10 shadow-xl overflow-hidden min-h-[320px] flex flex-col justify-center translate-y-4">
-                                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-10 h-10 bg-slate-400 rounded-full flex items-center justify-center font-black text-slate-900 border-4 border-[#050923] shadow-lg z-20">2</div>
+                                        <div className="bg-[#042f24] p-8 rounded-[40px] border border-white/10 text-center relative z-10 shadow-xl overflow-hidden min-h-[320px] flex flex-col justify-center translate-y-4">
+                                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center font-black text-white border-4 border-[#042f24] shadow-lg z-20">2</div>
 
-                                            <div className="w-20 h-20 rounded-full mx-auto mb-6 p-1 bg-slate-400/20 shadow-xl relative">
-                                                <div className="w-full h-full rounded-full border-2 border-[#050923] overflow-hidden bg-slate-800">
+                                            <div className="w-20 h-20 rounded-full mx-auto mb-6 p-1 bg-gray-400/20 shadow-xl relative">
+                                                <div className="w-full h-full rounded-full border-2 border-[#042f24] overflow-hidden bg-slate-800">
                                                     <img src={topThree[1].avatar} className="w-full h-full object-cover" alt={topThree[1].name} />
                                                 </div>
                                             </div>
 
                                             <h3 className="text-xl font-bold text-white mb-1 leading-tight">{topThree[1].name} <span className="text-lg">🌍</span></h3>
-                                            <p className="text-blue-400/80 font-bold text-[10px] mb-8 uppercase tracking-widest">{topThree[1].accountSize} Account</p>
+                                            <p className="text-[#d9e838]/80 font-bold text-[10px] mb-8 uppercase tracking-widest">{topThree[1].accountSize} Account</p>
 
                                             <div className="grid grid-cols-2 gap-3 mt-auto">
                                                 <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
                                                     <p className="text-slate-400 text-[9px] uppercase font-bold tracking-widest mb-1">Profit</p>
                                                     <p className="text-lg font-black text-white">${topThree[1].totalProfit.toLocaleString()}</p>
                                                 </div>
-                                                <div className="bg-blue-500/10 rounded-2xl p-4 border border-blue-500/10">
-                                                    <p className="text-blue-400/50 text-[9px] uppercase font-bold tracking-widest mb-1">Return</p>
-                                                    <p className="text-lg font-black text-blue-400">{topThree[1].return}%</p>
+                                                <div className="bg-[#d9e838]/10 rounded-2xl p-4 border border-[#d9e838]/10">
+                                                    <p className="text-[#d9e838]/50 text-[9px] uppercase font-bold tracking-widest mb-1">Return</p>
+                                                    <p className="text-lg font-black text-[#d9e838]">{topThree[1].return}%</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -128,14 +128,14 @@ export default function RankingPage() {
                                         initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }}
                                         className="w-full relative z-20"
                                     >
-                                        <div className="bg-[#050923] p-10 rounded-[40px] border border-yellow-500/20 text-center relative shadow-2xl overflow-hidden min-h-[400px] flex flex-col justify-center">
+                                        <div className="bg-[#042f24] p-10 rounded-[40px] border border-[#d9e838]/20 text-center relative shadow-2xl overflow-hidden min-h-[400px] flex flex-col justify-center">
                                             <div className="absolute top-4 right-0 left-0 flex justify-center">
                                                 <div className="w-24 h-8 bg-yellow-500/5 rounded-full blur-2xl" />
                                             </div>
                                             <Crown className="w-10 h-10 text-yellow-500 absolute -top-5 left-1/2 -translate-x-1/2 drop-shadow-[0_0_20px_rgba(234,179,8,0.5)] z-30" />
 
-                                            <div className="w-28 h-28 rounded-full mx-auto mb-6 p-1 bg-gradient-to-br from-yellow-400 via-orange-500 to-yellow-600 shadow-2xl relative">
-                                                <div className="w-full h-full rounded-full border-4 border-[#050923] overflow-hidden bg-slate-900">
+                                            <div className="w-28 h-28 rounded-full mx-auto mb-6 p-1 bg-gradient-to-br from-[#d9e838] via-green-500 to-[#d9e838] shadow-2xl relative">
+                                                <div className="w-full h-full rounded-full border-4 border-[#042f24] overflow-hidden bg-slate-900">
                                                     <img src={topThree[0].avatar} className="w-full h-full object-cover" alt={topThree[0].name} />
                                                 </div>
                                             </div>
@@ -148,9 +148,9 @@ export default function RankingPage() {
                                                     <p className="text-yellow-500/70 text-[10px] uppercase font-bold tracking-widest mb-1.5">Profit</p>
                                                     <p className="text-xl font-black text-white">${topThree[0].totalProfit.toLocaleString()}</p>
                                                 </div>
-                                                <div className="bg-white/5 rounded-[24px] p-5 border border-blue-500/20 shadow-inner">
-                                                    <p className="text-blue-400/70 text-[10px] uppercase font-bold tracking-widest mb-1.5">Return</p>
-                                                    <p className="text-xl font-black text-blue-400">{topThree[0].return}%</p>
+                                                <div className="bg-white/5 rounded-[24px] p-5 border border-[#d9e838]/20 shadow-inner">
+                                                    <p className="text-[#d9e838]/70 text-[10px] uppercase font-bold tracking-widest mb-1.5">Return</p>
+                                                    <p className="text-xl font-black text-[#d9e838]">{topThree[0].return}%</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -165,26 +165,26 @@ export default function RankingPage() {
                                         initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
                                         className="w-full relative group"
                                     >
-                                        <div className="bg-[#050923] p-8 rounded-[40px] border border-white/10 text-center relative z-10 shadow-xl overflow-hidden min-h-[320px] flex flex-col justify-center translate-y-4">
-                                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-10 h-10 bg-[#b45309] rounded-full flex items-center justify-center font-black text-white border-4 border-[#050923] shadow-lg z-20">3</div>
+                                        <div className="bg-[#042f24] p-8 rounded-[40px] border border-white/10 text-center relative z-10 shadow-xl overflow-hidden min-h-[320px] flex flex-col justify-center translate-y-4">
+                                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-10 h-10 bg-[#b45309] rounded-full flex items-center justify-center font-black text-white border-4 border-[#042f24] shadow-lg z-20">3</div>
 
                                             <div className="w-20 h-20 rounded-full mx-auto mb-6 p-1 bg-orange-500/20 shadow-xl relative">
-                                                <div className="w-full h-full rounded-full border-2 border-[#050923] overflow-hidden bg-slate-800">
+                                                <div className="w-full h-full rounded-full border-2 border-[#042f24] overflow-hidden bg-slate-800">
                                                     <img src={topThree[2].avatar} className="w-full h-full object-cover" alt={topThree[2].name} />
                                                 </div>
                                             </div>
 
                                             <h3 className="text-xl font-bold text-white mb-1 leading-tight">{topThree[2].name} <span className="text-lg">🌍</span></h3>
-                                            <p className="text-blue-400/80 font-bold text-[10px] mb-8 uppercase tracking-widest">{topThree[2].accountSize} Account</p>
+                                            <p className="text-[#d9e838]/80 font-bold text-[10px] mb-8 uppercase tracking-widest">{topThree[2].accountSize} Account</p>
 
                                             <div className="grid grid-cols-2 gap-3 mt-auto">
                                                 <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
                                                     <p className="text-slate-400 text-[9px] uppercase font-bold tracking-widest mb-1">Profit</p>
                                                     <p className="text-lg font-black text-white">${topThree[2].totalProfit.toLocaleString()}</p>
                                                 </div>
-                                                <div className="bg-blue-500/10 rounded-2xl p-4 border border-blue-500/10">
-                                                    <p className="text-blue-400/50 text-[9px] uppercase font-bold tracking-widest mb-1">Return</p>
-                                                    <p className="text-lg font-black text-blue-400">{topThree[2].return}%</p>
+                                                <div className="bg-[#d9e838]/10 rounded-2xl p-4 border border-[#d9e838]/10">
+                                                    <p className="text-[#d9e838]/50 text-[9px] uppercase font-bold tracking-widest mb-1">Return</p>
+                                                    <p className="text-lg font-black text-[#d9e838]">{topThree[2].return}%</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -195,7 +195,7 @@ export default function RankingPage() {
                     )}
 
                     {/* List View */}
-                    <div className="bg-[#050923] rounded-[32px] border border-white/10 overflow-hidden shadow-2xl mt-8">
+                    <div className="bg-[#042f24] rounded-[32px] border border-white/10 overflow-hidden shadow-2xl mt-8">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
@@ -218,12 +218,12 @@ export default function RankingPage() {
                                                     animate={{ opacity: 1, x: 0 }}
                                                     transition={{ delay: idx * 0.05 }}
                                                     className={cn(
-                                                        "hover:bg-blue-50/50 transition-colors group",
-                                                        trader.isMe ? "bg-blue-50" : ""
+                                                        "hover:bg-white/5 transition-colors group",
+                                                        trader.isMe ? "bg-[#d9e838]/10" : ""
                                                     )}
                                                 >
                                                     <td className="px-8 py-5">
-                                                        <span className="font-bold text-slate-400 group-hover:text-blue-600 transition-colors">#{trader.rank}</span>
+                                                        <span className="font-bold text-slate-400 group-hover:text-[#d9e838] transition-colors">#{trader.rank}</span>
                                                     </td>
                                                     <td className="px-8 py-5">
                                                         <div className="flex items-center gap-4">
@@ -239,7 +239,7 @@ export default function RankingPage() {
                                                         </div>
                                                     </td>
                                                     <td className="px-8 py-5">
-                                                        <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-600 font-bold text-[10px] border border-blue-200/50">
+                                                        <span className="px-3 py-1 rounded-full bg-[#d9e838]/10 text-[#d9e838] font-bold text-[10px] border border-[#d9e838]/20">
                                                             {trader.accountSize}
                                                         </span>
                                                     </td>

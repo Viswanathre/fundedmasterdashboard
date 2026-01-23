@@ -60,16 +60,16 @@ export function AdminSidebar({ user, onClose }: AdminSidebarProps & { onClose?: 
     );
 
     return (
-        <div className="flex h-full w-64 flex-col bg-[#0a0d20] border-r border-white/5">
+        <div className="flex h-full w-64 flex-col bg-[#011d16] border-r border-white/5">
             {/* Logo Section */}
             <div className="flex h-16 items-center px-6 border-b border-white/5">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600">
-                        <Shield className="h-5 w-5 text-white" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#d9e838]">
+                        <Shield className="h-5 w-5 text-[#011d16]" />
                     </div>
                     <div>
                         <span className="block text-base font-semibold text-white">SharkFunded</span>
-                        <span className="block text-xs text-gray-400">Admin Portal</span>
+                        <span className="block text-xs text-emerald-500/80">Admin Portal</span>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@ export function AdminSidebar({ user, onClose }: AdminSidebarProps & { onClose?: 
             {/* Navigation */}
             <div className="flex flex-1 flex-col gap-1 p-4">
                 <div className="px-3 mb-2">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Navigation</p>
+                    <p className="text-xs font-semibold text-emerald-500/80 uppercase tracking-wide">Navigation</p>
                 </div>
                 {filteredNavigation.map((item) => {
                     const isActive = pathname.startsWith(item.href);
@@ -89,13 +89,13 @@ export function AdminSidebar({ user, onClose }: AdminSidebarProps & { onClose?: 
                             className={cn(
                                 "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
                                 isActive
-                                    ? "text-white bg-[linear-gradient(180deg,#0066FF_0%,#0066FF_50%,#96C0FF_100%)] shadow-[inset_0_-2px_0_0_#B7DCFF]"
+                                    ? "text-[#011d16] bg-[#d9e838] shadow-lg shadow-emerald-500/10"
                                     : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                             )}
                         >
                             <item.icon className={cn(
                                 "h-5 w-5",
-                                isActive ? "text-white" : "text-gray-400"
+                                isActive ? "text-[#011d16]" : "text-gray-400"
                             )} />
                             {item.name}
                         </Link>
@@ -106,15 +106,15 @@ export function AdminSidebar({ user, onClose }: AdminSidebarProps & { onClose?: 
             {/* Footer / User Profile */}
             <div className="border-t border-white/5 p-4">
                 <div className="mb-3 flex items-center gap-3 rounded-lg bg-white/[0.03] p-3">
-                    <div className="h-9 w-9 rounded-full bg-blue-600 flex items-center justify-center">
-                        <span className="font-semibold text-white text-sm uppercase">
+                    <div className="h-9 w-9 rounded-full bg-[#d9e838] flex items-center justify-center">
+                        <span className="font-semibold text-[#011d16] text-sm uppercase">
                             {user?.full_name?.substring(0, 2) || "AD"}
                         </span>
                     </div>
                     <div className="flex-1 overflow-hidden">
                         <p className="truncate text-sm font-medium text-white">{user?.full_name || 'Admin'}</p>
                         <p className="truncate text-xs text-gray-400">{user?.email}</p>
-                        <p className="truncate text-[10px] text-blue-400 font-medium capitalize mt-0.5">{userRole.replace('_', ' ')}</p>
+                        <p className="truncate text-[10px] text-[#d9e838] font-medium capitalize mt-0.5">{userRole.replace('_', ' ')}</p>
                     </div>
                 </div>
 

@@ -70,14 +70,14 @@ export default function DetailedStats() {
 
     if (loading && !statsData) {
         return (
-            <div className="space-y-4">
+            <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-slate-900">Detailed Stats</h2>
+                    <h2 className="text-xl font-bold text-white tracking-tight">Detailed Stats</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {[...Array(5)].map((_, i) => (
-                        <div key={i} className="p-5 rounded-xl border border-white/10 bg-[#050923] flex items-center justify-center min-h-[100px]">
-                            <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+                        <div key={i} className="p-6 rounded-xl border border-white/5 bg-[#042f24] flex items-center justify-center min-h-[120px] animate-pulse">
+                            <Loader2 className="w-6 h-6 text-[#d9e838] animate-spin" />
                         </div>
                     ))}
                 </div>
@@ -86,25 +86,25 @@ export default function DetailedStats() {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-slate-900">Detailed Stats</h2>
+                <h2 className="text-xl font-bold text-white tracking-tight">Detailed Stats</h2>
                 {selectedAccount && (
-                    <span className="text-xs text-gray-500 font-medium">
+                    <span className="text-xs text-emerald-500/40 font-bold uppercase tracking-wider">
                         {selectedAccount.account_number}
                     </span>
                 )}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {stats.map((stat, i) => (
-                    <div key={i} className="p-5 rounded-xl border border-white/10 bg-[#050923] group hover:border-white/20 transition-all">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 rounded-lg bg-white/5 text-gray-400 group-hover:text-blue-400 group-hover:bg-blue-500/10 transition-colors border border-transparent group-hover:border-blue-500/20">
-                                <stat.icon size={16} />
+                    <div key={i} className="p-6 rounded-xl border border-white/5 bg-[#042f24] group hover:border-[#d9e838]/20 transition-all font-sans">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2.5 rounded-lg bg-white/5 text-emerald-500/40 group-hover:text-[#d9e838] group-hover:bg-[#d9e838]/10 transition-colors border border-transparent group-hover:border-[#d9e838]/20">
+                                <stat.icon size={18} />
                             </div>
-                            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{stat.label}</span>
+                            <span className="text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">{stat.label}</span>
                         </div>
-                        <p className={cn("text-xl font-bold", stat.color || "text-white")}>
+                        <p className={cn("text-2xl font-bold tracking-tight", stat.color ? "text-emerald-400" : "text-white")}>
                             {stat.value}
                         </p>
                     </div>

@@ -1,7 +1,6 @@
 import { Router, Response } from 'express';
 import { getSocketMetrics } from '../services/socket';
 import { supabase } from '../lib/supabase';
-import { redis } from '../lib/redis';
 
 const router = Router();
 
@@ -50,24 +49,7 @@ router.get('/', async (req, res: Response) => {
             };
         }
 
-        // 3. Redis Health
-        try {
-            const start = Date.now();
-            await redis.ping();
-            const latency = Date.now() - start;
-
-            healthData.services.redis = {
-                status: 'healthy',
-                latency: `${latency}ms`
-            };
-        } catch (error) {
-            healthData.services.redis = {
-                status: 'unhealthy',
-                error: (error as Error).message
-            };
-        }
-
-        // 4. MT5 Bridge Health
+        // 3. MT5 Bridge Health
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 5000);

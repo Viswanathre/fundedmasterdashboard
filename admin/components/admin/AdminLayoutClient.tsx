@@ -15,7 +15,7 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
-        <div className="flex h-screen w-full bg-white">
+        <div className="flex h-screen w-full bg-background">
             {/* Desktop Sidebar */}
             <div className="hidden md:block h-full">
                 <AdminSidebar user={user} />
@@ -56,7 +56,7 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
             {/* Main Content Area */}
             <div className="flex flex-1 flex-col overflow-hidden">
                 <AdminHeader onMenuClick={() => setIsSidebarOpen(true)} />
-                <main className="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-8">
+                <main className="flex-1 overflow-y-auto bg-card p-4 md:p-8">
                     {children}
                 </main>
             </div>

@@ -37,12 +37,48 @@ const verifyPaymentSecret = (req: Request): boolean => {
 
     // 4. Check Paymid Signature
     const paymidSignature = req.headers['x-paymid-signature'] || req.headers['signature'];
-    if (paymidSignature) {
+    if (paymidSignature && !req.body.event_name) { // Paymid doesn't have event_name, Cregis does
         console.log('✅ Paymid Signature detected. Allowing.');
         return true;
     }
 
-    // 5. Check Query Param (Legacy/Redirects)
+    // 5. Check Cregis Signature
+    if (req.body.sign && req.body.event_name) {
+        const cregisApiKey = process.env.CREGIS_API_KEY;
+        if (!cregisApiKey) {
+            console.warn('⚠️ CREGIS_API_KEY not configured. Failing verification.');
+            return false;
+        }
+
+        const body = req.body;
+        const filteredParams = Object.keys(body)
+            .filter(key => key !== 'sign' && body[key] !== null && body[key] !== '')
+            .reduce((obj: any, key) => {
+                obj[key] = body[key];
+                return obj;
+            }, {});
+
+        const sortedKeys = Object.keys(filteredParams).sort();
+        let baseString = '';
+        sortedKeys.forEach(key => {
+            // If value is an object (like 'data'), we might need to stringify it correctly
+            // Based on Cregis docs, nested objects are usually skipped or handled specifically.
+            // For 'paid' event, the 'data' is an object.
+            const value = typeof filteredParams[key] === 'object' ? JSON.stringify(filteredParams[key]) : filteredParams[key];
+            baseString += key + value;
+        });
+
+        const stringToSign = cregisApiKey + baseString;
+        const expectedSign = require('crypto').createHash('md5').update(stringToSign).digest('hex').toLowerCase();
+
+        if (body.sign === expectedSign) {
+            console.log('✅ Cregis Signature verified.');
+            return true;
+        }
+        console.warn('🛑 Cregis Signature mismatch. Expected:', expectedSign, 'Got:', body.sign);
+    }
+
+    // 6. Check Query Param (Legacy/Redirects)
     const querySecret = req.query.secret as string;
     if (querySecret === secret) return true;
 
@@ -76,8 +112,21 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         const body = req.body; // ONLY use body (POST), ignore query (GET)
         console.log('Payment webhook received (POST):', { body });
 
-        const internalOrderId = body.reference_id || body.reference || body.orderId || body.internalOrderId;
-        const status = body.status || body.event?.split('.')[1];
+        // Normalize Cregis vs SharkPay vs Paymid
+        let internalOrderId = body.reference_id || body.reference || body.orderId || body.internalOrderId;
+        let status = body.status || body.event?.split('.')[1];
+        let amount = body.amount;
+        let gateway = body.gateway || 'unknown';
+        let paymentId = body.paymentId || body.transaction_id || body.utr;
+
+        // Cregis Specific normalization
+        if (body.event_name === 'order' && body.data) {
+            internalOrderId = body.data.order_id;
+            status = body.data.status;
+            amount = body.data.order_amount;
+            gateway = 'cregis';
+            paymentId = body.data.cregis_id;
+        }
 
         if (!internalOrderId) {
             console.error('Missing order ID in webhook:', body);
@@ -86,13 +135,13 @@ async function handlePaymentWebhook(req: Request, res: Response) {
 
         // Log webhook
         await supabase.from('webhook_logs').insert({
-            event_type: body.event || 'unknown',
-            gateway: body.gateway || 'unknown',
+            event_type: body.event || body.event_type || 'unknown',
+            gateway: gateway,
             order_id: internalOrderId,
-            gateway_order_id: body.orderId || body.transaction_id,
-            amount: body.amount,
+            gateway_order_id: paymentId,
+            amount: amount,
             status: status || 'unknown',
-            utr: body.utr,
+            utr: body.utr || (body.data?.tx_id),
             request_body: body,
         });
 
@@ -112,8 +161,8 @@ async function handlePaymentWebhook(req: Request, res: Response) {
             .from('payment_orders')
             .update({
                 status: 'paid',
-                payment_id: body.paymentId || body.transaction_id || body.utr,
-                payment_method: body.paymentMethod || 'gateway',
+                payment_id: paymentId,
+                payment_method: body.paymentMethod || body.data?.pay_currency || 'gateway',
                 paid_at: new Date().toISOString(),
             })
             .eq('order_id', internalOrderId)
@@ -181,7 +230,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
                 current_balance: order.account_size,
                 current_equity: order.account_size,
                 start_of_day_equity: order.account_size, // Initialize with full balance
-                group: mt5Group, // Store the MT5 group for Risk Rules
+                mt5_group: mt5Group, // Store the MT5 group for Risk Rules
                 status: 'active',
                 login: mt5Data.login,
                 master_password: mt5Data.password,

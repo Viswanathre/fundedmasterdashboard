@@ -15,7 +15,6 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl!, supabaseKey!);
 
 export function startCompetitionScheduler() {
-    console.log("🏆 Competition Scheduler initialized. Schedule: '*/10 * * * *' (Every 10 Minutes)");
 
     cron.schedule('*/10 * * * *', async () => {
         await checkCompetitionStatus();

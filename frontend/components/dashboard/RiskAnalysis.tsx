@@ -48,15 +48,15 @@ function RiskItem({ label, description, status, icon: Icon, breaches }: RiskItem
         <div className="relative group">
             <div
                 className={cn(
-                    "flex flex-col h-full bg-[#050923] border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-all",
-                    hasBreaches ? "cursor-pointer hover:bg-[#050923]/80" : "cursor-default"
+                    "flex flex-col h-full bg-[#042f24] border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-all font-sans",
+                    hasBreaches ? "cursor-pointer hover:bg-[#042f24]/80" : "cursor-default"
                 )}
                 onClick={() => hasBreaches && setIsExpanded(!isExpanded)}
             >
                 {/* Header */}
                 <div className="flex justify-end items-start mb-2 h-6">
                     {hasBreaches && (
-                        <button className="text-gray-500 hover:text-white transition-colors">
+                        <button className="text-emerald-500/40 hover:text-white transition-colors">
                             <ChevronDown size={18} className={cn("transition-transform duration-300", isExpanded ? "rotate-180" : "")} />
                         </button>
                     )}
@@ -64,16 +64,16 @@ function RiskItem({ label, description, status, icon: Icon, breaches }: RiskItem
 
                 {/* Content */}
                 <div className="flex-1 flex flex-col justify-end">
-                    <h4 className="text-lg font-bold text-white mb-1">{label}</h4>
-                    <p className="text-xs text-gray-400 font-medium leading-relaxed mb-4 min-h-[32px]">
+                    <h4 className="text-lg font-bold text-white mb-1 tracking-tight">{label}</h4>
+                    <p className="text-xs text-emerald-500/40 font-bold leading-relaxed mb-4 min-h-[32px] tracking-wide">
                         {description}
                     </p>
 
                     {/* Status Badge */}
                     <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                        <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Status</span>
-                        <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold",
-                            isPassed ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"
+                        <span className="text-[10px] uppercase font-bold text-emerald-500/40 tracking-widest">Status</span>
+                        <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border shadow-sm",
+                            isPassed ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-red-500/10 text-red-400 border-red-500/20"
                         )}>
                             {status.toUpperCase()}
                         </div>
@@ -90,20 +90,20 @@ function RiskItem({ label, description, status, icon: Icon, breaches }: RiskItem
                         exit={{ opacity: 0, y: -10 }}
                         className="absolute top-full left-0 right-0 mt-2 z-20"
                     >
-                        <div className="bg-[#050923] border border-red-500/20 rounded-xl shadow-2xl overflow-hidden p-4">
-                            <h5 className="text-xs font-bold text-red-400 mb-3 flex items-center gap-2">
+                        <div className="bg-[#011d16] border border-red-500/20 rounded-xl shadow-2xl overflow-hidden p-4">
+                            <h5 className="text-[10px] font-bold text-red-400 mb-3 flex items-center gap-2 uppercase tracking-widest">
                                 <AlertTriangle size={12} />
                                 VIOLATIONS ({breaches.length})
                             </h5>
-                            <div className="space-y-2 max-h-48 overflow-y-auto">
+                            <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
                                 {breaches.map((breach, idx) => (
-                                    <div key={idx} className="bg-red-500/5 rounded-lg p-2 text-xs border border-red-500/10">
-                                        <div className="flex justify-between mb-1">
+                                    <div key={idx} className="bg-red-500/5 rounded-lg p-3 text-xs border border-red-500/10">
+                                        <div className="flex justify-between mb-1.5">
                                             <span className="font-bold text-white">{breach.symbol}</span>
-                                            <span className="font-mono text-gray-400">#{breach.ticket}</span>
+                                            <span className="font-mono text-emerald-500/40 font-bold">#{breach.ticket}</span>
                                         </div>
-                                        <div className="text-red-300 mb-1">{breach.reason}</div>
-                                        <div className="text-gray-500 text-[10px] text-right">{breach.time}</div>
+                                        <div className="text-red-300 mb-1.5 font-medium leading-relaxed">{breach.reason}</div>
+                                        <div className="text-emerald-500/20 text-[9px] font-bold text-right uppercase tracking-wider">{breach.time}</div>
                                     </div>
                                 ))}
                             </div>
@@ -179,13 +179,13 @@ export default function RiskAnalysis() {
         return (
             <div className="w-full">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                        <ShieldCheck size={24} className="text-blue-600" />
+                    <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                        <ShieldCheck size={24} className="text-[#d9e838]" />
                         Risk Analysis
                     </h2>
                 </div>
                 <div className="flex items-center justify-center py-12">
-                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                    <Loader2 className="w-8 h-8 text-[#d9e838] animate-spin" />
                 </div>
             </div>
         );
@@ -195,12 +195,12 @@ export default function RiskAnalysis() {
         return (
             <div className="w-full">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                        <ShieldCheck size={24} className="text-blue-600" />
+                    <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                        <ShieldCheck size={24} className="text-[#d9e838]" />
                         Risk Analysis
                     </h2>
                 </div>
-                <div className="p-8 text-center text-gray-500 border border-white/10 rounded-xl bg-[#050923]">
+                <div className="p-8 text-center text-emerald-500/40 border border-white/5 rounded-xl bg-[#011d16] font-medium">
                     Select an account to view risk analysis
                 </div>
             </div>
@@ -214,34 +214,34 @@ export default function RiskAnalysis() {
         <div className="w-full">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                        <ShieldCheck size={24} className="text-blue-600" />
+                    <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                        <ShieldCheck size={24} className="text-[#d9e838]" />
                         Risk Analysis
                     </h2>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-emerald-500/40 font-bold uppercase tracking-wider">
                         {selectedAccount.account_number}
                     </span>
                 </div>
                 <div className="flex items-center gap-3">
                     {lastUpdate && (
-                        <span className="text-[10px] text-gray-500 flex items-center gap-1">
+                        <span className="text-[10px] text-emerald-500/40 flex items-center gap-1 font-bold">
                             <Clock size={10} />
                             Updated: {lastUpdate.toLocaleTimeString()}
                         </span>
                     )}
                     <div className={cn(
-                        "flex items-center gap-2 px-3 py-1 rounded-full border",
+                        "flex items-center gap-2 px-3 py-1 rounded-full border shadow-lg",
                         hasAnyViolations
-                            ? "bg-red-500/10 border-red-500/20"
-                            : "bg-green-500/10 border-green-500/20"
+                            ? "bg-red-500/10 border-red-500/20 shadow-red-500/5"
+                            : "bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/5"
                     )}>
                         <div className={cn(
                             "w-2 h-2 rounded-full animate-pulse",
-                            hasAnyViolations ? "bg-red-500" : "bg-green-500"
+                            hasAnyViolations ? "bg-red-500" : "bg-emerald-500"
                         )} />
                         <span className={cn(
-                            "text-xs font-bold uppercase tracking-wide",
-                            hasAnyViolations ? "text-red-400" : "text-green-400"
+                            "text-[10px] font-bold uppercase tracking-widest",
+                            hasAnyViolations ? "text-red-400" : "text-emerald-400"
                         )}>
                             {hasAnyViolations ? `${Object.values(violations).flat().length} Violations` : "All Clear"}
                         </span>

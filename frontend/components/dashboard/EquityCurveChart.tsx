@@ -112,7 +112,7 @@ export default function EquityCurveChart() {
 
     if (loading) {
         return (
-            <div className="bg-[#050923] border border-white/10 rounded-2xl p-6 h-[400px] animate-pulse">
+            <div className="bg-[#042f24] border border-white/5 rounded-2xl p-6 h-[400px] animate-pulse">
                 <div className="h-6 bg-white/5 rounded w-1/4 mb-4"></div>
                 <div className="h-64 bg-white/5 rounded"></div>
             </div>
@@ -124,45 +124,45 @@ export default function EquityCurveChart() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-[#050923] border border-white/10 rounded-2xl overflow-hidden relative"
+            className="bg-[#042f24] border border-white/5 rounded-2xl overflow-hidden relative"
         >
             {/* Background Glow */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/5 blur-[100px] rounded-full translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 blur-[100px] rounded-full translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
 
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start gap-4 p-4 sm:p-6 md:p-8 pb-2 relative z-10">
                 <div>
                     <div className="flex items-center gap-2 mb-3 sm:mb-4">
-                        <Activity size={16} className="text-blue-400 sm:w-[18px] sm:h-[18px]" />
+                        <Activity size={16} className="text-[#d9e838] sm:w-[18px] sm:h-[18px]" />
                         <h3 className="font-bold text-base sm:text-lg text-white">Equity Curve</h3>
                     </div>
                     <div className="flex flex-col">
-                        <p className="text-xs sm:text-sm text-gray-500 font-medium mb-1">Current Balance</p>
+                        <p className="text-xs sm:text-sm text-emerald-500/50 font-medium mb-1">Current Balance</p>
                         <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
                             <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">${stats.currentEquity.toLocaleString()}</p>
                             <div className={cn(
                                 "flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full border text-xs sm:text-sm font-bold whitespace-nowrap",
                                 stats.totalProfit >= 0
-                                    ? "bg-green-500/10 text-green-400 border-green-500/20"
+                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                                     : "bg-red-500/10 text-red-400 border-red-500/20"
                             )}>
                                 {stats.totalProfit >= 0 ? <TrendingUp size={12} className="sm:w-[14px] sm:h-[14px]" /> : <TrendingDown size={12} className="sm:w-[14px] sm:h-[14px]" />}
                                 <span className="text-xs sm:text-sm">{stats.totalProfit >= 0 ? '+' : ''}${Math.abs(stats.totalProfit).toLocaleString()}</span>
                                 <span className={cn(
                                     "text-[10px] sm:text-xs ml-0.5",
-                                    stats.totalProfit >= 0 ? "text-green-400/80" : "text-red-400/80"
+                                    stats.totalProfit >= 0 ? "text-emerald-400/80" : "text-red-400/80"
                                 )}>
                                     ({stats.percentChange.toFixed(2)}%)
                                 </span>
                             </div>
                         </div>
-                        <p className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider">TOTAL P&L</p>
+                        <p className="text-[10px] sm:text-xs text-emerald-500/40 font-bold uppercase tracking-wider">TOTAL P&L</p>
                     </div>
                 </div>
 
                 {/* Time Period Selector - Scrollable on mobile */}
                 <div className="overflow-x-auto -mx-2 sm:mx-0 px-2 sm:px-0">
-                    <div className="flex bg-[#13161C] p-1 rounded-lg border border-white/5 min-w-fit">
+                    <div className="flex bg-[#011d16] p-1 rounded-lg border border-white/5 min-w-fit">
                         {(['1D', '1W', '1M', '3M', 'ALL'] as TimePeriod[]).map((period) => (
                             <button
                                 key={period}
@@ -170,8 +170,8 @@ export default function EquityCurveChart() {
                                 className={cn(
                                     "px-3 sm:px-4 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap touch-manipulation",
                                     selectedPeriod === period
-                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
-                                        : "text-gray-500 active:text-white active:bg-white/5"
+                                        ? "bg-[#d9e838] text-[#011d16] shadow-lg shadow-emerald-500/20"
+                                        : "text-emerald-500/40 active:text-white active:bg-white/5"
                                 )}
                             >
                                 {period}
@@ -187,33 +187,33 @@ export default function EquityCurveChart() {
                     <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                         <defs>
                             <linearGradient id="equityGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                <stop offset="5%" stopColor="#d9e838" stopOpacity={0.2} />
+                                <stop offset="95%" stopColor="#d9e838" stopOpacity={0} />
                             </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" vertical={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
                         <XAxis
                             dataKey="displayDate"
-                            stroke="#374151"
-                            tick={{ fill: '#6b7280', fontSize: 11, fontWeight: 500 }}
+                            stroke="#1f4b43"
+                            tick={{ fill: '#10b98180', fontSize: 11, fontWeight: 500 }}
                             tickLine={false}
                             axisLine={false}
                             dy={10}
                         />
                         <YAxis
                             domain={['auto', 'auto']}
-                            stroke="#374151"
-                            tick={{ fill: '#6b7280', fontSize: 11, fontWeight: 500 }}
+                            stroke="#1f4b43"
+                            tick={{ fill: '#10b98180', fontSize: 11, fontWeight: 500 }}
                             tickLine={false}
                             axisLine={false}
                             tickFormatter={(value) => `$${(value / 1000).toFixed(1)}k`}
                             dx={-10}
                         />
-                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#ffffff20', strokeWidth: 1 }} />
+                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#ffffff10', strokeWidth: 1 }} />
                         <Area
                             type="monotone"
                             dataKey="equity"
-                            stroke="#3b82f6"
+                            stroke="#d9e838"
                             strokeWidth={3}
                             fill="url(#equityGradient)"
                             animationDuration={1500}

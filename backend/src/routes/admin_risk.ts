@@ -194,7 +194,7 @@ router.post('/upgrade-account', authenticate, async (req: any, res: any) => {
         // For now, assume Phase 1 -> Phase 2.
         const currentType = (sourceAccount.challenge_type || '').toLowerCase();
         let nextType = 'Phase 2';
-        let targetGroup = sourceAccount.group.replace('Phase 1', 'Phase 2').replace('Step 1', 'Step 2');
+        let targetGroup = sourceAccount.mt5_group.replace('Phase 1', 'Phase 2').replace('Step 1', 'Step 2');
 
         if (currentType.includes('phase 2') || currentType.includes('step 2')) {
             return res.status(400).json({ error: 'Phase 2 accounts cannot be auto-upgraded yet (Requires Manual Funded Creation).' });
@@ -247,7 +247,7 @@ router.post('/upgrade-account', authenticate, async (req: any, res: any) => {
                 current_equity: payload.deposit,
                 start_of_day_equity: payload.deposit,
                 status: 'active',
-                group: targetGroup,
+                mt5_group: targetGroup,
                 plan_type: sourceAccount.metadata?.plan_type || 'Standard',
                 metadata: {
                     ...sourceAccount.metadata,

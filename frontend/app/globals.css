@@ -1,47 +1,46 @@
 @import "tailwindcss";
 
 :root {
-  /* Light Theme Palette */
-  --background: 0 0% 100%;
+  /* Deep Forest Green Theme Palette */
+  --background: 165 93% 6%;
+  /* #011d16 */
+  --foreground: 0 0% 100%;
   /* #ffffff */
-  --foreground: 222.2 84% 4.9%;
-  /* #020617 */
 
-  --card: 0 0% 100%;
-  /* #ffffff */
-  --card-foreground: 222.2 84% 4.9%;
+  --card: 165 84% 10%;
+  /* #042f24 */
+  --card-foreground: 0 0% 100%;
 
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
+  --popover: 165 84% 10%;
+  --popover-foreground: 0 0% 100%;
 
-  --primary: 221.2 83.2% 53.3%;
-  /* #2563eb Blue 600 */
-  --primary-foreground: 210 40% 98%;
+  --primary: 65 78% 56%;
+  /* #d9e838 Neon Yellow/Lime */
+  --primary-foreground: 165 93% 6%;
 
-  --secondary: 210 40% 96.1%;
-  /* #f1f5f9 Slate 100 */
-  --secondary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 165 84% 10%;
+  --secondary-foreground: 0 0% 100%;
 
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  /* #64748b Slate 500 */
+  --muted: 165 84% 10%;
+  --muted-foreground: 165 40% 40%;
+  /* Adjusted for readability */
 
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
+  --accent: 65 78% 56%;
+  --accent-foreground: 165 93% 6%;
 
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
 
-  --border: 214.3 31.8% 91.4%;
-  /* #e2e8f0 Slate 200 */
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
+  --border: 169 41% 21%;
+  /* #1f4b43 subtle green */
+  --input: 169 41% 21%;
+  --ring: 65 78% 56%;
 
   --radius: 0.5rem;
 
-  /* Custom "Trading Terminal" Variables - Adjusted for Light */
+  /* Custom "Trading Terminal" Variables */
   --color-up: #10b981;
-  /* Green */
+  /* Emerald Green */
   --color-down: #ef4444;
   /* Red */
 }

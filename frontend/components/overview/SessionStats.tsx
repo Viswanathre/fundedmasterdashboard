@@ -21,13 +21,13 @@ export default function SessionStats({ sessions }: SessionStatsProps) {
 
     const displaySessions = sessions && sessions.length > 0 ? sessions : defaultSessions;
     return (
-        <div className="bg-[#050923] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 h-full relative overflow-hidden group">
+        <div className="bg-[#042f24] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 h-full relative overflow-hidden group">
             <h3 className="text-white font-medium text-lg relative z-10 mb-6 flex justify-between items-center">
                 Session Win Rates
                 <div className="flex gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#d9e838]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#d9e838]/80" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#d9e838]/60" />
                 </div>
             </h3>
 
@@ -37,13 +37,13 @@ export default function SessionStats({ sessions }: SessionStatsProps) {
                         <span className="text-xs font-bold text-gray-400 w-16 uppercase tracking-wider">{session.name}</span>
 
                         {/* Custom Bar */}
-                        <div className="flex-1 h-2.5 bg-[#0a0f1c] rounded-full overflow-hidden relative ring-1 ring-white/5 p-[1px] flex items-center">
-                            {/* Blue Progress */}
+                        <div className="flex-1 h-2.5 bg-[#011d16] rounded-full overflow-hidden relative ring-1 ring-white/5 p-[1px] flex items-center">
+                            {/* Neon Yellow Progress */}
                             <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${session.winRate}%` }}
                                 transition={{ duration: 1, delay: i * 0.1 }}
-                                className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full relative z-10 flex items-center justify-end pr-0.5 shadow-[0_0_10px_rgba(37,99,235,0.4)]"
+                                className="h-full bg-[#d9e838] rounded-full relative z-10 flex items-center justify-end pr-0.5 shadow-[0_0_10px_rgba(217,232,56,0.4)]"
                             >
                                 {/* Dot indicator */}
                                 <div className="w-1 h-1 bg-white rounded-full shadow-sm" />

@@ -10,12 +10,12 @@ interface BalanceHistoryChartProps {
 export default function BalanceHistoryChart({ data }: BalanceHistoryChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="lg:col-span-4 bg-[#121826]/30 border border-white/5 rounded-2xl p-6 relative overflow-hidden group min-h-[350px] flex flex-col">
+            <div className="lg:col-span-4 bg-[#042f24]/30 border border-white/5 rounded-2xl p-6 relative overflow-hidden group min-h-[350px] flex flex-col">
                 <h3 className="text-white font-medium text-lg mb-4 relative z-10 flex items-center justify-between">
                     Balance History
                     <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider bg-white/5 px-2 py-0.5 rounded">All Time</span>
                 </h3>
-                <div className="flex-1 flex items-center justify-center text-gray-500 text-sm relative z-10 border border-dashed border-white/10 rounded-xl bg-[#0a0f1c]/50">
+                <div className="flex-1 flex items-center justify-center text-gray-500 text-sm relative z-10 border border-dashed border-white/10 rounded-xl bg-[#011d16]/50">
                     <div className="text-center">
                         <Activity className="w-8 h-8 text-gray-600 mb-2 mx-auto" />
                         <p className="text-gray-400 font-medium">No Data Available</p>
@@ -30,7 +30,7 @@ export default function BalanceHistoryChart({ data }: BalanceHistoryChartProps) 
     const isProfit = currentBalance >= startBalance;
 
     return (
-        <div className="lg:col-span-4 bg-[#121826]/30 border border-white/5 rounded-2xl p-6 relative overflow-hidden group min-h-[350px] flex flex-col">
+        <div className="lg:col-span-4 bg-[#042f24]/30 border border-white/5 rounded-2xl p-6 relative overflow-hidden group min-h-[350px] flex flex-col">
             <h3 className="text-white font-medium text-lg mb-4 relative z-10 flex items-center justify-between">
                 Balance History
                 <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider bg-white/5 px-2 py-0.5 rounded">All Time</span>
@@ -55,7 +55,7 @@ export default function BalanceHistoryChart({ data }: BalanceHistoryChartProps) 
                         />
                         <Tooltip
                             contentStyle={{
-                                backgroundColor: '#0a0f1c',
+                                backgroundColor: '#011d16',
                                 borderColor: 'rgba(255,255,255,0.1)',
                                 borderRadius: '8px',
                                 fontSize: '12px'

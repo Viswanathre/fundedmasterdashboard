@@ -47,8 +47,8 @@ function RiskItem({ label, description, status, icon: Icon, breaches }: RiskItem
         <div className="relative group">
             <div
                 className={cn(
-                    "flex flex-col h-full bg-[#1C2333] border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-all",
-                    hasBreaches ? "cursor-pointer hover:bg-[#1C2333]/80" : "cursor-default"
+                    "flex flex-col h-full bg-[#042f24] border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-all",
+                    hasBreaches ? "cursor-pointer hover:bg-[#042f24]/80" : "cursor-default"
                 )}
                 onClick={() => hasBreaches && setIsExpanded(!isExpanded)}
             >
@@ -89,7 +89,7 @@ function RiskItem({ label, description, status, icon: Icon, breaches }: RiskItem
                         exit={{ opacity: 0, y: -10 }}
                         className="absolute top-full left-0 right-0 mt-2 z-20"
                     >
-                        <div className="bg-[#1C2333] border border-red-500/20 rounded-xl shadow-2xl overflow-hidden p-4">
+                        <div className="bg-[#042f24] border border-red-500/20 rounded-xl shadow-2xl overflow-hidden p-4">
                             <h5 className="text-xs font-bold text-red-400 mb-3 flex items-center gap-2">
                                 <AlertTriangle size={12} />
                                 VIOLATIONS ({breaches.length})
@@ -185,12 +185,12 @@ export default function RiskAnalysis() {
             <div className="w-full">
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                        <ShieldCheck size={24} className="text-blue-500" />
+                        <ShieldCheck size={24} className="text-[#d9e838]" />
                         Risk Analysis
                     </h2>
                 </div>
                 <div className="flex items-center justify-center py-12">
-                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                    <Loader2 className="w-8 h-8 text-[#d9e838] animate-spin" />
                 </div>
             </div>
         );
@@ -201,11 +201,11 @@ export default function RiskAnalysis() {
             <div className="w-full">
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                        <ShieldCheck size={24} className="text-blue-500" />
+                        <ShieldCheck size={24} className="text-[#d9e838]" />
                         Risk Analysis
                     </h2>
                 </div>
-                <div className="p-8 text-center text-gray-500 border border-white/10 rounded-xl bg-gray-900">
+                <div className="p-8 text-center text-gray-500 border border-white/10 rounded-xl bg-[#042f24]">
                     Select an account to view risk analysis
                 </div>
             </div>
@@ -220,7 +220,7 @@ export default function RiskAnalysis() {
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
                     <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                        <ShieldCheck size={24} className="text-blue-500" />
+                        <ShieldCheck size={24} className="text-[#d9e838]" />
                         Risk Analysis
                     </h2>
                     <span className="text-xs text-gray-500">

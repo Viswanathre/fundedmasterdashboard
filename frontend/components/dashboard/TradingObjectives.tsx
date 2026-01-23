@@ -41,18 +41,18 @@ function ObjectiveRow({ title, timer, max, current, threshold, status, isLossLim
     const remainingVal = remainingOverride !== undefined ? remainingOverride : Math.max(0, max - current);
 
     return (
-        <div className="p-5 rounded-xl border border-white/10 bg-[#050923] hover:border-white/20 transition-all">
+        <div className="p-5 rounded-xl border border-white/5 bg-[#042f24] hover:border-white/10 transition-all font-sans">
             <div className="flex justify-between items-start mb-3">
                 <div className="flex items-center gap-3">
-                    <h3 className="font-bold text-white text-sm">{title}</h3>
+                    <h3 className="font-bold text-white text-sm tracking-tight">{title}</h3>
                     <div className="group relative">
-                        <AlertCircle size={14} className="text-gray-500 cursor-help" />
-                        <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-black text-white text-[10px] rounded-lg z-20 border border-white/10">
+                        <AlertCircle size={14} className="text-emerald-500/40 cursor-help" />
+                        <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-[#011d16] text-white text-[10px] rounded-lg z-20 border border-white/10">
                             Breaching this limit will close your account.
                         </div>
                     </div>
                     {timer && (
-                        <span className="flex items-center gap-1.5 text-[10px] font-bold text-blue-400 bg-blue-500/10 px-2 py-1 rounded-md border border-blue-500/20">
+                        <span className="flex items-center gap-1.5 text-[10px] font-bold text-[#d9e838] bg-[#d9e838]/10 px-2 py-1 rounded-md border border-[#d9e838]/20">
                             <Clock size={12} /> {timer}
                         </span>
                     )}
@@ -60,19 +60,19 @@ function ObjectiveRow({ title, timer, max, current, threshold, status, isLossLim
                 <span className={cn(
                     "text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border",
                     status === "Failed" ? "bg-red-500/10 text-red-400 border-red-500/20" :
-                        status === "Passed" ? "bg-green-500/10 text-green-400 border-green-500/20" :
-                            "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                        status === "Passed" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                            "bg-[#d9e838]/10 text-[#d9e838] border-[#d9e838]/20"
                 )}>
                     {status}
                 </span>
             </div>
 
-            <div className="flex justify-between text-[11px] text-gray-500 mb-2 font-medium">
+            <div className="flex justify-between text-[11px] text-emerald-500/40 mb-2 font-bold tracking-wide">
                 <span>Max Allowed: ${max.toLocaleString()}</span>
                 <span>Threshold: ${threshold.toLocaleString()}</span>
             </div>
 
-            <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden relative">
+            <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden relative">
                 {/* Progress Bar */}
                 <motion.div
                     initial={{ width: 0 }}
@@ -80,18 +80,18 @@ function ObjectiveRow({ title, timer, max, current, threshold, status, isLossLim
                     transition={{ duration: 1, ease: "easeOut" }}
                     className={cn(
                         "h-full rounded-full relative",
-                        isLossLimit ? "bg-gradient-to-r from-red-500 to-red-600" : "bg-gradient-to-r from-green-400 to-green-600"
+                        isLossLimit ? "bg-gradient-to-r from-red-500 to-red-600" : "bg-gradient-to-r from-emerald-400 to-emerald-600"
                     )}
                 >
                     <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-white rounded-full shadow-sm mr-1" />
                 </motion.div>
             </div>
 
-            <div className="flex justify-between mt-2">
-                <span className={cn("text-xs font-bold", isLossLimit ? "text-red-400" : "text-green-400")}>
+            <div className="flex justify-between mt-2.5">
+                <span className={cn("text-xs font-bold tracking-tight", isLossLimit ? "text-red-400" : "text-emerald-400")}>
                     ${current.toLocaleString()}
                 </span>
-                <span className="text-xs font-bold text-white">
+                <span className="text-xs font-bold text-white tracking-tight">
                     Remaining: ${remainingVal.toLocaleString()}
                 </span>
             </div>
@@ -203,9 +203,9 @@ export default function TradingObjectives() {
     if (accountLoading || loadingRules) {
         return (
             <div className="space-y-4">
-                <h2 className="text-lg font-bold text-slate-900">Trading Objectives</h2>
+                <h2 className="text-xl font-bold text-white tracking-tight">Trading Objectives</h2>
                 <div className="flex items-center justify-center py-12">
-                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                    <Loader2 className="w-8 h-8 text-[#d9e838] animate-spin" />
                 </div>
             </div>
         );
@@ -214,8 +214,8 @@ export default function TradingObjectives() {
     if (!selectedAccount || !rules) {
         return (
             <div className="space-y-4">
-                <h2 className="text-lg font-bold text-slate-900">Trading Objectives</h2>
-                <div className="p-8 text-center text-gray-500 border border-slate-200 rounded-xl bg-slate-100">
+                <h2 className="text-xl font-bold text-white tracking-tight">Trading Objectives</h2>
+                <div className="p-8 text-center text-emerald-500/40 border border-white/5 rounded-xl bg-[#011d16] font-medium">
                     Select an account to view trading objectives
                 </div>
             </div>
@@ -250,17 +250,17 @@ export default function TradingObjectives() {
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <h2 className="text-lg font-bold text-slate-900">Trading Objectives</h2>
+                <div className="flex items-center gap-4">
+                    <h2 className="text-xl font-bold text-white tracking-tight">Trading Objectives</h2>
                     {selectedAccount && (
-                        <span className="text-xs text-gray-500 font-medium">
+                        <span className="text-xs text-emerald-500/40 font-bold uppercase tracking-wider">
                             {selectedAccount.account_number} • ${initialBalance.toLocaleString()}
                         </span>
                     )}
                 </div>
-                <button className="text-xs font-bold text-blue-400 hover:text-blue-300">View Rules</button>
+                <button className="text-xs font-bold text-[#d9e838] hover:text-[#d9e838]/80 transition-colors uppercase tracking-widest">View Rules</button>
             </div>
 
 

@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { supabase } from '../lib/supabase';
+import { verifyOTPToken } from './otp';
 
 const router = Router();
 
@@ -114,6 +115,19 @@ router.post('/withdraw', authenticate, async (req: AuthRequest, res: Response) =
 
         if (!amount || amount <= 0) {
             res.status(400).json({ error: 'Invalid amount' });
+            return;
+        }
+
+        // 2FA Verification - Require OTP token
+        const { otp_token } = req.body;
+        if (!otp_token) {
+            res.status(400).json({ error: '2FA verification required. Please request an OTP code first.' });
+            return;
+        }
+
+        const isValidOTP = await verifyOTPToken(user.id, otp_token, 'withdrawal');
+        if (!isValidOTP) {
+            res.status(401).json({ error: 'Invalid or expired verification code. Please request a new code.' });
             return;
         }
 

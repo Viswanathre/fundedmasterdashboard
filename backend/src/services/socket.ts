@@ -56,10 +56,7 @@ export function initializeSocket(httpServer: HTTPServer) {
                     challenges: [] // No longer auto-subscribing
                 });
 
-                console.log(`🔐 Socket authenticated for user: ${userId}`); // Auth is important, but maybe debug only? Let's keep it visible for now or debug?
-                // User asked to wrap high volume logs. Auth is 1 per session. 
-                // Let's wrap it to be consistent with "logs in terminal" request.
-                if (DEBUG) console.log(`🔐 Socket authenticated for user: ${userId}`);
+                if (DEBUG) console.log(`Socket authenticated: ${userId}`);
             } catch (error) {
                 console.error('Authentication error:', error);
                 socket.emit('auth_error', { message: 'Authentication failed' });
@@ -70,39 +67,38 @@ export function initializeSocket(httpServer: HTTPServer) {
         socket.on('subscribe_challenge', (challengeId: string) => {
             const roomName = `challenge_${challengeId}`;
             socket.join(roomName);
-            if (DEBUG) console.log(`📡 Socket ${socket.id} subscribed to ${roomName}`);
+            if (DEBUG) console.log(`Subscribed to ${roomName}`);
         });
 
         // Handle unsubscribe
         socket.on('unsubscribe_challenge', (challengeId: string) => {
             const roomName = `challenge_${challengeId}`;
             socket.leave(roomName);
-            if (DEBUG) console.log(`📴 Socket ${socket.id} unsubscribed from ${roomName}`);
+            if (DEBUG) console.log(`Unsubscribed from ${roomName}`);
         });
 
         // Handle Competition Room Join
         socket.on('subscribe_competition', (competitionId: string) => {
             const roomName = `competition_${competitionId}`;
             socket.join(roomName);
-            if (DEBUG) console.log(`🏆 Socket ${socket.id} joined competition room: ${roomName}`);
+            if (DEBUG) console.log(`Joined competition: ${roomName}`);
         });
 
         socket.on('unsubscribe_competition', (competitionId: string) => {
             const roomName = `competition_${competitionId}`;
             socket.leave(roomName);
-            if (DEBUG) console.log(`👋 Socket ${socket.id} left competition room: ${roomName}`);
+            if (DEBUG) console.log(`Left competition: ${roomName}`);
         });
 
         socket.on('disconnect', () => {
-            // if (DEBUG) console.log(`🔌 WebSocket disconnected: ${socket.id}`);
+            // Silent disconnect
         });
 
         socket.on('error', (error) => {
-            console.error(`❌ WebSocket error on ${socket.id}:`, error);
+            console.error(`WebSocket error on ${socket.id}:`, error);
         });
     });
 
-    console.log('✅ Socket.IO initialized');
     return io;
 }
 
@@ -135,46 +131,28 @@ export function getSocketMetrics() {
 
 // Broadcast helpers
 export function broadcastTradeUpdate(challengeId: string, trade: any) {
-    if (!io) {
-        console.warn('⚠️ Socket.IO not initialized, cannot broadcast trade update');
-        return;
-    }
+    if (!io) return;
 
     const roomName = `challenge_${challengeId}`;
     io.to(roomName).emit('trade_update', trade);
-    if (DEBUG) console.log(`📤 Broadcasted trade update to room: ${roomName}`);
 }
 
 export function broadcastBalanceUpdate(challengeId: string, balanceData: any) {
-    if (!io) {
-        console.warn('⚠️ Socket.IO not initialized, cannot broadcast balance update');
-        return;
-    }
+    if (!io) return;
 
     const roomName = `challenge_${challengeId}`;
     io.to(roomName).emit('balance_update', balanceData);
-    if (DEBUG) console.log(`📤 Broadcasted balance update to room: ${roomName}`);
 }
 
 export function broadcastToUser(userId: string, event: string, data: any) {
-    if (!io) {
-        console.warn('⚠️ Socket.IO not initialized, cannot broadcast to user');
-        return;
-    }
+    if (!io) return;
 
     io.to(`user_${userId}`).emit(event, data);
-    if (DEBUG) console.log(`📤 Broadcasted ${event} to user: ${userId}`);
 }
 
 export function broadcastLeaderboard(competitionId: string, leaderboard: any[]) {
-    if (!io) {
-        console.warn('⚠️ Socket.IO not initialized, cannot broadcast leaderboard');
-        return;
-    }
+    if (!io) return;
 
-    // Broadcast to a specific competition room (e.g., 'competition_123')
-    // Clients viewing that competition will join this room.
     const roomName = `competition_${competitionId}`;
     io.to(roomName).emit('leaderboard_update', leaderboard);
-    if (DEBUG) console.log(`🏆 Broadcasted leaderboard update for ${competitionId} (Rows: ${leaderboard.length})`);
 }

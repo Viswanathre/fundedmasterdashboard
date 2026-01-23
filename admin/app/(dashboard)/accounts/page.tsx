@@ -97,50 +97,50 @@ export default async function AccountsListPage({
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-900">All MT5 Accounts</h1>
-                    <p className="text-sm text-gray-600 mt-1">Master list of all created trading accounts</p>
+                    <h1 className="text-2xl font-semibold text-white">All MT5 Accounts</h1>
+                    <p className="text-sm text-gray-500 mt-1">Master list of all created trading accounts</p>
                 </div>
-                <div className="bg-white border border-gray-200 rounded-lg px-4 py-2 shadow-sm">
+                <div className="bg-[#042f24] border border-white/10 rounded-lg px-4 py-2 shadow-sm">
                     <p className="text-xs text-gray-500 uppercase font-semibold">Total Accounts</p>
-                    <p className="text-2xl font-bold text-indigo-600">{count || 0}</p>
+                    <p className="text-2xl font-bold text-[#d9e838]">{count || 0}</p>
                 </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-[#042f24] rounded-lg border border-white/10 p-4">
                 <div className="w-full max-w-md">
                     <SearchInput placeholder="Search by Email, Login, or ID..." />
                 </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-[#042f24] rounded-lg border border-white/10 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-50 border-b border-gray-200">
+                        <thead className="bg-white/5 border-b border-white/10">
                             <tr>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Account ID</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">User</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Login</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Password</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Type</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Plan / Group</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Balance</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Equity</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Status</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Actions</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Created</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">Account ID</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">User</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">Login</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">Password</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">Type</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">Plan / Group</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">Balance</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">Equity</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">Status</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">Actions</th>
+                                <th className="px-6 py-3 font-semibold text-gray-400 text-xs uppercase">Created</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-white/5">
                             {accountsWithProfiles.map((account) => (
-                                <tr key={account.id} className="hover:bg-gray-50 transition-colors">
-                                    <td className="px-6 py-4 font-mono text-xs text-gray-600">
-                                        <div className="text-indigo-600 font-medium">
+                                <tr key={account.id} className="hover:bg-white/5 transition-colors">
+                                    <td className="px-6 py-4 font-mono text-xs text-gray-400">
+                                        <div className="text-[#d9e838] font-medium">
                                             {account.challenge_number || `SF-${account.id.slice(0, 8)}`}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div>
-                                            <div className="font-medium text-gray-900">
+                                            <div className="font-medium text-white">
                                                 {account.profile?.full_name || "Unknown"}
                                             </div>
                                             <div className="text-xs text-gray-500 font-mono">
@@ -148,31 +148,31 @@ export default async function AccountsListPage({
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 font-mono text-gray-900">
+                                    <td className="px-6 py-4 font-mono text-white">
                                         {account.login || "-"}
                                     </td>
-                                    <td className="px-6 py-4 font-mono text-gray-900">
+                                    <td className="px-6 py-4 font-mono text-white">
                                         <div className="flex flex-col">
                                             <span title="Master Password">{account.master_password || "-"}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-gray-900 capitalize">
-                                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                                    <td className="px-6 py-4 text-white capitalize">
+                                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-white/5 text-gray-400">
                                             {account.challenge_type}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="text-gray-900 font-medium text-xs break-words max-w-[150px]">
+                                        <div className="text-white font-medium text-xs break-words max-w-[150px]">
                                             {account.plan_type || "Standard"}
                                         </div>
                                         <div className="text-[10px] text-gray-500 font-mono truncate max-w-[150px]" title={account.server}>
                                             {account.mt5_group}
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 font-medium text-gray-900">
+                                    <td className="px-6 py-4 font-medium text-white">
                                         ${account.initial_balance?.toLocaleString()}
                                     </td>
-                                    <td className="px-6 py-4 font-medium text-blue-600">
+                                    <td className="px-6 py-4 font-medium text-[#d9e838]">
                                         ${account.current_equity?.toLocaleString() ?? '-'}
                                     </td>
                                     <td className="px-6 py-4">

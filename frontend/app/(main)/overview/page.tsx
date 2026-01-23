@@ -42,7 +42,7 @@ function OverviewContent() {
 
 
     return (
-        <div className="flex h-screen overflow-hidden bg-transparent text-slate-900 relative">
+        <div className="flex h-screen overflow-hidden bg-transparent text-white relative">
             <PageLoader isLoading={loading} />
             <div className="flex-1 p-8 overflow-y-auto relative scrollbar-thin scrollbar-thumb-gray-800 hover:scrollbar-thumb-gray-700">
                 <div className="max-w-[1600px] mx-auto space-y-6">
@@ -54,10 +54,10 @@ function OverviewContent() {
                         className="flex justify-between items-center mb-8"
                     >
                         <div>
-                            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600">
+                            <h1 className="text-3xl font-bold text-white">
                                 Overview
                             </h1>
-                            <p className="text-slate-500 text-sm mt-1">Detailed performance analytics and behavioral insights</p>
+                            <p className="text-gray-400 text-sm mt-1">Detailed performance analytics and behavioral insights</p>
                         </div>
                     </motion.div>
 

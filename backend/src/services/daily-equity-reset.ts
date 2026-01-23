@@ -9,8 +9,6 @@ dotenv.config();
 // Using imported 'supabase' from lib to share config
 
 export function startDailyEquityReset() {
-    console.log("📅 Daily Equity Reset Scheduler initialized. Schedule: '0 0 * * *' (Midnight)");
-
     // Schedule task to run at 00:00 every day
     cron.schedule('0 0 * * *', async () => {
         console.log("🕛 [Daily Reset] Starting Daily Equity Reset...");

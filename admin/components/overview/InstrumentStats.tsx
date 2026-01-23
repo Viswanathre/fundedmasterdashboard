@@ -15,7 +15,7 @@ interface InstrumentStatsProps {
 
 export default function InstrumentStats({ instruments = [] }: InstrumentStatsProps) {
     return (
-        <div className="flex flex-col h-full bg-[#121826]/30 rounded-2xl border border-white/5 p-2">
+        <div className="flex flex-col h-full bg-[#042f24]/30 rounded-2xl border border-white/5 p-2">
             <h3 className="text-white font-medium text-lg relative z-10 mb-6 px-2 flex justify-between items-center">
                 Most Traded Instruments
                 <span className="text-[10px] text-gray-500 bg-white/5 px-2 py-0.5 rounded uppercase font-bold tracking-wider">Top 3</span>
@@ -30,7 +30,7 @@ export default function InstrumentStats({ instruments = [] }: InstrumentStatsPro
                     return (
                         <div key={item.symbol} className="flex flex-col gap-2.5">
                             <div className="flex justify-between items-end">
-                                <span className="text-xs font-bold text-gray-200 tracking-wide bg-[#0a0f1c] px-2 py-0.5 rounded border border-white/5">{item.symbol}</span>
+                                <span className="text-xs font-bold text-gray-200 tracking-wide bg-[#011d16] px-2 py-0.5 rounded border border-white/5">{item.symbol}</span>
                                 <div className="flex items-center gap-2 text-[10px] font-medium">
                                     <div className="flex items-center gap-1">
                                         <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
@@ -44,7 +44,7 @@ export default function InstrumentStats({ instruments = [] }: InstrumentStatsPro
                             </div>
 
                             {/* Progress Bar */}
-                            <div className="h-2.5 w-full bg-[#0a0f1c] rounded-full overflow-hidden flex relative ring-1 ring-white/5 p-[1px]">
+                            <div className="h-2.5 w-full bg-[#011d16] rounded-full overflow-hidden flex relative ring-1 ring-white/5 p-[1px]">
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${winPct}%` }}

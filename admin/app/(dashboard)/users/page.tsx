@@ -40,39 +40,39 @@ export default async function AdminUsersPage({
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-semibold text-gray-900">User Management</h1>
-                <p className="text-sm text-gray-600 mt-1">View and manage all registered users</p>
+                <h1 className="text-2xl font-bold text-white">User Management</h1>
+                <p className="text-sm text-gray-500 mt-1">View and manage all registered users</p>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-[#042f24] rounded-xl border border-white/5 p-4 shadow-sm">
                 <div className="w-full max-w-md">
                     <SearchInput placeholder="Search by name, email or ID..." />
                 </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-[#042f24] rounded-xl border border-white/5 overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-50 border-b border-gray-200">
+                        <thead className="bg-[#011d16] border-b border-white/5">
                             <tr>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">User Details</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Status</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Commission</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Referrals</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase">Joined Date</th>
-                                <th className="px-6 py-3 font-semibold text-gray-700 text-xs uppercase text-right">Actions</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">User Details</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">Status</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">Commission</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">Referrals</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase">Joined Date</th>
+                                <th className="px-6 py-3 font-semibold text-gray-500 text-xs uppercase text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-white/5">
                             {users?.map((user) => (
-                                <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                                <tr key={user.id} className="hover:bg-white/5 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 flex-shrink-0 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-semibold">
+                                            <div className="h-10 w-10 flex-shrink-0 rounded-full bg-[#d9e838]/10 flex items-center justify-center text-[#d9e838] font-bold">
                                                 {user.full_name?.charAt(0) || "U"}
                                             </div>
                                             <div>
-                                                <div className="font-medium text-gray-900">
+                                                <div className="font-bold text-white">
                                                     {user.full_name || "Unknown"}
                                                 </div>
                                                 <div className="text-xs text-gray-500 font-mono">
@@ -84,17 +84,17 @@ export default async function AdminUsersPage({
                                     <td className="px-6 py-4">
                                         <StatusBadge status="Active" />
                                     </td>
-                                    <td className="px-6 py-4 font-medium text-gray-900">
+                                    <td className="px-6 py-4 font-bold text-white">
                                         ${user.total_commission || 0}
                                     </td>
-                                    <td className="px-6 py-4 text-gray-600">{user.total_referrals || 0}</td>
-                                    <td className="px-6 py-4 text-gray-600">
+                                    <td className="px-6 py-4 text-gray-400">{user.total_referrals || 0}</td>
+                                    <td className="px-6 py-4 text-gray-500">
                                         {new Date(user.created_at).toLocaleDateString()}
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <Link
                                             href={`/users/${user.id}`}
-                                            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                                            className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-[#011d16] px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition-all"
                                         >
                                             View Details
                                             <ChevronRight className="ml-1 h-4 w-4" />

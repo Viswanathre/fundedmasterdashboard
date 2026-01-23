@@ -55,28 +55,28 @@ export default function EconomicsPage() {
     });
 
     return (
-        <div className="min-h-screen bg-transparent text-slate-900 p-6 md:p-8 font-sans">
+        <div className="min-h-screen bg-transparent text-white p-6 md:p-8 font-sans">
             <div className="max-w-7xl mx-auto space-y-8">
 
                 {/* HEADLINE */}
                 <div className="flex flex-col md:flex-row justify-between items-end gap-6 pb-6 border-b border-white/5">
                     <div>
-                        <h1 className="text-3xl font-black text-black flex items-center gap-3 tracking-tight mb-2">
-                            <Globe className="text-blue-600 drop-shadow-[0_0_15px_rgba(37,99,235,0.2)]" size={32} />
+                        <h1 className="text-3xl font-black text-white flex items-center gap-3 tracking-tight mb-2">
+                            <Globe className="text-[#d9e838] drop-shadow-[0_0_15px_rgba(217,232,56,0.2)]" size={32} />
                             Economic Calendar
                         </h1>
-                        <p className="text-slate-500 font-medium">Track global market-moving events in real-time.</p>
+                        <p className="text-gray-500 font-medium">Track global market-moving events in real-time.</p>
                     </div>
 
                     <div className="flex items-center gap-4 w-full md:w-auto">
                         <div className="relative group w-full md:w-64">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-[#00E5FF] transition-colors" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-[#d9e838] transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Search events or currency..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-[#0a0f1c] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#00E5FF] transition-all placeholder:text-gray-600 shadow-inner"
+                                className="w-full bg-[#011d16] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#d9e838] transition-all placeholder:text-gray-600 shadow-inner"
                             />
                         </div>
                     </div>
@@ -86,7 +86,7 @@ export default function EconomicsPage() {
                 <div className="flex flex-col lg:flex-row gap-6 justify-between items-start lg:items-center">
 
                     {/* Date Navigation */}
-                    <div className="flex bg-[#0a0f1c] p-1 rounded-xl border border-white/5">
+                    <div className="flex bg-[#011d16] p-1 rounded-xl border border-white/5">
                         {TAB_OPTIONS.map((tab) => (
                             <button
                                 key={tab}
@@ -94,7 +94,7 @@ export default function EconomicsPage() {
                                 className={cn(
                                     "px-5 py-2 rounded-lg text-sm font-bold transition-all",
                                     selectedTab === tab
-                                        ? "bg-[#00E5FF]/10 text-[#00E5FF] shadow-[0_0_10px_rgba(0,229,255,0.1)]"
+                                        ? "bg-[#d9e838]/10 text-[#d9e838] shadow-[0_0_10px_rgba(217,232,56,0.1)]"
                                         : "text-gray-400 hover:text-white"
                                 )}
                             >
@@ -127,11 +127,11 @@ export default function EconomicsPage() {
                 </div>
 
                 {/* EVENTS TABLE */}
-                <div className="bg-[#0a0f1c] rounded-2xl overflow-hidden shadow-2xl border border-white/5">
+                <div className="bg-[#011d16] rounded-2xl overflow-hidden shadow-2xl border border-white/5">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-[#0a0f1c] text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b border-white/5">
+                                <tr className="bg-[#011d16] text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b border-white/5">
                                     <th className="px-6 py-4 w-24">Time</th>
                                     <th className="px-6 py-4 w-20">Cur</th>
                                     <th className="px-6 py-4 w-24 text-center">Impact</th>
@@ -141,7 +141,7 @@ export default function EconomicsPage() {
                                     <th className="px-6 py-4 text-right w-32">Previous</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5 bg-[#0a0f1c]">
+                            <tbody className="divide-y divide-white/5 bg-[#011d16]">
                                 <AnimatePresence initial={false}>
                                     {filteredEvents.map((item) => (
                                         <motion.tr
@@ -176,7 +176,7 @@ export default function EconomicsPage() {
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 {item.actual ? (
-                                                    <span className="text-sm font-bold text-cyan-300">{item.actual}</span>
+                                                    <span className="text-sm font-bold text-[#d9e838]">{item.actual}</span>
                                                 ) : (
                                                     <span className="text-gray-400">-</span>
                                                 )}

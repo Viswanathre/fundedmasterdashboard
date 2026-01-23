@@ -16,7 +16,7 @@ interface StatsCardProps {
 
 export default function StatsCard({ title, value, change, isPositive, icon: Icon, color = "blue" }: StatsCardProps) {
     const colorStyles = {
-        blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+        blue: "bg-[#d9e838]/10 text-[#d9e838] border-[#d9e838]/20",
         green: "bg-green-500/10 text-green-400 border-green-500/20",
         orange: "bg-orange-500/10 text-orange-400 border-orange-500/20",
         purple: "bg-purple-500/10 text-purple-400 border-purple-500/20",
@@ -27,7 +27,7 @@ export default function StatsCard({ title, value, change, isPositive, icon: Icon
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gray-900 rounded-xl border border-white/10 p-6 relative overflow-hidden group hover:border-white/20 transition-all"
+            className="bg-[#042f24] rounded-xl border border-white/10 p-6 relative overflow-hidden group hover:border-white/20 transition-all"
         >
             <div className="flex justify-between items-start mb-6 relative z-10">
                 <div className="flex items-center gap-3">

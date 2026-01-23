@@ -320,7 +320,7 @@ router.get('/accounts', authenticate, async (req: AuthRequest, res: Response) =>
 
         const { data: accounts, error } = await supabase
             .from('challenges')
-            .select('*')
+            .select('*, mt5_group')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
 
@@ -337,8 +337,6 @@ router.get('/accounts', authenticate, async (req: AuthRequest, res: Response) =>
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
-console.log('✅ Dashboard routes loaded, registering /objectives endpoint...');
 
 // GET /api/dashboard/objectives
 // Calculates risk metrics (daily loss, total loss, profit target) from trades
@@ -536,6 +534,7 @@ router.get('/risk', authenticate, async (req: AuthRequest, res: Response) => {
     }
 });
 
+/*
 // GET /api/dashboard/consistency
 router.get('/consistency', authenticate, async (req: AuthRequest, res: Response) => {
     try {
@@ -611,5 +610,6 @@ router.get('/consistency', authenticate, async (req: AuthRequest, res: Response)
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+*/
 
 export default router;

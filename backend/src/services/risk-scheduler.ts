@@ -20,9 +20,6 @@ const BRIDGE_URL = process.env.BRIDGE_URL || 'https://bridge.sharkfunded.co';
 // Dynamic Risk Rules are fetched from 'mt5_risk_groups' table.
 
 export function startRiskMonitor(intervalSeconds: number = 20) {
-    console.log(`⏰ Risk Monitor Scheduler started. Interval: ${intervalSeconds}s`);
-    console.log(`🛡️ Limits: Dynamic based on MT5 Groups`);
-
     runRiskCheck();
     setInterval(runRiskCheck, intervalSeconds * 1000);
 }
@@ -41,7 +38,7 @@ async function runRiskCheck() {
         // 1. Fetch Active Challenges
         const { data: challenges, error } = await supabase
             .from('challenges')
-            .select('id, login, initial_balance, current_balance, current_equity, group, start_of_day_equity, user_id, status, challenge_type')
+            .select('id, login, initial_balance, current_balance, current_equity, mt5_group, start_of_day_equity, user_id, status, challenge_type')
             .eq('status', 'active');
 
         // 2. Fetch Risk Groups
@@ -96,12 +93,12 @@ async function processBatch(challenges: any[], riskGroups: any[], attempt = 1) {
             const initialBalance = Number(c.initial_balance);
 
             // Normalize challenge group name
-            const normalizedGroup = (c.group || '').replace(/\\\\/g, '\\').toLowerCase();
+            const normalizedGroup = (c.mt5_group || '').replace(/\\\\/g, '\\').toLowerCase();
             let rule = riskGroupMap.get(normalizedGroup);
 
             if (!rule) {
                 // Try literal match if normalized failed (just in case)
-                rule = riskGroups.find(g => g.group_name === c.group);
+                rule = riskGroups.find(g => g.group_name === c.mt5_group);
             }
 
             if (!rule) {
@@ -196,9 +193,9 @@ async function processBatch(challenges: any[], riskGroups: any[], attempt = 1) {
 
 
                 // Recalculate limits for logging
-                const normalizedGroup = (challenge.group || '').replace(/\\/g, '\\').toLowerCase();
+                const normalizedGroup = (challenge.mt5_group || '').replace(/\\/g, '\\').toLowerCase();
                 let rule = riskGroupMap.get(normalizedGroup);
-                if (!rule) rule = riskGroups.find(g => g.group_name === challenge.group);
+                if (!rule) rule = riskGroups.find(g => g.group_name === challenge.mt5_group);
                 if (!rule) {
                     const typeStr = (challenge.challenge_type || '').toLowerCase();
                     if (typeStr.includes('competition')) {
@@ -227,7 +224,7 @@ async function processBatch(challenges: any[], riskGroups: any[], attempt = 1) {
                 // Determine Profit Target % based on simplified logic (mirrors RulesService)
                 let profitTargetPercent = 8; // Default Phase 1
                 const typeStr = (challenge.challenge_type || '').toLowerCase();
-                const groupStr = (challenge.group || '').toLowerCase();
+                const groupStr = (challenge.mt5_group || '').toLowerCase();
 
                 if (typeStr.includes('funded') || typeStr.includes('master') || typeStr.includes('instant') || typeStr.includes('competition') ||
                     groupStr.includes('funded') || groupStr.includes('master') || groupStr.includes('instant') || groupStr.includes('competition')) {

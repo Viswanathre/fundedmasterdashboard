@@ -71,10 +71,10 @@ export default function ZenvesttPage() {
         <div className="p-8 max-w-7xl mx-auto space-y-8">
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3">
-                    <Sparkles className="text-purple-600 w-8 h-8" />
-                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Zenvestt Integration</h1>
+                    <Sparkles className="text-[#d9e838] w-8 h-8" />
+                    <h1 className="text-3xl font-extrabold text-white tracking-tight">Zenvestt Integration</h1>
                 </div>
-                <p className="text-slate-500 font-medium">Import your trading history directly to Zenvestt for advanced analytics.</p>
+                <p className="text-gray-400 font-medium">Import your trading history directly to Zenvestt for advanced analytics.</p>
             </div>
 
             {loading ? (

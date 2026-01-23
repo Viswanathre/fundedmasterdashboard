@@ -19,7 +19,7 @@ async function run() {
 
     console.log(`Searching for challenge: ${loginArg}`);
 
-    let query = supabase.from('challenges').select('*');
+    let query = supabase.from('challenges').select('id, user_id, login, master_password, investor_password, server, challenge_type, status, initial_balance, current_balance, current_equity, start_of_day_equity, mt5_group, leverage, platform, is_account_created, created_at');
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(loginArg);
 

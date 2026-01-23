@@ -113,7 +113,7 @@ export class RulesService {
         // Fetch account details
         const { data: challenge, error } = await supabase
             .from('challenges')
-            .select('initial_balance, group, challenge_type, current_equity, start_of_day_equity, status')
+            .select('initial_balance, mt5_group, challenge_type, current_equity, start_of_day_equity, status')
             .eq('id', challengeId)
             .single();
 
@@ -122,7 +122,7 @@ export class RulesService {
         }
 
         // Get percentages
-        const rules = await this.getRules(challenge.group, challenge.challenge_type);
+        const rules = await this.getRules(challenge.mt5_group, challenge.challenge_type);
 
         const initialBalance = Number(challenge.initial_balance) || 100000;
 

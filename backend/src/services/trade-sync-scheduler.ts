@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
-import { redis } from '../lib/redis';
 import { fetchMT5Trades } from '../lib/mt5-bridge';
 
 dotenv.config();
@@ -12,7 +11,6 @@ const supabase = createClient(supabaseUrl!, supabaseKey!);
 const SYNC_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes (backup polling - webhook is primary)
 
 export function startTradeSyncScheduler() {
-    console.log(`⏳ Trade Sync Scheduler started (Bulk Mode). Interval: ${SYNC_INTERVAL_MS / 1000}s`);
     runTradeSync();
     setInterval(runTradeSync, SYNC_INTERVAL_MS);
 }
@@ -26,7 +24,6 @@ async function runTradeSync() {
     }
     isSyncing = true;
     try {
-        console.log("🔄 [Trade Apps] Starting Bulk Sync Cycle...");
 
         // 1. Fetch Active Challenges
         const { data: challenges, error } = await supabase
@@ -48,7 +45,6 @@ async function runTradeSync() {
             }
         }
 
-        console.log(`✅ [Trade Sync] Cycle Complete. Synced ${challenges.length} accounts.`);
 
     } catch (e) {
         console.error("❌ [Trade Sync] Cycle Error:", e);
@@ -146,14 +142,7 @@ async function processBatch(challenges: any[], attempt = 1) {
                         return c && ft.challenge_id === c.id;
                     });
 
-                    if (accountTrades.length > 0) {
-                        const eventPayload = {
-                            login: Number(login),
-                            trades: accountTrades,
-                            timestamp: Date.now()
-                        };
-                        await redis.publish('events:trade_update', JSON.stringify(eventPayload));
-                    }
+                    // Trades synced (Redis removed - direct processing)
                 }
             }
         }

@@ -262,7 +262,7 @@ export default function SettingsPage() {
             {/* Page Header */}
             <div className="mb-8 flex items-center gap-4">
                 <div className="h-8 w-1 bg-primary rounded-full" />
-                <h1 className="text-3xl font-black tracking-tight text-black">Account Settings</h1>
+                <h1 className="text-3xl font-black tracking-tight text-white">Account Settings</h1>
             </div>
 
             {/* Navigation Pills */}

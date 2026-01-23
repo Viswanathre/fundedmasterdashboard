@@ -16,7 +16,7 @@ export default function PayoutHistoryTable({ requests = [] }: { requests?: Payou
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#050923] rounded-xl p-6 border border-white/10"
+            className="bg-[#042f24] rounded-xl p-6 border border-white/10"
         >
             <div className="flex items-center justify-between mb-6">
                 <div>
@@ -74,7 +74,7 @@ export default function PayoutHistoryTable({ requests = [] }: { requests?: Payou
                                         {tx.status === 'processed' ? (
                                             <Link
                                                 href={`/certificates/${tx.id}`}
-                                                className="inline-flex items-center gap-1 text-shark-blue hover:text-blue-400 text-xs font-medium transition-colors"
+                                                className="inline-flex items-center gap-1 text-[#d9e838] hover:text-[#c9d828] text-xs font-medium transition-colors"
                                             >
                                                 <Award size={14} /> View
                                             </Link>

@@ -34,7 +34,7 @@ export default function ProfitabilityGauge({
     const colors = { left: "#ef4444", right: "#22c55e" };
 
     return (
-        <div className="bg-[#050923] border border-white/5 rounded-2xl p-6 flex flex-col justify-between h-full relative overflow-hidden group hover:border-white/10 transition-colors">
+        <div className="bg-[#042f24] border border-white/5 rounded-2xl p-6 flex flex-col justify-between h-full relative overflow-hidden group hover:border-white/10 transition-colors">
             <div className="flex justify-between items-start relative z-10 mb-4 px-2">
                 <h3 className="text-white font-medium text-lg">Profitability</h3>
                 <div className="text-right flex flex-col items-end">
@@ -71,7 +71,7 @@ export default function ProfitabilityGauge({
                         </defs>
 
                         {/* Track Background */}
-                        <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#1e293b" strokeWidth="8" strokeLinecap="round" opacity="0.5" />
+                        <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#011d16" strokeWidth="8" strokeLinecap="round" opacity="0.5" />
 
                         {/* Data Segments with Overlay Logic */}
                         {(() => {

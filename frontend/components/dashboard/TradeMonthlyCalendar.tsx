@@ -137,15 +137,15 @@ export default function TradeMonthlyCalendar() {
 
     const getDayColor = (day: DayData) => {
         if (day.date === 0) return "";
-        if (day.isToday) return "border-blue-400 bg-blue-500/10";
-        if (day.trades === 0) return "border-white/5 bg-black/20";
+        if (day.isToday) return "border-[#d9e838] bg-[#d9e838]/10";
+        if (day.trades === 0) return "border-white/5 bg-[#011d16]";
         if (day.isProfit) return "border-green-500/30 bg-green-500/10";
         return "border-red-500/30 bg-red-500/10";
     };
 
     if (loading) {
         return (
-            <div className="bg-[#050923] border border-white/10 rounded-xl p-6 animate-pulse">
+            <div className="bg-[#042f24] border border-white/10 rounded-xl p-6 animate-pulse">
                 <div className="h-6 bg-white/5 rounded w-1/3 mb-4"></div>
                 <div className="h-64 bg-white/5 rounded"></div>
             </div>
@@ -157,12 +157,12 @@ export default function TradeMonthlyCalendar() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-[#050923] border border-white/10 rounded-xl p-4 sm:p-6"
+            className="bg-[#042f24] border border-white/10 rounded-xl p-4 sm:p-6"
         >
             {/* Header */}
             <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <div className="flex items-center gap-2">
-                    <Calendar className="text-blue-400" size={18} />
+                    <Calendar className="text-[#d9e838]" size={18} />
                     <h3 className="font-bold text-white text-sm sm:text-base">Trade Calendar</h3>
                 </div>
                 <div className="flex items-center gap-1.5 sm:gap-2">
@@ -186,21 +186,21 @@ export default function TradeMonthlyCalendar() {
 
             {/* Month Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
-                <div className="bg-black/20 rounded-lg p-2 sm:p-3 border border-white/5">
+                <div className="bg-[#011d16] rounded-lg p-2 sm:p-3 border border-white/5">
                     <p className="text-[9px] sm:text-[10px] text-gray-400 mb-0.5 sm:mb-1">Total P&L</p>
                     <p className={`text-sm sm:text-lg font-bold ${monthStats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         ${monthStats.totalPnL.toFixed(2)}
                     </p>
                 </div>
-                <div className="bg-black/20 rounded-lg p-2 sm:p-3 border border-white/5">
+                <div className="bg-[#011d16] rounded-lg p-2 sm:p-3 border border-white/5">
                     <p className="text-[9px] sm:text-[10px] text-gray-400 mb-0.5 sm:mb-1">Trades</p>
                     <p className="text-sm sm:text-lg font-bold text-white">{monthStats.totalTrades}</p>
                 </div>
-                <div className="bg-black/20 rounded-lg p-2 sm:p-3 border border-white/5">
+                <div className="bg-[#011d16] rounded-lg p-2 sm:p-3 border border-white/5">
                     <p className="text-[9px] sm:text-[10px] text-gray-400 mb-0.5 sm:mb-1">Win Days</p>
                     <p className="text-sm sm:text-lg font-bold text-green-400">{monthStats.winningDays}</p>
                 </div>
-                <div className="bg-black/20 rounded-lg p-2 sm:p-3 border border-white/5">
+                <div className="bg-[#011d16] rounded-lg p-2 sm:p-3 border border-white/5">
                     <p className="text-[9px] sm:text-[10px] text-gray-400 mb-0.5 sm:mb-1">Loss Days</p>
                     <p className="text-sm sm:text-lg font-bold text-red-400">{monthStats.losingDays}</p>
                 </div>
@@ -269,7 +269,7 @@ export default function TradeMonthlyCalendar() {
                     <span className="text-gray-400">Losing Day</span>
                 </div>
                 <div className="flex items-center gap-1.5 sm:gap-2">
-                    <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded border border-blue-400 bg-blue-500/10"></div>
+                    <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded border border-[#d9e838] bg-[#d9e838]/10"></div>
                     <span className="text-gray-400">Today</span>
                 </div>
             </div>

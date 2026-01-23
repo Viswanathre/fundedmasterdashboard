@@ -84,14 +84,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className={cn(
-                    "fixed inset-y-0 left-0 z-50 flex flex-col h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-r border-gray-800/50 transition-all duration-300",
+                    "fixed inset-y-0 left-0 z-50 flex flex-col h-screen bg-[#042f24] border-r border-white/10 transition-all duration-300",
                     "md:sticky md:top-0 md:translate-x-0 shadow-2xl md:shadow-none",
                     isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
                 )}
             >
                 {/* Logo Header */}
                 <div className={cn(
-                    "h-16 flex items-center border-b border-gray-800/50 relative",
+                    "h-16 flex items-center border-b border-white/5 relative",
                     isCollapsed ? "justify-center px-4" : "px-5"
                 )}>
                     {!isCollapsed ? (
@@ -119,7 +119,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     <button
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         className={cn(
-                            "w-6 h-6 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700 absolute -right-3 top-5 transition-all shadow-md",
+                            "w-6 h-6 rounded-full bg-[#011d16] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 absolute -right-3 top-5 transition-all shadow-md",
                             isCollapsed && "rotate-180"
                         )}
                     >
@@ -128,7 +128,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 px-3 py-8 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-transparent">
+                <nav className="flex-1 px-3 py-8 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                     {!isCollapsed && (
                         <p className="px-3 text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-5">
                             Navigation
@@ -146,8 +146,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                                         className={cn(
                                             "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative",
                                             isActive
-                                                ? "text-white bg-gradient-to-b from-[#0066FF] to-[#0055DD] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3),inset_0_-1px_0_0_rgba(255,255,255,0.3)]"
-                                                : "text-gray-400 hover:text-white hover:bg-white/[0.03]",
+                                                ? "text-black bg-[#d9e838] shadow-[0_4px_12px_rgba(217,232,56,0.2)]"
+                                                : "text-gray-400 hover:text-[#d9e838] hover:bg-[#d9e838]/5",
                                             isCollapsed && "justify-center"
                                         )}
                                     >
@@ -158,7 +158,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                                             strokeWidth={isActive ? 2.5 : 2}
                                             className={cn(
                                                 "shrink-0 transition-colors",
-                                                isActive ? "text-white" : "text-gray-500 group-hover:text-blue-400"
+                                                isActive ? "text-black" : "text-gray-500 group-hover:text-[#d9e838]"
                                             )}
                                         />
 
@@ -177,7 +177,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
                                         {/* Tooltip for collapsed state */}
                                         {isCollapsed && (
-                                            <div className="absolute left-full ml-3 px-3 py-1.5 bg-gray-800 text-white text-sm font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-xl z-50 whitespace-nowrap">
+                                            <div className="absolute left-full ml-3 px-3 py-1.5 bg-[#011d16] text-white text-sm font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-xl z-50 whitespace-nowrap border border-white/5">
                                                 {item.label}
                                             </div>
                                         )}
@@ -189,7 +189,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 </nav>
 
                 {/* Bottom Section */}
-                <div className="px-3 py-4 border-t border-gray-800/50 space-y-2">
+                <div className="px-3 py-4 border-t border-white/5 space-y-2">
                     {/* Settings */}
                     {bottomItems.map((item) => {
                         const isActive = pathname === item.href;
@@ -213,7 +213,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
                     {/* User Profile */}
                     <div className={cn(
-                        "flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-gray-800/80 to-gray-800/40 border border-gray-700/50 cursor-pointer hover:border-gray-600/50 transition-all",
+                        "flex items-center gap-3 p-2.5 rounded-xl bg-[#011d16] border border-white/10 cursor-pointer hover:border-[#d9e838]/30 transition-all",
                         isCollapsed && "justify-center p-2"
                     )}>
                         <div className="relative shrink-0">

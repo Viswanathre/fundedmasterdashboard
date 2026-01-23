@@ -5,7 +5,6 @@ import { RulesService } from '../services/rules-service';
 import * as fs from 'fs';
 
 const router = Router();
-console.log('✅ Objectives module loaded!');
 
 router.use((req, res, next) => {
     // console.log(`[Objectives Router] ${req.method} ${req.path}`);

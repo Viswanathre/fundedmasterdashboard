@@ -28,14 +28,14 @@ export default function CredentialsModal({ isOpen, onClose, account }: Credentia
     };
 
     const CredentialRow = ({ label, value, field, isPassword = false, icon: Icon }: any) => (
-        <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex items-center justify-between group hover:border-blue-500/30 hover:bg-white hover:shadow-sm transition-all duration-200">
+        <div className="bg-[#011d16] border border-white/5 rounded-xl p-4 flex items-center justify-between group hover:border-[#d9e838]/30 transition-all duration-200">
             <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-[#d9e838] shadow-sm">
                     <Icon size={20} />
                 </div>
                 <div>
-                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-0.5">{label}</p>
-                    <p className="text-slate-900 font-mono font-medium text-lg tracking-wide select-all">
+                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5">{label}</p>
+                    <p className="text-white font-mono font-medium text-lg tracking-wide select-all">
                         {isPassword && !showPassword ? '••••••••••' : value}
                     </p>
                 </div>
@@ -44,7 +44,7 @@ export default function CredentialsModal({ isOpen, onClose, account }: Credentia
                 {isPassword && (
                     <button
                         onClick={() => setShowPassword(!showPassword)}
-                        className="p-2 hover:bg-slate-200 rounded-lg text-slate-400 hover:text-slate-700 transition-colors"
+                        className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors"
                     >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -54,8 +54,8 @@ export default function CredentialsModal({ isOpen, onClose, account }: Credentia
                     className={cn(
                         "p-2 rounded-lg transition-all duration-200",
                         copiedField === field
-                            ? "bg-green-100 text-green-600"
-                            : "hover:bg-slate-200 text-slate-400 hover:text-slate-700"
+                            ? "bg-green-500/10 text-green-400"
+                            : "hover:bg-white/5 text-gray-400 hover:text-white"
                     )}
                 >
                     {copiedField === field ? <Check size={18} /> : <Copy size={18} />}
@@ -67,24 +67,24 @@ export default function CredentialsModal({ isOpen, onClose, account }: Credentia
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
             <div
-                className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                 onClick={onClose}
             />
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="relative bg-white border border-slate-200 rounded-2xl w-full max-w-md shadow-2xl shadow-slate-200/50 overflow-hidden"
+                className="relative bg-[#042f24] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden"
             >
                 {/* Header */}
-                <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white relative">
+                <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-[#042f24] relative">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20">
-                            <Image src="/shark-icon.svg" alt="Shark" width={24} height={24} className="brightness-0 invert" />
+                        <div className="w-10 h-10 rounded-xl bg-[#d9e838] flex items-center justify-center shadow-lg shadow-[#d9e838]/20">
+                            <Image src="/shark-icon.jpg" alt="Shark" width={24} height={24} className="rounded" />
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-slate-900">Account Credentials</h2>
-                            <p className="text-xs text-slate-500 font-medium">MT5 Login Details</p>
+                            <h2 className="text-lg font-bold text-white">Account Credentials</h2>
+                            <p className="text-xs text-gray-500 font-medium">MT5 Login Details</p>
                         </div>
                     </div>
                     <button
@@ -97,9 +97,9 @@ export default function CredentialsModal({ isOpen, onClose, account }: Credentia
 
                 {/* Body */}
                 <div className="p-6 space-y-4">
-                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6">
-                        <p className="text-sm text-blue-700 leading-relaxed font-medium">
-                            Use these credentials to log in to the <strong className="font-bold text-blue-800">MetaTrader 5</strong> platform (PC, Web, or Mobile).
+                    <div className="bg-[#d9e838]/5 border border-[#d9e838]/10 rounded-xl p-4 mb-6">
+                        <p className="text-sm text-[#d9e838] leading-relaxed font-medium">
+                            Use these credentials to log in to the <strong className="font-bold text-[#d9e838]">MetaTrader 5</strong> platform (PC, Web, or Mobile).
                         </p>
                     </div>
 
@@ -127,8 +127,8 @@ export default function CredentialsModal({ isOpen, onClose, account }: Credentia
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 text-center">
-                    <p className="text-xs text-slate-500 font-medium">
+                <div className="px-6 py-4 bg-[#011d16] border-t border-white/5 text-center">
+                    <p className="text-xs text-gray-500 font-medium">
                         Never share your master password with anyone provided by support.
                     </p>
                 </div>

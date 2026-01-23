@@ -182,8 +182,8 @@ export default function KYCPage() {
         <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 pt-2 sm:pt-4 px-4 sm:px-0">
             {/* Header */}
             <div className="text-center mb-4 sm:mb-6">
-                <h1 className="text-xl sm:text-2xl font-bold text-black mb-1">Identity Verification</h1>
-                <p className="text-slate-500 text-xs sm:text-sm">Complete KYC verification to enable withdrawals and unlock all features.</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">Identity Verification</h1>
+                <p className="text-gray-400 text-xs sm:text-sm">Complete KYC verification to enable withdrawals and unlock all features.</p>
             </div>
 
             {/* Error Alert */}
@@ -225,7 +225,7 @@ export default function KYCPage() {
                     <h2 className={cn("text-xl sm:text-2xl font-bold mb-2", config.color)}>
                         {config.title}
                     </h2>
-                    <p className="text-slate-500 mb-4 sm:mb-6 max-w-md text-sm sm:text-base">
+                    <p className="text-gray-400 mb-4 sm:mb-6 max-w-md text-sm sm:text-base">
                         {config.description}
                     </p>
 
@@ -273,17 +273,17 @@ export default function KYCPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm"
+                    className="bg-[#042f24] border border-white/10 rounded-xl p-4 sm:p-6 shadow-sm"
                 >
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Verified Information</h3>
+                    <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">Verified Information</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                         <div>
-                            <span className="text-slate-500">Name</span>
-                            <p className="text-slate-900 font-medium">{status.firstName} {status.lastName}</p>
+                            <span className="text-gray-500">Name</span>
+                            <p className="text-white font-medium">{status.firstName} {status.lastName}</p>
                         </div>
                         <div>
-                            <span className="text-slate-500">Verified On</span>
-                            <p className="text-slate-900 font-medium">
+                            <span className="text-gray-500">Verified On</span>
+                            <p className="text-white font-medium">
                                 {status.completedAt ? new Date(status.completedAt).toLocaleDateString() : '-'}
                             </p>
                         </div>
@@ -297,7 +297,7 @@ export default function KYCPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="bg-[#050B24] border border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm"
+                    className="bg-[#042f24] border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm"
                 >
                     <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">What You'll Need</h3>
                     <div className="space-y-2 sm:space-y-3">

@@ -59,7 +59,7 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
     };
 
     return (
-        <div className="bg-[#050923] rounded-xl p-8 border border-white/10 relative overflow-hidden min-h-[460px]">
+        <div className="bg-[#042f24] rounded-xl p-8 border border-white/10 relative overflow-hidden min-h-[460px]">
             <AnimatePresence mode="wait">
                 {success ? (
                     <motion.div
@@ -67,7 +67,7 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-[#050923]/95 backdrop-blur-xl z-20"
+                        className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-[#042f24]/95 backdrop-blur-xl z-20"
                     >
                         <motion.div
                             initial={{ scale: 0 }}
@@ -124,7 +124,7 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        className="absolute inset-0 flex flex-col p-8 bg-[#050923] z-10"
+                        className="absolute inset-0 flex flex-col p-8 bg-[#042f24] z-10"
                     >
                         <h2 className="text-xl font-bold text-white mb-6">Confirm Withdrawal</h2>
 
@@ -141,12 +141,12 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                                 <div className="h-px bg-white/10 my-2" />
                                 <div className="flex justify-between items-center pt-1">
                                     <span className="text-gray-300 text-sm font-medium uppercase tracking-wider">Total Receive</span>
-                                    <span className="text-shark-blue text-2xl font-bold tracking-tight">${parseFloat(amount).toFixed(2)}</span>
+                                    <span className="text-[#d9e838] text-2xl font-bold tracking-tight">${parseFloat(amount).toFixed(2)}</span>
                                 </div>
                             </div>
 
-                            <div className="bg-shark-blue/10 border border-shark-blue/30 rounded-xl p-4 shadow-inner">
-                                <span className="text-[10px] text-shark-blue uppercase font-black tracking-widest mb-2 block opacity-90">Destination Wallet</span>
+                            <div className="bg-[#d9e838]/10 border border-[#d9e838]/30 rounded-xl p-4 shadow-inner">
+                                <span className="text-[10px] text-[#d9e838] uppercase font-black tracking-widest mb-2 block opacity-90">Destination Wallet</span>
                                 <p className="text-xs text-gray-200 font-mono break-all leading-relaxed bg-black/20 p-2 rounded-lg border border-white/5">{walletAddress}</p>
                             </div>
                         </div>
@@ -161,7 +161,7 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                             <button
                                 onClick={confirmAndPay}
                                 disabled={isLoading}
-                                className="px-4 py-3 rounded-lg bg-shark-blue hover:bg-blue-600 text-white font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                                className="px-4 py-3 rounded-lg bg-[#d9e838] hover:bg-[#c9d828] text-black font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
                             >
                                 {isLoading ? <Loader2 size={18} className="animate-spin" /> : "Confirm"}
                             </button>
@@ -181,10 +181,10 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                             {/* Method Selection - Locked to USDT for now */}
                             <div className="grid grid-cols-1 gap-3">
                                 <button
-                                    className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 border-shark-blue bg-shark-blue/20 text-shark-blue shadow-[0_0_20px_rgba(59,130,246,0.2)]`}
+                                    className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 border-[#d9e838] bg-[#d9e838]/20 text-[#d9e838] shadow-[0_0_20px_rgba(217,232,56,0.2)]`}
                                 >
-                                    <div className="w-12 h-12 bg-shark-blue/20 rounded-xl flex items-center justify-center mb-3">
-                                        <Wallet size={28} className="text-shark-blue" />
+                                    <div className="w-12 h-12 bg-[#d9e838]/20 rounded-xl flex items-center justify-center mb-3">
+                                        <Wallet size={28} className="text-[#d9e838]" />
                                     </div>
                                     <span className="text-xs font-bold uppercase tracking-wider">Crypto (USDT TRC20)</span>
                                 </button>
@@ -205,7 +205,7 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                                             setError(null);
                                         }}
                                         disabled={availablePayout <= 0 || !walletAddress || isLoading}
-                                        className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-shark-blue text-white font-medium placeholder:text-gray-500 transition-colors disabled:opacity-50"
+                                        className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-[#d9e838] text-white font-medium placeholder:text-gray-500 transition-colors disabled:opacity-50"
                                         placeholder="0.00"
                                     />
                                 </div>
@@ -221,7 +221,7 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                                     <button
                                         onClick={() => setAmount(availablePayout.toString())}
                                         disabled={availablePayout <= 0 || !walletAddress}
-                                        className="text-shark-blue font-bold uppercase tracking-tight hover:text-blue-400 transition-colors disabled:text-gray-600 px-2 py-1 bg-shark-blue/10 rounded-md"
+                                        className="text-[#d9e838] font-bold uppercase tracking-tight hover:text-[#c9d828] transition-colors disabled:text-gray-600 px-2 py-1 bg-[#d9e838]/10 rounded-md"
                                     >
                                         Max Amount
                                     </button>
@@ -242,7 +242,7 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                                     <AlertTriangle className="text-yellow-500 shrink-0 mt-0.5" size={16} />
                                     <div>
                                         <p className="text-xs text-yellow-500 font-medium">No Wallet Address</p>
-                                        <Link href="/settings" className="text-xs text-white underline hover:text-blue-400 mt-1 block">
+                                        <Link href="/settings" className="text-xs text-white underline hover:text-[#d9e838] mt-1 block">
                                             Add payout wallet in Settings
                                         </Link>
                                     </div>
@@ -253,9 +253,9 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                             <button
                                 onClick={handleInitialSubmit}
                                 disabled={availablePayout <= 0 || !walletAddress || isLoading || !amount}
-                                className="relative w-full py-4 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all group disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-[0_0_20px_rgba(34,197,94,0.0)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] active:scale-[0.98]"
+                                className="relative w-full py-4 text-black font-bold rounded-xl flex items-center justify-center gap-2 transition-all group disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-[0_0_20px_rgba(34,197,94,0.0)] hover:shadow-[0_0_25px_rgba(217,232,56,0.5)] active:scale-[0.98]"
                                 style={{
-                                    background: "linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)",
+                                    background: "#d9e838",
                                 }}
                             >
                                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />

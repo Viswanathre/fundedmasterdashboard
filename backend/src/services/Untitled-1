@@ -1,0 +1,44 @@
+### [​](https://developer.cregis.com/api-reference/request-apis/payment/payment-engine-create#response)Response
+
+[​](https://developer.cregis.com/api-reference/request-apis/payment/payment-engine-create#response)
+
+#### [​](https://developer.cregis.com/api-reference/request-apis/payment/payment-engine-create#response-result)Response Result
+[​](https://developer.cregis.com/api-reference/request-apis/payment/payment-engine-create#response-result)
+
+#### [​](https://developer.cregis.com/api-reference/request-apis/payment/payment-engine-create#data-object)data Object
+[​](https://developer.cregis.com/api-reference/request-apis/payment/payment-engine-create#data-object)
+
+```
+data
+```
+
+
+#### [​](https://developer.cregis.com/api-reference/request-apis/payment/payment-engine-create#payment-info-object)payment_info object
+[​](https://developer.cregis.com/api-reference/request-apis/payment/payment-engine-create#payment-info-object)
+
+```
+payment_info
+```
+
+
+###### Response Example
+
+```
+{ "code": "00000", "msg": "ok", "data": { "cregis_id": "po1420761885130752", "checkout_url": "http://192.168.2.60:9099?cid=b2fb433c953a43bd9bdfc3f611567887", "merchant_name": null, "merchant_logo_url": null, "order_amount": "5", "order_currency": "HKD", "created_time": 1734328473070, "expire_time": 1734332073070, "payment_info": [ { "payment_address": "TX8GZJfLYPtmzRgd3FoiXuCHbptiQ37NSM", "token_symbol": "USDT", "blockchain": "TRON", "token_name": "USDT-TRC20", "logo_url": "https://static.cregis.io/pic/coin/[[[[[email protected]](https://developer.cregis.com/cdn-cgi/l/email-protection)](https://developer.cregis.com/cdn-cgi/l/email-protection)](https://developer.cregis.com/cdn-cgi/l/email-protection)](https://developer.cregis.com/cdn-cgi/l/email-protection)", "token_decimals": 6, "receive_amount": "0.642951", "receive_currency": "USDT", "exchange_rate": "0.1285902181", "asset_logo": "https://static.cregis.io/pic/coin/tether%[email protected]" }, { "payment_address": "0xf9d70ab23195cfc9c0c14b384a1fd3a3f12cd4f8", "token_symbol": "USDT", "blockchain": "BNB-BSC", "token_name": "USDT-BEP20", "logo_url": "https://static.cregis.io/pic/coin/USDT-BNB%[email protected]", "token_decimals": 18, "receive_amount": "0.642951", "receive_currency": "USDT", "exchange_rate": "0.1285902181", "asset_logo": "https://static.cregis.io/pic/coin/tether%[email protected]" }, ] } }
+```
+
+
+```
+{ "code": "00000", "msg": "ok", "data": { "cregis_id": "po1420761885130752", "checkout_url": "http://192.168.2.60:9099?cid=b2fb433c953a43bd9bdfc3f611567887", "merchant_name": null, "merchant_logo_url": null, "order_amount": "5", "order_currency": "HKD", "created_time": 1734328473070, "expire_time": 1734332073070, "payment_info": [ { "payment_address": "TX8GZJfLYPtmzRgd3FoiXuCHbptiQ37NSM", "token_symbol": "USDT", "blockchain": "TRON", "token_name": "USDT-TRC20", "logo_url": "https://static.cregis.io/pic/coin/[[[[[email protected]](https://developer.cregis.com/cdn-cgi/l/email-protection)](https://developer.cregis.com/cdn-cgi/l/email-protection)](https://developer.cregis.com/cdn-cgi/l/email-protection)](https://developer.cregis.com/cdn-cgi/l/email-protection)", "token_decimals": 6, "receive_amount": "0.642951", "receive_currency": "USDT", "exchange_rate": "0.1285902181", "asset_logo": "https://static.cregis.io/pic/coin/tether%[email protected]" }, { "payment_address": "0xf9d70ab23195cfc9c0c14b384a1fd3a3f12cd4f8", "token_symbol": "USDT", "blockchain": "BNB-BSC", "token_name": "USDT-BEP20", "logo_url": "https://static.cregis.io/pic/coin/USDT-BNB%[email protected]", "token_decimals": 18, "receive_amount": "0.642951", "receive_currency": "USDT", "exchange_rate": "0.1285902181", "asset_logo": "https://static.cregis.io/pic/coin/tether%[email protected]" }, ] } }
+```
+
+[[email protected]](https://developer.cregis.com/cdn-cgi/l/email-protection)
+[[email protected]](https://developer.cregis.com/cdn-cgi/l/email-protection)
+[[email protected]](https://developer.cregis.com/cdn-cgi/l/email-protection)
+[[email protected]](https://developer.cregis.com/cdn-cgi/l/email-protection)
+[Query withdrawal order](https://developer.cregis.com/api-reference/request-apis/withdrawal/withdrawal-query)
+[Query Payment order](https://developer.cregis.com/api-reference/request-apis/payment/payment-engine-query)
+[twitter](https://twitter.com/0xCregis)
+[github](https://github.com/0xcregis)
+[linkedin](https://linktr.ee/cregisofficial)
+[Powered by](https://www.mintlify.com?utm_campaign=poweredBy&utm_medium=referral&utm_source=eg)

@@ -177,6 +177,7 @@ router.post('/:id/join', authenticate, async (req: AuthRequest, res: Response) =
                         platform: 'MT5',
                         leverage: 100,
                         challenge_type: 'Competition', // Correct type for competitions
+                        mt5_group: 'demo\\SF\\0-Demo\\comp', // Store actual used group
                         metadata: {
                             is_competition: true,
                             competition_id: id,

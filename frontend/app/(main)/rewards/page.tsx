@@ -73,8 +73,8 @@ export default function RewardsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#0A0E1A] flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            <div className="min-h-screen bg-transparent flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d9e838]"></div>
             </div>
         );
     }
@@ -91,8 +91,8 @@ export default function RewardsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-8"
                 >
-                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Loyalty Rewards</h1>
-                    <p className="text-slate-500 font-medium">Earn points and unlock exclusive benefits</p>
+                    <h1 className="text-3xl font-extrabold text-white tracking-tight mb-2">Loyalty Rewards</h1>
+                    <p className="text-gray-400 font-medium">Earn points and unlock exclusive benefits</p>
                 </motion.div>
 
                 {/* Stats Row */}
@@ -101,15 +101,15 @@ export default function RewardsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+                        className="bg-[#042f24] rounded-2xl p-6 border border-white/10 shadow-sm"
                     >
                         <div className="flex items-center gap-3 mb-4">
                             <div className={`p-3 ${currentTier.bgColor} rounded-xl`}>
                                 <CurrentTierIcon size={24} className={currentTier.color} />
                             </div>
                             <div>
-                                <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">Current Tier</p>
-                                <p className="text-xl font-bold text-slate-900">{currentTier.name}</p>
+                                <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">Current Tier</p>
+                                <p className="text-xl font-bold text-white">{currentTier.name}</p>
                             </div>
                         </div>
                     </motion.div>
@@ -118,15 +118,15 @@ export default function RewardsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+                        className="bg-[#042f24] rounded-2xl p-6 border border-white/10 shadow-sm"
                     >
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-3 bg-blue-50 rounded-xl">
-                                <Zap size={24} className="text-blue-600" />
+                            <div className="p-3 bg-[#d9e838]/10 rounded-xl">
+                                <Zap size={24} className="text-[#d9e838]" />
                             </div>
                             <div>
-                                <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">Your Points</p>
-                                <p className="text-xl font-bold text-slate-900">{currentPoints.toLocaleString()}</p>
+                                <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">Your Points</p>
+                                <p className="text-xl font-bold text-white">{currentPoints.toLocaleString()}</p>
                             </div>
                         </div>
                     </motion.div>
@@ -135,15 +135,15 @@ export default function RewardsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+                        className="bg-[#042f24] rounded-2xl p-6 border border-white/10 shadow-sm"
                     >
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-3 bg-green-50 rounded-xl">
-                                <TrendingUp size={24} className="text-green-600" />
+                            <div className="p-3 bg-green-500/10 rounded-xl">
+                                <TrendingUp size={24} className="text-green-400" />
                             </div>
                             <div>
-                                <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">Next Tier In</p>
-                                <p className="text-xl font-bold text-slate-900">
+                                <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">Next Tier In</p>
+                                <p className="text-xl font-bold text-white">
                                     {nextTier ? `${(nextTier.minPoints - currentPoints).toLocaleString()} pts` : 'Max Level'}
                                 </p>
                             </div>
@@ -157,27 +157,27 @@ export default function RewardsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mb-8"
+                        className="bg-[#042f24] rounded-2xl p-6 border border-white/10 shadow-sm mb-8"
                     >
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
                                 <CurrentTierIcon size={18} className={currentTier.color} />
-                                <span className="font-bold text-slate-900">{currentTier.name}</span>
+                                <span className="font-bold text-white">{currentTier.name}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span className="font-bold text-slate-900">{nextTier.name}</span>
+                                <span className="font-bold text-white">{nextTier.name}</span>
                                 <nextTier.icon size={18} className={nextTier.color} />
                             </div>
                         </div>
-                        <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                        <div className="w-full bg-black/20 rounded-full h-3 overflow-hidden">
                             <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${Math.min(progressToNextTier, 100)}%` }}
                                 transition={{ duration: 1, ease: "easeOut" }}
-                                className="h-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-full"
+                                className="h-full bg-gradient-to-r from-[#d9e838] to-[#c9d828] rounded-full"
                             />
                         </div>
-                        <p className="text-sm text-slate-500 mt-2 text-center font-medium">
+                        <p className="text-sm text-gray-500 mt-2 text-center font-medium">
                             {currentPoints.toLocaleString()} / {nextTier.minPoints.toLocaleString()} points
                         </p>
                     </motion.div>
@@ -190,33 +190,33 @@ export default function RewardsPage() {
                     transition={{ delay: 0.5 }}
                     className="mb-8"
                 >
-                    <h2 className="text-xl font-bold text-slate-900 mb-4">How to Earn Points</h2>
+                    <h2 className="text-xl font-bold text-white mb-4">How to Earn Points</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="p-2 bg-blue-50 rounded-lg w-fit mb-3">
-                                <DollarSign size={20} className="text-blue-600" />
+                        <div className="bg-[#042f24] rounded-xl p-5 border border-white/10 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="p-2 bg-[#d9e838]/10 rounded-lg w-fit mb-3">
+                                <DollarSign size={20} className="text-[#d9e838]" />
                             </div>
-                            <h3 className="font-bold text-slate-900 mb-1">Trade Profits</h3>
-                            <p className="text-2xl font-bold text-blue-600">+10 pts</p>
-                            <p className="text-sm text-slate-500 font-medium">per profitable trade</p>
+                            <h3 className="font-bold text-white mb-1">Trade Profits</h3>
+                            <p className="text-2xl font-bold text-[#d9e838]">+10 pts</p>
+                            <p className="text-sm text-gray-500 font-medium">per profitable trade</p>
                         </div>
 
-                        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="p-2 bg-green-50 rounded-lg w-fit mb-3">
-                                <Trophy size={20} className="text-green-600" />
+                        <div className="bg-[#042f24] rounded-xl p-5 border border-white/10 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="p-2 bg-green-500/10 rounded-lg w-fit mb-3">
+                                <Trophy size={20} className="text-green-400" />
                             </div>
-                            <h3 className="font-bold text-slate-900 mb-1">Pass Challenge</h3>
-                            <p className="text-2xl font-bold text-green-600">+500 pts</p>
-                            <p className="text-sm text-slate-500 font-medium">per challenge passed</p>
+                            <h3 className="font-bold text-white mb-1">Pass Challenge</h3>
+                            <p className="text-2xl font-bold text-green-400">+500 pts</p>
+                            <p className="text-sm text-gray-500 font-medium">per challenge passed</p>
                         </div>
 
-                        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="p-2 bg-purple-50 rounded-lg w-fit mb-3">
-                                <Users size={20} className="text-purple-600" />
+                        <div className="bg-[#042f24] rounded-xl p-5 border border-white/10 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="p-2 bg-purple-500/10 rounded-lg w-fit mb-3">
+                                <Users size={20} className="text-purple-400" />
                             </div>
-                            <h3 className="font-bold text-slate-900 mb-1">Referrals</h3>
-                            <p className="text-2xl font-bold text-purple-600">+1000 pts</p>
-                            <p className="text-sm text-slate-500 font-medium">per successful referral</p>
+                            <h3 className="font-bold text-white mb-1">Referrals</h3>
+                            <p className="text-2xl font-bold text-purple-400">+1000 pts</p>
+                            <p className="text-sm text-gray-500 font-medium">per successful referral</p>
                         </div>
                     </div>
                 </motion.div>
@@ -253,8 +253,8 @@ export default function RewardsPage() {
                                             <TierIcon size={22} className={tier.color} />
                                         </div>
                                         <div>
-                                            <h3 className="text-lg font-bold text-slate-900">{tier.name}</h3>
-                                            <p className="text-xs text-slate-500 font-medium">
+                                            <h3 className="text-lg font-bold text-white">{tier.name}</h3>
+                                            <p className="text-xs text-gray-500 font-medium">
                                                 {tier.maxPoints === Infinity
                                                     ? `${tier.minPoints.toLocaleString()}+ points`
                                                     : `${tier.minPoints.toLocaleString()} - ${tier.maxPoints.toLocaleString()} points`}
@@ -266,7 +266,7 @@ export default function RewardsPage() {
                                         {tier.benefits.map((benefit, i) => (
                                             <div key={i} className="flex items-center gap-2">
                                                 <CheckCircle size={14} className="text-green-500 flex-shrink-0" />
-                                                <p className="text-sm text-slate-600 font-medium">{benefit}</p>
+                                                <p className="text-sm text-gray-400 font-medium">{benefit}</p>
                                             </div>
                                         ))}
                                     </div>

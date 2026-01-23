@@ -116,7 +116,7 @@ export default function TradeHistory() {
 
     if (loading) {
         return (
-            <div className="bg-gray-900 border border-white/10 rounded-xl p-6 animate-pulse">
+            <div className="bg-[#042f24] border border-white/10 rounded-xl p-6 animate-pulse">
                 <div className="h-6 bg-white/5 rounded w-1/4 mb-4"></div>
                 <div className="h-64 bg-white/5 rounded"></div>
             </div>
@@ -128,13 +128,13 @@ export default function TradeHistory() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-gray-900 border border-white/10 rounded-xl overflow-hidden"
+            className="bg-[#042f24] border border-white/10 rounded-xl overflow-hidden"
         >
             {/* Header */}
             <div className="flex items-center justify-between p-6 pb-4 border-b border-white/10">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <History className="text-blue-400" size={20} />
+                        <History className="text-[#d9e838]" size={20} />
                         <h3 className="font-bold text-lg text-white">Trade History</h3>
                     </div>
                     <p className="text-sm text-gray-400">
@@ -143,7 +143,7 @@ export default function TradeHistory() {
                 </div>
 
                 {/* Filter Buttons */}
-                <div className="flex bg-black/20 p-1 rounded-lg border border-white/5">
+                <div className="flex bg-[#011d16] p-1 rounded-lg border border-white/5">
                     {(['all', 'open', 'closed'] as const).map((f) => (
                         <button
                             key={f}
@@ -151,7 +151,7 @@ export default function TradeHistory() {
                             className={`
                 px-4 py-1.5 rounded-md text-xs font-bold transition-all capitalize
                 ${filter === f
-                                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                                    ? 'bg-[#d9e838] text-black shadow-lg shadow-[#d9e838]/20'
                                     : 'text-gray-400 hover:text-gray-300 hover:bg-white/5'
                                 }
               `}
@@ -165,7 +165,7 @@ export default function TradeHistory() {
             {/* Trade Table */}
             <div className="overflow-x-auto">
                 <table className="w-full">
-                    <thead className="bg-black/20 border-b border-white/5">
+                    <thead className="bg-[#011d16] border-b border-white/5">
                         <tr>
                             <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase">Ticket</th>
                             <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase">Symbol</th>
@@ -242,11 +242,11 @@ export default function TradeHistory() {
                                 </td>
                                 <td className="px-4 py-3">
                                     {trade.close_time ? (
-                                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-gray-500/10 text-gray-400 text-xs font-medium">
+                                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-white/5 text-gray-400 text-xs font-medium">
                                             Closed
                                         </span>
                                     ) : (
-                                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 text-xs font-medium animate-pulse">
+                                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-[#d9e838]/10 text-[#d9e838] text-xs font-medium animate-pulse">
                                             Open
                                         </span>
                                     )}
@@ -269,19 +269,19 @@ export default function TradeHistory() {
             {/* Summary Footer */}
             {trades.length > 0 && (
                 <div className="grid grid-cols-4 gap-px bg-white/5 border-t border-white/10">
-                    <div className="bg-gray-900 p-4 text-center">
+                    <div className="bg-[#042f24] p-4 text-center">
                         <p className="text-xs text-gray-400 mb-1">Total Trades</p>
                         <p className="text-sm font-bold text-white">{stats.totalTrades}</p>
                     </div>
-                    <div className="bg-gray-900 p-4 text-center">
+                    <div className="bg-[#042f24] p-4 text-center">
                         <p className="text-xs text-gray-400 mb-1">Open Positions</p>
-                        <p className="text-sm font-bold text-blue-400">{stats.openTrades}</p>
+                        <p className="text-sm font-bold text-[#d9e838]">{stats.openTrades}</p>
                     </div>
-                    <div className="bg-gray-900 p-4 text-center">
+                    <div className="bg-[#042f24] p-4 text-center">
                         <p className="text-xs text-gray-400 mb-1">Closed Trades</p>
                         <p className="text-sm font-bold text-white">{stats.closedTrades}</p>
                     </div>
-                    <div className="bg-gray-900 p-4 text-center">
+                    <div className="bg-[#042f24] p-4 text-center">
                         <p className="text-xs text-gray-400 mb-1">Total P&L</p>
                         <p className={`text-sm font-bold ${stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                             {stats.totalPnL >= 0 ? '+' : ''}${stats.totalPnL.toFixed(2)}

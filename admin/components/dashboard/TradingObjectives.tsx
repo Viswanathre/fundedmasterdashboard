@@ -30,7 +30,7 @@ function ObjectiveRow({ title, timer, max, current, threshold, status, isLossLim
     const percentage = Math.min(100, Math.max(0, (current / max) * 100));
 
     return (
-        <div className="p-5 rounded-xl border border-white/10 bg-gray-900 hover:border-white/20 transition-all">
+        <div className="p-5 rounded-xl border border-white/10 bg-[#042f24] hover:border-white/20 transition-all">
             <div className="flex justify-between items-start mb-3">
                 <div className="flex items-center gap-3">
                     <h3 className="font-bold text-white text-sm">{title}</h3>
@@ -41,7 +41,7 @@ function ObjectiveRow({ title, timer, max, current, threshold, status, isLossLim
                         </div>
                     </div>
                     {timer && (
-                        <span className="flex items-center gap-1.5 text-[10px] font-bold text-blue-400 bg-blue-500/10 px-2 py-1 rounded-md border border-blue-500/20">
+                        <span className="flex items-center gap-1.5 text-[10px] font-bold text-[#d9e838] bg-[#d9e838]/10 px-2 py-1 rounded-md border border-[#d9e838]/20">
                             <Clock size={12} /> {timer}
                         </span>
                     )}
@@ -50,7 +50,7 @@ function ObjectiveRow({ title, timer, max, current, threshold, status, isLossLim
                     "text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border",
                     status === "Failed" ? "bg-red-500/10 text-red-400 border-red-500/20" :
                         status === "Passed" ? "bg-green-500/10 text-green-400 border-green-500/20" :
-                            "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                            "bg-[#d9e838]/10 text-[#d9e838] border-[#d9e838]/20"
                 )}>
                     {status}
                 </span>
@@ -190,7 +190,7 @@ export default function TradingObjectives() {
             <div className="space-y-4">
                 <h2 className="text-lg font-bold text-white">Trading Objectives</h2>
                 <div className="flex items-center justify-center py-12">
-                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                    <Loader2 className="w-8 h-8 text-[#d9e838] animate-spin" />
                 </div>
             </div>
         );
@@ -200,7 +200,7 @@ export default function TradingObjectives() {
         return (
             <div className="space-y-4">
                 <h2 className="text-lg font-bold text-white">Trading Objectives</h2>
-                <div className="p-8 text-center text-gray-500 border border-white/10 rounded-xl bg-gray-900">
+                <div className="p-8 text-center text-gray-500 border border-white/10 rounded-xl bg-[#042f24]">
                     Select an account to view trading objectives
                 </div>
             </div>
@@ -247,7 +247,7 @@ export default function TradingObjectives() {
                         </span>
                     )}
                 </div>
-                <button className="text-xs font-bold text-blue-400 hover:text-blue-300">View Rules</button>
+                <button className="text-xs font-bold text-[#d9e838] hover:text-[#c9d828]">View Rules</button>
             </div>
 
             <div className="grid gap-4">
