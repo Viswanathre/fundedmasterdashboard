@@ -492,3 +492,250 @@ Error: Not allowed by CORS
     at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
     at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
 
+[2026-01-29T02:16:20.562Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T02:16:20.565Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:06:41.142Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:06:41.147Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:06:42.952Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:01.474Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:01.602Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:04.427Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:04.438Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:05.293Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:05.294Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:06.400Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:06.401Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:07.208Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:07.209Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:11.122Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:07:11.131Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:09:13.062Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+
+[2026-01-29T05:09:13.066Z] ERROR: Not allowed by CORS
+Error: Not allowed by CORS
+    at origin (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/src/server.ts:33:22)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:286:9
+    at router.process_params (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/Users/viswanathreddy/Desktop/fundedmaster/crmsharkfunded/crmsharkfunded/backend/node_modules/cookie-parser/index.js:57:14)
+

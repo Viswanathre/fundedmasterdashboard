@@ -16,6 +16,8 @@ export function initializeSocket(httpServer: HTTPServer) {
                     'https://app.sharkfunded.com', // Explicit Add
                     'https://admin.sharkfunded.com', // Explicit Add
                     'https://api.sharkfunded.co', // Explicit Add
+                    'https://app.funded-master.com', // Explicit Add
+                    'https://www.funded-master.com', // Explicit Add
                     process.env.FRONTEND_URL,
                     process.env.ADMIN_URL
                 ].filter(Boolean) as string[];

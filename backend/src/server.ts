@@ -23,6 +23,8 @@ app.use(cors({
             'https://admin.sharkfunded.com', // Explicit Add
             'https://admin-six-gamma-66.vercel.app', // Explicit Add (User Deployment)
             'https://api.sharkfunded.co', // Explicit Add
+            'https://app.funded-master.com', // Explicit Add
+            'https://www.funded-master.com', // Explicit Add
             process.env.FRONTEND_URL,
             process.env.ADMIN_URL
         ].filter(Boolean) as string[];
