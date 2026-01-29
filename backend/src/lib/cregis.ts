@@ -83,7 +83,7 @@ export class CregisClient {
                 payer_name: params.customerName || 'Trader',
                 payer_email: params.customerEmail,
                 valid_time: 60,
-                callback_url: `${(process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || '').replace(/\/$/, '')}/api/webhooks/payment`,
+                callback_url: `${(process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || '').replace(/\/+$/, '')}/api/webhooks/payment`,
                 success_url: `${process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL}/payment/success?orderId=${params.orderId}`,
                 cancel_url: `${process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL}/payment/failed`,
                 remark: params.metadata?.account_type || "Challenge Purchase",

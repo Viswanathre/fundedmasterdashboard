@@ -57,8 +57,9 @@ export class SharkPayGateway implements PaymentGateway {
             const amountINR = await this.convertToINR(params.amount);
 
             // Use FRONTEND_URL for user redirects, BACKEND_URL for webhooks
-            const frontendUrl = (process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/$/, '');
-            const backendUrl = (process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001').replace(/\/$/, '');
+            // Use FRONTEND_URL for user redirects, BACKEND_URL for webhooks
+            const frontendUrl = (process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/+$/, '');
+            const backendUrl = (process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001').replace(/\/+$/, '');
 
             // SharkPay API payload (exact format from docs)
             console.log("🦈 [SharkPay Debug] Backend URL:", backendUrl);
