@@ -34,6 +34,11 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
 
         // Initialize socket connection
+        console.log("🔌 SocketContext: Environment Variables Check:");
+        console.log("   - NEXT_PUBLIC_BACKEND_URL:", process.env.NEXT_PUBLIC_BACKEND_URL);
+        console.log("   - BACKEND_URL:", process.env.BACKEND_URL);
+        console.log("   - NODE_ENV:", process.env.NODE_ENV);
+
         console.log("🔌 SocketContext: Connecting to backendUrl:", backendUrl);
         const newSocket = io(backendUrl, {
             transports: ['websocket', 'polling'],
