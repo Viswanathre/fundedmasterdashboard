@@ -92,7 +92,7 @@ router.post('/purchase-challenge', authenticate, async (req: AuthRequest, res: R
         if (paymentGateway === 'sharkpay') {
             const amountINR = Math.round(finalAmount * 84); // Convert USD to INR
             const frontendUrl = process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-            const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+            const backendUrl = (process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001').replace(/\/$/, '');
             const sharkpayUrl = process.env.SHARKPAY_API_URL || 'https://sharkpay-o9zz.vercel.app';
 
             const payload = {
