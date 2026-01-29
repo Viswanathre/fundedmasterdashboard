@@ -206,7 +206,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
             group: mt5Group,
             leverage: leverage,
             balance: order.account_size,
-            callback_url: `${process.env.BACKEND_URL || process.env.FRONTEND_URL}/api/webhooks/mt5`
+            callback_url: `${(process.env.BACKEND_URL || process.env.FRONTEND_URL || '').replace(/\/$/, '')}/api/webhooks/mt5`
         });
 
         // 5. Create Challenge Record & Competition Participant

@@ -110,7 +110,7 @@ async function main() {
             group: 'demo\\demo-sf',
             leverage: 100,
             balance: initialBalance,
-            callback_url: `${process.env.BACKEND_URL}/api/webhooks/mt5`
+            callback_url: `${(process.env.BACKEND_URL || '').replace(/\/$/, '')}/api/webhooks/mt5`
         });
     } catch (e: any) {
         console.error("MT5 Creation Failed (using dummy data):", e.message);

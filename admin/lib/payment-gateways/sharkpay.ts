@@ -29,9 +29,9 @@ export class SharkPayGateway implements PaymentGateway {
                 name: params.customerName,
                 email: params.customerEmail,
                 reference_id: params.orderId, // Our internal order ID
-                success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success`,
-                failed_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/failed`,
-                callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment`,
+                success_url: `${(process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '')}/payment/success`,
+                failed_url: `${(process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '')}/payment/failed`,
+                callback_url: `${(process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '')}/api/webhooks/payment`,
             };
 
             console.log('SharkPay request:', { ...payload, amount: amountINR });
