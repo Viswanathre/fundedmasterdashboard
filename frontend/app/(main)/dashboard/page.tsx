@@ -183,9 +183,9 @@ function DashboardContent() {
                                             exit={{ opacity: 0, y: 10 }}
                                             className="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 text-slate-800"
                                         >
-                                            <div className="p-3 border-b border-white/5">
-                                                <p className="text-xs font-bold text-white truncate">{user?.email}</p>
-                                                <p className="text-[10px] text-gray-500">Logged In</p>
+                                            <div className="p-3 border-b border-slate-100">
+                                                <p className="text-xs font-bold text-slate-900 truncate">{user?.email}</p>
+                                                <p className="text-[10px] text-slate-500">Logged In</p>
                                             </div>
                                             <button
                                                 onClick={handleLogout}

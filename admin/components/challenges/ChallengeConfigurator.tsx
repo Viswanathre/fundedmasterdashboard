@@ -16,8 +16,8 @@ const CHALLENGE_TYPES = [
 ];
 
 const MODELS = [
-    { id: "standard", label: "SharkFunded", desc: "Classic model" },
-    { id: "pro", label: "SharkFunded Pro", desc: "Higher leverage" }
+    { id: "standard", label: "FundedMaster", desc: "Classic model" },
+    { id: "pro", label: "FundedMaster Pro", desc: "Higher leverage" }
 ];
 
 const SIZES = [5000, 10000, 25000, 50000, 100000, 200000];
@@ -520,7 +520,7 @@ export default function ChallengeConfigurator() {
 
                         <div className="p-6 space-y-6">
                             <div className="flex justify-between items-start text-sm">
-                                <span className="text-muted-foreground">${size.toLocaleString()} — {type === "1-step" ? "One Step" : type === "2-step" ? "Two Step" : "Instant"} {model === "standard" ? "Shark" : "Shark Pro"}</span>
+                                <span className="text-muted-foreground">${size.toLocaleString()} — {type === "1-step" ? "One Step" : type === "2-step" ? "Two Step" : "Instant"} {model === "standard" ? "FundedMaster" : "FundedMaster Pro"}</span>
                                 <div className="text-right">
                                     <span className="font-bold font-mono">{displayCurrency === 'INR' ? '₹' : '$'}{(gateway === 'sharkpay' ? Math.round(basePriceUSD * 84) : basePriceUSD).toLocaleString()}</span>
                                 </div>

@@ -60,7 +60,7 @@ export default function DetailedStats() {
         return [
             { label: "Number of Days", value: "1", icon: Calendar },
             { label: "Total Trades Taken", value: String(trades), icon: Hash },
-            { label: "Total Lots Used", value: (lots / 10000).toFixed(2), icon: BarChart3 },
+            { label: "Total Lots Used", value: (lots / 100).toFixed(2), icon: BarChart3 },
             { label: "Biggest Win", value: win > 0 ? `+$${win.toFixed(2)}` : "$0.00", icon: TrendingUp, color: "text-green-400" },
             { label: "Biggest Loss", value: loss < 0 ? `-$${Math.abs(loss).toFixed(2)}` : "$0.00", icon: TrendingDown, color: "text-red-400" },
         ];
@@ -90,7 +90,7 @@ export default function DetailedStats() {
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-white tracking-tight">Detailed Stats</h2>
                 {selectedAccount && (
-                    <span className="text-xs text-emerald-500/40 font-bold uppercase tracking-wider">
+                    <span className="text-xs text-emerald-400/70 font-bold uppercase tracking-wider">
                         {selectedAccount.account_number}
                     </span>
                 )}
@@ -99,10 +99,10 @@ export default function DetailedStats() {
                 {stats.map((stat, i) => (
                     <div key={i} className="p-6 rounded-xl border border-white/5 bg-[#042f24] group hover:border-[#d9e838]/20 transition-all font-sans">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2.5 rounded-lg bg-white/5 text-emerald-500/40 group-hover:text-[#d9e838] group-hover:bg-[#d9e838]/10 transition-colors border border-transparent group-hover:border-[#d9e838]/20">
+                            <div className="p-2.5 rounded-lg bg-white/5 text-emerald-400/80 group-hover:text-[#d9e838] group-hover:bg-[#d9e838]/10 transition-colors border border-transparent group-hover:border-[#d9e838]/20">
                                 <stat.icon size={18} />
                             </div>
-                            <span className="text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">{stat.label}</span>
+                            <span className="text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">{stat.label}</span>
                         </div>
                         <p className={cn("text-2xl font-bold tracking-tight", stat.color ? "text-emerald-400" : "text-white")}>
                             {stat.value}

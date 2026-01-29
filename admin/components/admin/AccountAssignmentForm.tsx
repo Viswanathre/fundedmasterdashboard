@@ -8,20 +8,19 @@ import { createClient } from "@/utils/supabase/client";
 const supabase = createClient();
 
 const MT5_GROUPS = {
-    "Lite Instant Funding": "demo\\S\\0-SF",
-    "Lite 1-Step Challenge": "demo\\S\\1-SF",
-    "Lite 2-Step Challenge": "demo\\S\\2-SF",
-    "Prime Instant Funding": "demo\\SF\\0-Pro",
-    "Prime 1-Step Challenge": "demo\\SF\\1-Pro",
-    "Prime 2-Step Challenge": "demo\\SF\\2-Pro",
-    "Funded Live Account": "SF Funded Live",
+    "Standard Instant Funding": "demo\\0-FM",
+    "Standard 1-Step Challenge": "demo\\1-FM",
+    "Standard 2-Step Challenge": "demo\\2-FM",
+    "Prime Instant Funding": "demo\\5-FM",
+    "Prime 1-Step Challenge": "demo\\1-FM",
+    "Prime 2-Step Challenge": "demo\\4-FM",
+    "Prime Funded Account": "demo\\6-FM",
     "Competition Account": "demo\\SF\\0-Demo\\comp"
 };
 
 const ACCOUNT_SIZES = {
-    lite: [5000, 10000, 25000, 50000, 100000],
-    prime: [5000, 10000, 25000, 50000, 100000,],
-    funded: [5000, 10000, 25000, 50000, 100000,],
+    standard: [5000, 10000, 25000, 50000, 100000],
+    prime: [5000, 10000, 25000, 50000, 100000],
     competition: [100000],
 };
 
@@ -95,9 +94,8 @@ export default function AccountAssignmentForm({ users = [] }: AccountAssignmentF
 
     // Get available account sizes based on selected group
     const getAvailableSizes = () => {
-        if (selectedGroup.includes("Lite")) return ACCOUNT_SIZES.lite;
+        if (selectedGroup.includes("Standard")) return ACCOUNT_SIZES.standard;
         if (selectedGroup.includes("Prime")) return ACCOUNT_SIZES.prime;
-        if (selectedGroup.includes("Funded")) return ACCOUNT_SIZES.funded;
         if (selectedGroup.includes("Competition")) return ACCOUNT_SIZES.competition;
         return [];
     };

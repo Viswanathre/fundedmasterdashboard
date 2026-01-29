@@ -29,7 +29,7 @@ const PayoutCertificate = forwardRef<PayoutCertificateRef, PayoutCertificateProp
             const canvas = canvasRef.current;
             if (canvas) {
                 const link = document.createElement("a");
-                link.download = `SharkFunded-Certificate-${transactionId}.png`;
+                link.download = `Fundedmaster-Certificate-${transactionId}.png`;
                 link.href = canvas.toDataURL("image/png");
                 link.click();
             }
@@ -103,7 +103,7 @@ const PayoutCertificate = forwardRef<PayoutCertificateRef, PayoutCertificateProp
                 // QR Code Generation
                 try {
                     // QR Data: Verification URL
-                    const qrUrl = `https://sharkfunded.com/verify/${transactionId}`; // Using Transaction ID for lookup
+                    const qrUrl = `https://fundedmaster.com/verify/${transactionId}`; // Using Transaction ID for lookup
                     const qrDataUrl = await QRCode.toDataURL(qrUrl, {
                         width: 150,
                         margin: 1,

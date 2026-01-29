@@ -98,7 +98,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                         <div className="relative w-40 h-10">
                             <Image
                                 src="/shark-logo.png"
-                                alt="SharkFunded"
+                                alt="FundedMaster"
                                 fill
                                 className="object-contain object-left"
                                 priority
@@ -108,7 +108,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                         <div className="relative w-10 h-10">
                             <Image
                                 src="/shark-icon.jpg"
-                                alt="SharkFunded Icon"
+                                alt="FundedMaster Icon"
                                 fill
                                 className="object-contain"
                                 priority

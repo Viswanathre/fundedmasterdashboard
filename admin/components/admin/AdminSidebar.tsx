@@ -68,7 +68,7 @@ export function AdminSidebar({ user, onClose }: AdminSidebarProps & { onClose?: 
                         <Shield className="h-5 w-5 text-[#011d16]" />
                     </div>
                     <div>
-                        <span className="block text-base font-semibold text-white">SharkFunded</span>
+                        <span className="block text-base font-semibold text-white">FUNDEDMASTER</span>
                         <span className="block text-xs text-emerald-500/80">Admin Portal</span>
                     </div>
                 </div>

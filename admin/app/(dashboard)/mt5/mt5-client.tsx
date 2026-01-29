@@ -199,12 +199,12 @@ export default function AdminMT5Client() {
 
     // MT5 Group options for filtering
     const MT5_GROUP_FILTERS = [
-        { label: "Lite - Instant Funding", value: "demo\\S\\0-SF" },
-        { label: "Lite - 1-Step Challenge", value: "demo\\S\\1-SF" },
-        { label: "Lite - 2-Step Challenge", value: "demo\\S\\2-SF" },
-        { label: "Prime - Instant Funding", value: "demo\\SF\\0-Pro" },
-        { label: "Prime - 1-Step Challenge", value: "demo\\SF\\1-Pro" },
-        { label: "Prime - 2-Step Challenge", value: "demo\\SF\\2-Pro" },
+        { label: "Standard - Instant Funding", value: "demo\\0-FM" },
+        { label: "Standard - 1-Step Challenge", value: "demo\\1-FM" },
+        { label: "Standard - 2-Step Challenge", value: "demo\\2-FM" },
+        { label: "Prime - Instant Funding", value: "demo\\5-FM" },
+        { label: "Prime - 1-Step Challenge", value: "demo\\1-FM" },
+        { label: "Prime - 2-Step Challenge", value: "demo\\4-FM" },
         { label: "Funded Live Account", value: "SF Funded Live" },
     ];
 
@@ -486,7 +486,7 @@ export default function AdminMT5Client() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 font-mono text-gray-900 text-xs">
-                                            {account.challenge_number || `SF-${account.id.slice(0, 8)}`}
+                                            {account.challenge_number || `FM-${account.id.slice(0, 8)}`}
                                         </td>
                                         <td className="px-6 py-4 text-gray-900 capitalize">
                                             {account.plan_type || "Standard"}

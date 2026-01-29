@@ -127,8 +127,9 @@ export default function TradeHistory() {
 
     const normalizeType = (type: any): string => {
         const typeStr = String(type).toLowerCase();
-        if (typeStr === '0' || typeStr === 'buy') return 'Buy';
-        if (typeStr === '1' || typeStr === 'sell') return 'Sell';
+        // SWAPPED per user request: 0/Buy -> Sell, 1/Sell -> Buy
+        if (typeStr === '0' || typeStr === 'buy') return 'Sell';
+        if (typeStr === '1' || typeStr === 'sell') return 'Buy';
         return String(type);
     };
 
@@ -195,27 +196,31 @@ export default function TradeHistory() {
                 <table className="w-full">
                     <thead className="bg-[#011d16]/30 border-b border-white/5">
                         <tr>
-                            <th className="px-5 py-4 text-left text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">Ticket</th>
-                            <th className="px-5 py-4 text-left text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">Symbol</th>
-                            <th className="px-5 py-4 text-left text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">Type</th>
-                            <th className="px-5 py-4 text-right text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">Lots</th>
-                            <th className="px-5 py-4 text-right text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">Open</th>
-                            <th className="px-5 py-4 text-right text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">Close</th>
-                            <th className="px-5 py-4 text-left text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">Duration</th>
-                            <th className="px-4 py-3 text-right text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">Net P&L</th>
-                            <th className="px-4 py-3 text-left text-[10px] font-bold text-emerald-500/40 uppercase tracking-widest">Status</th>
+                            <th className="px-5 py-4 text-left text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Ticket</th>
+                            <th className="px-5 py-4 text-left text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Symbol</th>
+                            <th className="px-5 py-4 text-left text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Type</th>
+                            <th className="px-5 py-4 text-right text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Lots</th>
+                            <th className="px-5 py-4 text-right text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Open</th>
+                            <th className="px-5 py-4 text-right text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Close</th>
+                            <th className="px-5 py-4 text-left text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Duration</th>
+                            <th className="px-4 py-3 text-right text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Net P&L</th>
+                            <th className="px-4 py-3 text-left text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Status</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {trades.map((trade) => { // CHANGED: Map directly over trades (which are already paginated by backend)
                             const netProfit = (trade.profit_loss || 0) + (trade.commission || 0) + (trade.swap || 0);
+                            const rawType = String(trade.type).toLowerCase();
+                            // Logic swap for display style too: '0'/'buy' (which is now Sell) gets red, '1'/'sell' (which is now Buy) gets green
+                            const isNowBuy = rawType === '1' || rawType === 'sell';
+
                             return (
                                 <tr
                                     key={trade.id}
                                     className="hover:bg-white/5 transition-colors group"
                                 >
                                     <td className="px-4 py-3">
-                                        <span className="text-xs font-mono text-emerald-500/40 font-bold">#{trade.ticket_number}</span>
+                                        <span className="text-xs font-mono text-emerald-400/80 font-bold">#{trade.ticket_number}</span>
                                     </td>
                                     <td className="px-4 py-3">
                                         <span className="text-sm font-bold text-white tracking-tight">{trade.symbol}</span>
@@ -224,18 +229,18 @@ export default function TradeHistory() {
                                         <span
                                             className={`
                        inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest
-                       ${String(trade.type) === '0' || String(trade.type).toLowerCase() === 'buy' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}
+                       ${isNowBuy ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}
                      `}
                                         >
                                             {normalizeType(trade.type)}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 text-right">
-                                        <span className="text-sm text-white font-bold">{(trade.lots / 10000).toFixed(2)}</span>
+                                        <span className="text-sm text-white font-bold">{(trade.lots / 100).toFixed(2)}</span>
                                     </td>
                                     <td className="px-4 py-3 text-right">
                                         <div className="text-sm text-white font-bold">{trade.open_price.toFixed(5)}</div>
-                                        <div className="text-[10px] text-emerald-500/40 font-bold uppercase">{formatDate(trade.open_time)}</div>
+                                        <div className="text-[10px] text-emerald-400/70 font-bold uppercase">{formatDate(trade.open_time)}</div>
                                     </td>
                                     <td className="px-4 py-3 text-right">
                                         {trade.close_price ? (
@@ -248,7 +253,7 @@ export default function TradeHistory() {
                                         )}
                                     </td>
                                     <td className="px-4 py-3">
-                                        <div className="flex items-center gap-1.5 text-[10px] text-emerald-500/40 font-bold uppercase tracking-wider">
+                                        <div className="flex items-center gap-1.5 text-[10px] text-emerald-400/70 font-bold uppercase tracking-wider">
                                             <Clock size={12} />
                                             {formatDuration(trade.open_time, trade.close_time)}
                                         </div>
@@ -278,7 +283,7 @@ export default function TradeHistory() {
                                     </td>
                                     <td className="px-4 py-3">
                                         {trade.close_time ? (
-                                            <span className="inline-flex items-center px-2 py-1 rounded-md bg-white/5 text-emerald-500/40 text-[10px] font-bold uppercase tracking-widest">
+                                            <span className="inline-flex items-center px-2 py-1 rounded-md bg-white/5 text-emerald-400/70 text-[10px] font-bold uppercase tracking-widest">
                                                 Closed
                                             </span>
                                         ) : (
@@ -297,7 +302,7 @@ export default function TradeHistory() {
             {/* Pagination Controls */}
             {stats.totalTrades > 0 && (
                 <div className="flex items-center justify-between px-6 py-4 border-t border-white/5 bg-black/10">
-                    <div className="text-[10px] text-emerald-500/40 font-bold uppercase tracking-widest">
+                    <div className="text-[10px] text-emerald-400/70 font-bold uppercase tracking-widest">
                         Showing <span className="font-bold text-white tracking-normal">{((currentPage - 1) * tradesPerPage) + 1}</span> to <span className="font-bold text-white tracking-normal">{Math.min(currentPage * tradesPerPage, stats.totalTrades)}</span> of <span className="font-bold text-white tracking-normal">{stats.totalTrades}</span> trades
                     </div>
                     <div className="flex items-center gap-2">
@@ -333,19 +338,19 @@ export default function TradeHistory() {
             {stats.totalTrades > 0 && (
                 <div className="grid grid-cols-4 gap-px bg-white/5 border-t border-white/5">
                     <div className="bg-[#042f24] p-5 text-center">
-                        <p className="text-[10px] text-emerald-500/40 font-bold uppercase tracking-widest mb-1.5">Total Trades</p>
+                        <p className="text-[10px] text-emerald-400/80 font-bold uppercase tracking-widest mb-1.5">Total Trades</p>
                         <p className="text-base font-bold text-white tracking-tight">{stats.totalTrades}</p>
                     </div>
                     <div className="bg-[#042f24] p-5 text-center">
-                        <p className="text-[10px] text-emerald-500/40 font-bold uppercase tracking-widest mb-1.5">Open Positions</p>
+                        <p className="text-[10px] text-emerald-400/80 font-bold uppercase tracking-widest mb-1.5">Open Positions</p>
                         <p className="text-base font-bold text-[#d9e838] tracking-tight">{stats.openTrades}</p>
                     </div>
                     <div className="bg-[#042f24] p-5 text-center">
-                        <p className="text-[10px] text-emerald-500/40 font-bold uppercase tracking-widest mb-1.5">Closed Trades</p>
+                        <p className="text-[10px] text-emerald-400/80 font-bold uppercase tracking-widest mb-1.5">Closed Trades</p>
                         <p className="text-base font-bold text-white tracking-tight">{stats.closedTrades}</p>
                     </div>
                     <div className="bg-[#042f24] p-5 text-center">
-                        <p className="text-[10px] text-emerald-500/40 font-bold uppercase tracking-widest mb-1.5">Total P&L</p>
+                        <p className="text-[10px] text-emerald-400/80 font-bold uppercase tracking-widest mb-1.5">Total P&L</p>
                         <p className={`text-base font-bold tracking-tight ${stats.totalPnL >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                             {stats.totalPnL >= 0 ? '+' : ''}${stats.totalPnL.toFixed(2)}
                         </p>

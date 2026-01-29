@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
         source: '/api/dashboard/:path*',
         destination: `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/dashboard/:path*`,
       },
+      {
+        source: '/api/admin/:path*',
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/admin/:path*`,
+      },
+      {
+        source: '/api/admins/:path*',
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/admins/:path*`,
+      },
     ];
   },
 };

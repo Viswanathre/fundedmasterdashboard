@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="block w-full rounded-lg bg-[#011d16] border border-white/10 px-3 py-2.5 text-sm text-white focus:border-[#d9e838] focus:outline-none focus:ring-2 focus:ring-[#d9e838]/10"
-                                placeholder="admin@sharkfunded.com"
+                                placeholder="info@fundedmaster.com"
                             />
                         </div>
 

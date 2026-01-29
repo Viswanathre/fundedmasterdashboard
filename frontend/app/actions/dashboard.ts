@@ -1,21 +1,12 @@
 'use server'
 
-import { redis } from '@/lib/redis';
 import { createClient } from '@/utils/supabase/server';
 
 export async function getEquityCurveData(challengeId: string, initialBalance: number, period: string = '1M') {
-    const CACHE_KEY = `dashboard:equity:${challengeId}:${period}`;
+    // const CACHE_KEY = `dashboard:equity:${challengeId}:${period}`;
 
-    // 1. Try Cache
-    try {
-        const cached = await redis.get(CACHE_KEY);
-        if (cached) {
-            console.log('⚡ Redis Cache Hit for Equity Curve');
-            return JSON.parse(cached);
-        }
-    } catch (e) {
-        console.warn('Redis error (get):', e);
-    }
+    // 1. Try Cache - REMOVED due to connection issues
+
 
     console.log('🐢 Cache Miss - Fetching from DB');
 
@@ -136,14 +127,8 @@ export async function getEquityCurveData(challengeId: string, initialBalance: nu
         }
     }
 
-    // 4. Set Cache (60 seconds)
-    try {
-        if (equityCurve.length > 0) {
-            await redis.set(CACHE_KEY, JSON.stringify(equityCurve), 'EX', 60);
-        }
-    } catch (e) {
-        console.warn('Redis error (set):', e);
-    }
+    // 4. Set Cache (60 seconds) - REMOVED
+
 
     return equityCurve;
 }

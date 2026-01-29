@@ -16,6 +16,7 @@ export default function PayoutsPage() {
         totalPaid: 0,
         pending: 0
     });
+    const [accounts, setAccounts] = useState<any[]>([]); // New state for accounts
     const [eligibility, setEligibility] = useState({
         fundedAccountActive: false,
         walletConnected: false,
@@ -40,6 +41,7 @@ export default function PayoutsPage() {
                 totalPaid: balanceData.balance.totalPaid || 0,
                 pending: balanceData.balance.pending || 0
             });
+            setAccounts(balanceData.accounts || []); // Store accounts
             if (balanceData.eligibility) {
                 setEligibility(balanceData.eligibility);
             }
@@ -56,7 +58,7 @@ export default function PayoutsPage() {
         }
     };
 
-    const handleRequestPayout = async (amount: number, method: string): Promise<boolean> => {
+    const handleRequestPayout = async (amount: number, method: string, otpToken: string, challengeId: string): Promise<boolean> => {
         try {
             setRequesting(true);
 
@@ -68,7 +70,7 @@ export default function PayoutsPage() {
             // Call API to request payout
             const data = await fetchFromBackend('/api/payouts/request', {
                 method: 'POST',
-                body: JSON.stringify({ amount, method }),
+                body: JSON.stringify({ amount, method, otp_token: otpToken, challenge_id: challengeId }),
             });
 
 
@@ -130,9 +132,10 @@ export default function PayoutsPage() {
                 <div className="lg:col-span-1 space-y-6">
                     <RequestPayoutCard
                         availablePayout={stats.available}
+                        accounts={accounts} // Pass accounts list
                         walletAddress={walletAddress}
                         isLoading={requesting}
-                        onRequestPayout={handleRequestPayout} // Fixed prop name
+                        onRequestPayout={handleRequestPayout}
                     />
 
                     {/* Eligibility / Rules Card */}

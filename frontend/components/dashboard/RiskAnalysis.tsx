@@ -210,63 +210,6 @@ export default function RiskAnalysis() {
     // Check if any violations exist
     const hasAnyViolations = Object.values(violations).some(v => v.length > 0);
 
-    return (
-        <div className="w-full">
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
-                    <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                        <ShieldCheck size={24} className="text-[#d9e838]" />
-                        Risk Analysis
-                    </h2>
-                    <span className="text-xs text-emerald-500/40 font-bold uppercase tracking-wider">
-                        {selectedAccount.account_number}
-                    </span>
-                </div>
-                <div className="flex items-center gap-3">
-                    {lastUpdate && (
-                        <span className="text-[10px] text-emerald-500/40 flex items-center gap-1 font-bold">
-                            <Clock size={10} />
-                            Updated: {lastUpdate.toLocaleTimeString()}
-                        </span>
-                    )}
-                    <div className={cn(
-                        "flex items-center gap-2 px-3 py-1 rounded-full border shadow-lg",
-                        hasAnyViolations
-                            ? "bg-red-500/10 border-red-500/20 shadow-red-500/5"
-                            : "bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/5"
-                    )}>
-                        <div className={cn(
-                            "w-2 h-2 rounded-full animate-pulse",
-                            hasAnyViolations ? "bg-red-500" : "bg-emerald-500"
-                        )} />
-                        <span className={cn(
-                            "text-[10px] font-bold uppercase tracking-widest",
-                            hasAnyViolations ? "text-red-400" : "text-emerald-400"
-                        )}>
-                            {hasAnyViolations ? `${Object.values(violations).flat().length} Violations` : "All Clear"}
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
-                {RISK_RULES.map(rule => {
-                    const ruleViolations = violations[rule.key] || [];
-                    const hasFailed = ruleViolations.length > 0;
-
-                    return (
-                        <RiskItem
-                            key={rule.key}
-                            label={rule.label}
-                            description={rule.description}
-                            status={hasFailed ? "Failed" : "Passed"}
-                            icon={rule.icon}
-                            breaches={hasFailed ? ruleViolations : undefined}
-                        />
-                    );
-                })}
-            </div>
-        </div>
-    );
+    return null;
 }
 

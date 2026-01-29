@@ -559,19 +559,14 @@ export default function SettingsPage() {
                                                     setSaveMessage(null);
 
                                                     try {
-                                                        const response = await fetch('/api/user/wallet', {
+                                                        const response = await fetchFromBackend('/api/user/wallet', {
                                                             method: 'POST',
-                                                            headers: {
-                                                                'Content-Type': 'application/json',
-                                                            },
                                                             body: JSON.stringify({ walletAddress: wallet.address }),
                                                         });
 
-                                                        const data = await response.json();
-
-                                                        if (!response.ok) {
-                                                            throw new Error(data.error || 'Failed to save wallet');
-                                                        }
+                                                        // Helper returns parsed JSON directly or throws
+                                                        // No need to check response.ok or await response.json() again if helper does it.
+                                                        // Checking fetchFromBackend implementation... it returns data.
 
                                                         setWallet({ ...wallet, isLocked: true });
                                                         setSaveMessage({ type: 'success', text: 'Wallet saved and locked successfully!' });

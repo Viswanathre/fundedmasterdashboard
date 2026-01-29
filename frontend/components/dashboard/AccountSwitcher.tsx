@@ -266,8 +266,8 @@ function AccountSwitcherContent({
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
                     <div className="w-10 h-10 rounded-full bg-[#d9e838]/10 flex items-center justify-center overflow-hidden">
                         <Image
-                            src="/shark-icon.svg"
-                            alt="SharkFunded"
+                            src="/logo.png"
+                            alt="FundedMaster"
                             width={24}
                             height={24}
                             className="object-contain"

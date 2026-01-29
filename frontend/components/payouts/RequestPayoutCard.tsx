@@ -5,19 +5,32 @@ import Link from "next/link";
 
 interface RequestPayoutCardProps {
     availablePayout: number;
+    accounts: any[]; // List of accounts
     walletAddress: string | null;
     isLoading: boolean;
-    onRequestPayout: (amount: number, method: string) => Promise<boolean>;
+    onRequestPayout: (amount: number, method: string, otpToken: string, challengeId: string) => Promise<boolean>;
 }
 
-export default function RequestPayoutCard({ availablePayout, walletAddress, isLoading, onRequestPayout }: RequestPayoutCardProps) {
+export default function RequestPayoutCard({ availablePayout, accounts, walletAddress, isLoading, onRequestPayout }: RequestPayoutCardProps) {
+    console.log('RequestPayoutCard accounts prop:', accounts);
     const [amount, setAmount] = useState("");
-    const [method, setMethod] = useState<"crypto">("crypto"); // bank removed for now as user requested USDT only
+    const [method, setMethod] = useState<"crypto">("crypto");
+    const [otpToken, setOtpToken] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-    const [showConfirmation, setShowConfirmation] = useState(false);
+    // Account Selection
+    const [selectedAccountId, setSelectedAccountId] = useState<string>(accounts?.[0]?.id || "");
 
+    // Update selected account if accounts list loads later
+    if (!selectedAccountId && accounts.length > 0) {
+        setSelectedAccountId(accounts[0].id);
+    }
+
+    const selectedAccount = accounts.find(a => a.id === selectedAccountId);
+    const currentAvailable = selectedAccount ? selectedAccount.available : 0;
+
+    const [showConfirmation, setShowConfirmation] = useState(false);
     const [submittedAmount, setSubmittedAmount] = useState<string | null>(null);
 
     const handleInitialSubmit = () => {
@@ -26,8 +39,8 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
             setError("Please enter a valid amount");
             return;
         }
-        if (parseFloat(amount) > availablePayout) {
-            setError("Amount exceeds available payout");
+        if (parseFloat(amount) > currentAvailable) {
+            setError("Amount exceeds available payout for this account");
             return;
         }
         if (parseFloat(amount) < 50) {
@@ -38,19 +51,55 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
             setError("No wallet address found");
             return;
         }
+        if (!selectedAccountId) {
+            setError("Please select an account");
+            return;
+        }
         setShowConfirmation(true);
     };
 
+    const [resendTimer, setResendTimer] = useState(0);
+    const [sendingCode, setSendingCode] = useState(false);
+    const [emailSentSuccess, setEmailSentSuccess] = useState(false);
+
+    const handleSendEmailOTP = async () => {
+        try {
+            setSendingCode(true);
+            setEmailSentSuccess(false); // Reset previous success state
+            const { fetchFromBackend } = require("@/lib/backend-api");
+            await fetchFromBackend('/api/otp/generate', {
+                method: 'POST',
+                body: JSON.stringify({ purpose: 'withdrawal' })
+            });
+            setResendTimer(60);
+            const interval = setInterval(() => {
+                setResendTimer((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(interval);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+            setEmailSentSuccess(true);
+            // alert("Verification code sent to your email!"); // Removed alert
+        } catch (error: any) {
+            console.error("Failed to send code:", error);
+            alert(error.message || "Failed to send verification code");
+        } finally {
+            setSendingCode(false);
+        }
+    };
+
     const confirmAndPay = async () => {
-        const currentAmount = amount; // Capture current amount
-        const isSuccess = await onRequestPayout(parseFloat(currentAmount), "USDT (TRC20)");
+        const currentAmount = amount;
+        const isSuccess = await onRequestPayout(parseFloat(currentAmount), "USDT (TRC20)", otpToken, selectedAccountId);
 
         if (isSuccess) {
-            setSubmittedAmount(currentAmount); // Store for success view
+            setSubmittedAmount(currentAmount);
             setShowConfirmation(false);
             setSuccess(true);
             setAmount("");
-            // Reset success state after animation
             setTimeout(() => {
                 setSuccess(false);
                 setSubmittedAmount(null);
@@ -76,7 +125,6 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                             className="relative w-24 h-24 bg-gradient-to-tr from-green-500 to-emerald-400 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(34,197,94,0.4)]"
                         >
                             <CheckCircle size={48} className="text-white z-10" />
-                            {/* Particle Explosion */}
                             {[...Array(12)].map((_, i) => (
                                 <motion.div
                                     key={i}
@@ -124,12 +172,16 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        className="absolute inset-0 flex flex-col p-8 bg-[#042f24] z-10"
+                        className="flex flex-col"
                     >
                         <h2 className="text-xl font-bold text-white mb-6">Confirm Withdrawal</h2>
 
-                        <div className="flex-1 space-y-4">
+                        <div className="space-y-4">
                             <div className="bg-white/5 rounded-xl p-5 space-y-4 border border-white/5">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-400 text-sm font-medium">Account</span>
+                                    <span className="text-white text-sm font-mono">{selectedAccount?.login}</span>
+                                </div>
                                 <div className="flex justify-between items-center">
                                     <span className="text-gray-400 text-sm font-medium">Amount</span>
                                     <span className="text-white text-xl font-bold tracking-tight">${parseFloat(amount).toFixed(2)}</span>
@@ -149,6 +201,57 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                                 <span className="text-[10px] text-[#d9e838] uppercase font-black tracking-widest mb-2 block opacity-90">Destination Wallet</span>
                                 <p className="text-xs text-gray-200 font-mono break-all leading-relaxed bg-black/20 p-2 rounded-lg border border-white/5">{walletAddress}</p>
                             </div>
+
+                            {/* OTP Verification Section */}
+                            <div className="pt-2 border-t border-white/10 mt-4">
+                                <label className="block text-gray-300 text-sm font-bold mb-3 flex justify-between items-center">
+                                    <span>Verification Code</span>
+                                    <span className={`text-xs font-normal ${sendingCode ? 'text-green-400' : 'text-gray-400'}`}>
+                                        {sendingCode ? 'Sending...' : 'Sent to registered email'}
+                                    </span>
+                                </label>
+
+                                <div className="space-y-3">
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={otpToken}
+                                            onChange={(e) => setOtpToken(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
+                                            placeholder="------"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white text-center tracking-[1.5rem] font-mono text-2xl focus:outline-none focus:border-[#d9e838] focus:bg-white/10 transition-all placeholder:tracking-[1.5rem] placeholder:text-white/10"
+                                            maxLength={6}
+                                        />
+                                    </div>
+
+                                    {emailSentSuccess && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -5 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className="text-center"
+                                        >
+                                            <p className="text-green-400 text-xs font-medium flex items-center justify-center gap-1">
+                                                <CheckCircle size={12} /> Verification code sent to your email
+                                            </p>
+                                        </motion.div>
+                                    )}
+
+                                    <button
+                                        onClick={handleSendEmailOTP}
+                                        disabled={resendTimer > 0 || sendingCode}
+                                        className="w-full py-2 text-xs font-medium text-[#d9e838] hover:text-[#c9d828] disabled:text-gray-500 disabled:cursor-not-allowed transition-colors border border-dashed border-[#d9e838]/30 rounded-lg hover:bg-[#d9e838]/5"
+                                    >
+                                        {sendingCode ? (
+                                            <span className="flex items-center justify-center gap-2">
+                                                <Loader2 size={12} className="animate-spin" /> Sending Code...
+                                            </span>
+                                        ) : resendTimer > 0 ? (
+                                            `Resend code in ${resendTimer}s`
+                                        ) : (
+                                            "Send Verification Code via Email"
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="mt-6 grid grid-cols-2 gap-3">
@@ -160,10 +263,10 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                             </button>
                             <button
                                 onClick={confirmAndPay}
-                                disabled={isLoading}
-                                className="px-4 py-3 rounded-lg bg-[#d9e838] hover:bg-[#c9d828] text-black font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                                disabled={isLoading || otpToken.length < 6}
+                                className="px-4 py-3 rounded-lg bg-[#d9e838] hover:bg-[#c9d828] text-black font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {isLoading ? <Loader2 size={18} className="animate-spin" /> : "Confirm"}
+                                {isLoading ? <Loader2 size={18} className="animate-spin" /> : "Confirm & Withdraw"}
                             </button>
                         </div>
                     </motion.div>
@@ -178,6 +281,35 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                         <p className="text-gray-300 font-medium text-sm mb-6 opacity-80">Withdraw your verified profits to your saved wallet.</p>
 
                         <div className="space-y-6">
+                            {/* Account Selection */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    Select Account
+                                </label>
+                                <div className="space-y-2">
+                                    {accounts && accounts.length > 0 ? (
+                                        <select
+                                            value={selectedAccountId}
+                                            onChange={(e) => {
+                                                setSelectedAccountId(e.target.value);
+                                                setAmount(""); // Reset amount when account changes
+                                            }}
+                                            className="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#d9e838] appearance-none"
+                                        >
+                                            {accounts.map(acc => (
+                                                <option key={acc.id} value={acc.id} className="bg-gray-900">
+                                                    Login: {acc.login} | Available: ${acc.available.toFixed(2)}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    ) : (
+                                        <div className="text-gray-500 text-sm p-3 border border-white/5 rounded-lg bg-white/5">
+                                            No eligible accounts found.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
                             {/* Method Selection - Locked to USDT for now */}
                             <div className="grid grid-cols-1 gap-3">
                                 <button
@@ -204,7 +336,7 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                                             setAmount(e.target.value);
                                             setError(null);
                                         }}
-                                        disabled={availablePayout <= 0 || !walletAddress || isLoading}
+                                        disabled={currentAvailable <= 0 || !walletAddress || isLoading || !selectedAccountId}
                                         className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-[#d9e838] text-white font-medium placeholder:text-gray-500 transition-colors disabled:opacity-50"
                                         placeholder="0.00"
                                     />
@@ -217,10 +349,10 @@ export default function RequestPayoutCard({ availablePayout, walletAddress, isLo
                                 )}
 
                                 <div className="flex justify-between items-center mt-3 text-xs">
-                                    <span className="text-gray-400 font-medium">Available to withdraw: <span className="text-white font-bold ml-1">${availablePayout.toFixed(2)}</span></span>
+                                    <span className="text-gray-400 font-medium">Available to withdraw: <span className="text-white font-bold ml-1">${currentAvailable.toFixed(2)}</span></span>
                                     <button
-                                        onClick={() => setAmount(availablePayout.toString())}
-                                        disabled={availablePayout <= 0 || !walletAddress}
+                                        onClick={() => setAmount(currentAvailable.toString())}
+                                        disabled={currentAvailable <= 0 || !walletAddress}
                                         className="text-[#d9e838] font-bold uppercase tracking-tight hover:text-[#c9d828] transition-colors disabled:text-gray-600 px-2 py-1 bg-[#d9e838]/10 rounded-md"
                                     >
                                         Max Amount

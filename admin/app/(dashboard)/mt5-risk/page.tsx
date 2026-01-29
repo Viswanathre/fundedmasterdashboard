@@ -104,9 +104,9 @@ function RiskGroupsTab() {
                 <button onClick={addRow} className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 font-medium">+ Add Group</button>
             </div>
 
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
-                <table className="w-full text-left text-sm text-gray-900">
-                    <thead className="bg-white border border-gray-200 text-gray-900 uppercase">
+            <div className="overflow-x-auto rounded-lg border border-gray-700 bg-gray-900">
+                <table className="w-full text-left text-sm text-gray-200">
+                    <thead className="bg-gray-800 border-b border-gray-700 text-gray-200 uppercase">
                         <tr>
                             <th className="px-4 py-3">Group Name (MT5)</th>
                             <th className="px-4 py-3">Max DD (%)</th>
@@ -115,12 +115,12 @@ function RiskGroupsTab() {
                             <th className="px-4 py-3">Action</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-700">
                         {groups.map((g, idx) => (
-                            <tr key={idx} className="hover:bg-white border border-gray-200">
+                            <tr key={idx} className="hover:bg-gray-800 border-gray-700">
                                 <td className="px-4 py-2">
                                     <input
-                                        className="bg-transparent border border-gray-200 rounded px-2 py-1 text-gray-900 w-full"
+                                        className="bg-transparent border border-gray-600 rounded px-2 py-1 text-gray-200 w-full focus:border-blue-500 focus:outline-none"
                                         value={g.group_name}
                                         onChange={(e) => {
                                             const newG = [...groups];
@@ -132,7 +132,7 @@ function RiskGroupsTab() {
                                 <td className="px-4 py-2">
                                     <input
                                         type="number"
-                                        className="bg-transparent border border-gray-200 rounded px-2 py-1 text-gray-900 w-24"
+                                        className="bg-transparent border border-gray-600 rounded px-2 py-1 text-gray-200 w-24 focus:border-blue-500 focus:outline-none"
                                         value={g.max_drawdown_percent}
                                         onChange={(e) => {
                                             const newG = [...groups];
@@ -144,7 +144,7 @@ function RiskGroupsTab() {
                                 <td className="px-4 py-2">
                                     <input
                                         type="number"
-                                        className="bg-transparent border border-gray-200 rounded px-2 py-1 text-gray-900 w-24"
+                                        className="bg-transparent border border-gray-600 rounded px-2 py-1 text-gray-200 w-24 focus:border-blue-500 focus:outline-none"
                                         value={g.daily_drawdown_percent}
                                         onChange={(e) => {
                                             const newG = [...groups];
@@ -156,7 +156,7 @@ function RiskGroupsTab() {
                                 <td className="px-4 py-2">
                                     <input
                                         type="number"
-                                        className="bg-transparent border border-gray-200 rounded px-2 py-1 text-gray-900 w-24"
+                                        className="bg-transparent border border-gray-600 rounded px-2 py-1 text-gray-200 w-24 focus:border-blue-500 focus:outline-none"
                                         value={g.profit_target_percent ?? ''}
                                         onChange={(e) => {
                                             const newG = [...groups];

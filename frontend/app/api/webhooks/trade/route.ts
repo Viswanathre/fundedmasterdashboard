@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { redis } from '@/lib/redis';
+// import { redis } from '@/lib/redis';
 import { supabaseAdmin } from '@/lib/supabase';
 import { RiskEngine } from '@/lib/risk-engine';
 
@@ -8,19 +8,10 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { accountId, ticket, symbol, type, lots, price, profit, equity, balance, open_time, close_time, user_id, challenge_id } = body;
 
-        // --- STEP 1: SPEED LAYER (Redis) ---
+        // --- STEP 1: SPEED LAYER (Redis) - REMOVED due to connection errors
         // Update dashboard stats immediately
         // Multi-command pipeline for atomic update
-        const pipeline = redis.pipeline();
-        pipeline.hset(`user:${accountId}:stats`, {
-            equity: equity,
-            balance: balance,
-            last_update: Date.now()
-        });
-        // Also cache the latest trade for "Recent Trades" widget
-        pipeline.lpush(`user:${accountId}:trades`, JSON.stringify(body));
-        pipeline.ltrim(`user:${accountId}:trades`, 0, 49); // Keep last 50 trades
-        await pipeline.exec();
+        // const pipeline = redis.pipeline(); ... REMOVED
 
 
         // --- STEP 2: STORAGE LAYER (Supabase) ---

@@ -46,7 +46,7 @@ function ObjectiveRow({ title, timer, max, current, threshold, status, isLossLim
                 <div className="flex items-center gap-3">
                     <h3 className="font-bold text-white text-sm tracking-tight">{title}</h3>
                     <div className="group relative">
-                        <AlertCircle size={14} className="text-emerald-500/40 cursor-help" />
+                        <AlertCircle size={14} className="text-emerald-400/70 cursor-help" />
                         <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-[#011d16] text-white text-[10px] rounded-lg z-20 border border-white/10">
                             Breaching this limit will close your account.
                         </div>
@@ -67,7 +67,7 @@ function ObjectiveRow({ title, timer, max, current, threshold, status, isLossLim
                 </span>
             </div>
 
-            <div className="flex justify-between text-[11px] text-emerald-500/40 mb-2 font-bold tracking-wide">
+            <div className="flex justify-between text-[11px] text-emerald-400/80 mb-2 font-bold tracking-wide">
                 <span>Max Allowed: ${max.toLocaleString()}</span>
                 <span>Threshold: ${threshold.toLocaleString()}</span>
             </div>
@@ -255,7 +255,7 @@ export default function TradingObjectives() {
                 <div className="flex items-center gap-4">
                     <h2 className="text-xl font-bold text-white tracking-tight">Trading Objectives</h2>
                     {selectedAccount && (
-                        <span className="text-xs text-emerald-500/40 font-bold uppercase tracking-wider">
+                        <span className="text-xs text-emerald-400/70 font-bold uppercase tracking-wider">
                             {selectedAccount.account_number} • ${initialBalance.toLocaleString()}
                         </span>
                     )}

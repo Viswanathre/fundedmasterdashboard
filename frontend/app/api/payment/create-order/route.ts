@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
             }
 
             const amount = 9; // Hardcoded as per user request
-            const orderId = `SF-COMP-${Date.now()}-${require('crypto').randomBytes(4).toString('hex')}`;
+            const orderId = `FM-COMP-${Date.now()}-${require('crypto').randomBytes(4).toString('hex')}`;
 
             const { data: order, error: orderError } = await dbClient
                 .from('payment_orders')
@@ -266,7 +266,7 @@ export async function POST(request: NextRequest) {
         const finalAmount = basePrice - discountAmount;
 
         // Generate ID Locally to save 1 Round Trip (US -> AUS)
-        const orderId = `SF-ORDER-${Date.now()}-${require('crypto').randomBytes(4).toString('hex')}`;
+        const orderId = `FM-ORDER-${Date.now()}-${require('crypto').randomBytes(4).toString('hex')}`;
 
         // Create payment order (store everything in USD)
         const { data: order, error: orderError } = await dbClient

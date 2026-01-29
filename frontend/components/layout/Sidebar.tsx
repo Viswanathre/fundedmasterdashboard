@@ -224,7 +224,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                         </button>
 
                         <a
-                            href="https://discord.gg/sharkfunded"
+                            href="https://discord.gg/fundedmaster"
                             target="_blank"
                             rel="noopener noreferrer"
                             className={cn(

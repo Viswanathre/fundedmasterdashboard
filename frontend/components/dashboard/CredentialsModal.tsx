@@ -80,7 +80,7 @@ export default function CredentialsModal({ isOpen, onClose, account }: Credentia
                 <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-[#042f24] relative">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-[#d9e838] flex items-center justify-center shadow-lg shadow-[#d9e838]/20">
-                            <Image src="/shark-icon.jpg" alt="Shark" width={24} height={24} className="rounded" />
+                            <Image src="/logo.png" alt="FundedMaster" width={24} height={24} className="rounded" />
                         </div>
                         <div>
                             <h2 className="text-lg font-bold text-white">Account Credentials</h2>
@@ -120,7 +120,7 @@ export default function CredentialsModal({ isOpen, onClose, account }: Credentia
 
                     <CredentialRow
                         label="Server"
-                        value={account.server || 'SharkFunded-Demo'}
+                        value={account.server || 'FundedMaster-Demo'}
                         field="server"
                         icon={Server}
                     />
