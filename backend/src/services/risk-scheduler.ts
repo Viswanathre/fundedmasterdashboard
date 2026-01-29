@@ -188,7 +188,12 @@ async function processBatch(challenges: any[], riskGroups: any[], attempt = 1) {
                     user_id: challenge.user_id, // Required to satisfy NOT NULL constraint during upsert check
                     current_equity: res.equity,
                     current_balance: res.balance,
-                    status: challenge.status // maintain existing status by default
+                    status: challenge.status, // maintain existing status by default
+                    login: challenge.login, // Required to satisfy NOT NULL constraint during upsert
+                    initial_balance: challenge.initial_balance,
+                    start_of_day_equity: challenge.start_of_day_equity,
+                    mt5_group: challenge.mt5_group,
+                    challenge_type: challenge.challenge_type
                 };
 
 

@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
+import { getDiditSession } from '../lib/didit';
 
 const router = Router();
 
@@ -71,6 +72,29 @@ router.post('/didit', async (req: Request, res: Response) => {
         }
 
         console.log(`✅ Processing webhook for session: ${didit_session_id}`);
+
+        // Check if we have critical data, if not fetch full session details
+        const hasIdentityData = kycData.first_name ||
+            kycData.firstName ||
+            (kycData.payload && kycData.payload.first_name) ||
+            (kycData.id_document && kycData.id_document.extracted_data);
+
+        // If payload looks minimal (just status/id), fetch full details
+        if (!hasIdentityData) {
+            console.log(`⚠️ Webhook payload missing identity data. Fetching full session details for ${didit_session_id}...`);
+            try {
+                const fullSessionData = await getDiditSession(didit_session_id);
+                console.log('✅ Fetched full session data from DiDit');
+
+                // Merge fetched data with original payload (fetched data takes precedence for details)
+                // We keep original payload properties in case they have newer status info
+                Object.assign(kycData, fullSessionData);
+            } catch (fetchError) {
+                console.error('❌ Failed to fetch full session details:', fetchError);
+                // Continue with what we have, or could decide to fail here
+                // For now, we proceed to at least update status
+            }
+        }
 
         // Extract and normalize status
         let status = kycData.status || kycData.decision || kycData.verification_status;

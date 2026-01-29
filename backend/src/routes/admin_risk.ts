@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'; // Adjust path if needed
 import { authenticate } from '../middleware/auth'; // Ensure admin auth
 import { RulesService } from '../services/rules-service'; // Import RulesService
 import { EmailService } from '../services/email-service'; // Import EmailService
+import { createMT5Account } from '../lib/mt5-bridge'; // Import Bridge Helper
 
 const router = express.Router();
 
@@ -194,22 +195,25 @@ router.post('/upgrade-account', authenticate, async (req: any, res: any) => {
         // For now, assume Phase 1 -> Phase 2.
         const currentType = (sourceAccount.challenge_type || '').toLowerCase();
         let nextType = 'Phase 2';
-        let targetGroup = sourceAccount.mt5_group.replace('Phase 1', 'Phase 2').replace('Step 1', 'Step 2');
+        let targetGroup = sourceAccount.mt5_group
+            .replace('Phase 1', 'Phase 2')
+            .replace('Step 1', 'Step 2')
+            .replace('1-FM', '2-FM');
 
         if (currentType.includes('phase 2') || currentType.includes('step 2')) {
             return res.status(400).json({ error: 'Phase 2 accounts cannot be auto-upgraded yet (Requires Manual Funded Creation).' });
         }
 
         // 3. Create New Account on Bridge
-        const BRIDGE_URL = process.env.BRIDGE_URL || 'http://localhost:5001';
+        // Note: BRIDGE_URL logic is handled inside createMT5Account
 
         // Use same user details
         const { data: profile } = await supabase.from('profiles').select('*').eq('id', sourceAccount.user_id).single();
 
+        const callbackUrl = `${process.env.BACKEND_URL || process.env.FRONTEND_URL}/api/mt5/trades/webhook`;
+
+        // Construct payload for email and legacy references
         const payload = {
-            login: Number(sourceAccount.login), // We usually want a NEW login for new account. 
-            // Wait, existing logic usually implies creating a NEW MT5 account.
-            // Let's generate a new request to Bridge to create account.
             firstName: profile?.full_name?.split(' ')[0] || 'Trader',
             lastName: profile?.full_name?.split(' ').slice(1).join(' ') || 'User',
             email: profile?.email || 'no-email@sharkfunded.com',
@@ -218,19 +222,14 @@ router.post('/upgrade-account', authenticate, async (req: any, res: any) => {
             deposit: Number(sourceAccount.initial_balance)
         };
 
-        // Call Bridge to Create Account
-        const createRes = await fetch(`${BRIDGE_URL}/create-account`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+        const newAccountData = await createMT5Account({
+            name: profile?.full_name || 'Trader', // pass full name as name
+            email: payload.email,
+            group: payload.group,
+            leverage: payload.leverage,
+            balance: payload.deposit,
+            callback_url: callbackUrl
         });
-
-        if (!createRes.ok) {
-            const errText = await createRes.text();
-            throw new Error(`Bridge Account Creation Failed: ${errText}`);
-        }
-
-        const newAccountData = (await createRes.json()) as any;
 
         // 4. Insert New Challenge Record
         const { data: newChallenge, error: insertError } = await supabase
@@ -240,7 +239,7 @@ router.post('/upgrade-account', authenticate, async (req: any, res: any) => {
                 login: newAccountData.login,
                 master_password: newAccountData.password,
                 investor_password: newAccountData.investorPassword,
-                server: newAccountData.server || 'MT5-Real',
+                server: newAccountData.server || 'neweracapitalmarkets-server',
                 challenge_type: nextType,
                 initial_balance: payload.deposit,
                 current_balance: payload.deposit,
@@ -248,9 +247,10 @@ router.post('/upgrade-account', authenticate, async (req: any, res: any) => {
                 start_of_day_equity: payload.deposit,
                 status: 'active',
                 mt5_group: targetGroup,
-                plan_type: sourceAccount.metadata?.plan_type || 'Standard',
+                // plan_type: sourceAccount.metadata?.plan_type || 'Standard', // Column does not exist
                 metadata: {
                     ...sourceAccount.metadata,
+                    plan_type: sourceAccount.metadata?.plan_type || 'Standard', // Ensure it's in metadata
                     origin_account_id: sourceAccount.id,
                     upgraded_from: sourceAccount.login
                 }
@@ -293,6 +293,8 @@ router.post('/upgrade-account', authenticate, async (req: any, res: any) => {
             // But we shouldn't delete the old one if archive failed.
         } else {
             // B. Delete from Active Challenges
+            // Commented out per user request to prevent deletion
+            /*
             const { error: deleteError } = await supabase
                 .from('challenges')
                 .delete()
@@ -303,6 +305,8 @@ router.post('/upgrade-account', authenticate, async (req: any, res: any) => {
             } else {
                 console.log(`✅ Archived and Deleted old account ${sourceAccount.login}`);
             }
+            */
+            console.log(`✅ Archived old account ${sourceAccount.login} (Deletion skipped)`);
         }
 
         // 6. Send Credentials Email
@@ -320,7 +324,7 @@ router.post('/upgrade-account', authenticate, async (req: any, res: any) => {
                 userName,
                 String(newAccountData.login),
                 newAccountData.password,
-                newAccountData.server || 'ALFX Limited',
+                newAccountData.server || 'neweracapitalmarkets-server',
                 newAccountData.investorPassword
             );
         } catch (emailErr) {

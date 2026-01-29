@@ -4,12 +4,12 @@ export class EmailService {
     // SMTP Credentials
     private static SMTP_HOST = process.env.ELASTIC_EMAIL_SMTP_HOST || 'smtp.elasticemail.com';
     private static SMTP_PORT = Number(process.env.ELASTIC_EMAIL_SMTP_PORT) || 2525;
-    private static SMTP_USER = process.env.ELASTIC_EMAIL_SMTP_USER || 'noreply@sharkfunded.com';
+    private static SMTP_USER = process.env.ELASTIC_EMAIL_SMTP_USER || 'info@fundedmaster.com';
     // Using hardcoded password as fallback from user request if env is missing
-    private static SMTP_PASS = process.env.ELASTIC_EMAIL_SMTP_PASS || 'C26AD1121F3DDAFCE8CC1BD6F0F97F766132';
+    private static SMTP_PASS = process.env.ELASTIC_EMAIL_SMTP_PASS || '4290326C8C8F4C37A5797925A237A0BD8A8A';
 
-    private static FROM_EMAIL = process.env.ELASTIC_EMAIL_FROM || 'noreply@sharkfunded.com';
-    private static FROM_NAME = 'SharkFunded';
+    private static FROM_EMAIL = process.env.ELASTIC_EMAIL_FROM || 'info@fundedmaster.com';
+    private static FROM_NAME = 'FundedMaster';
 
     private static transporter = nodemailer.createTransport({
         host: EmailService.SMTP_HOST,
@@ -112,7 +112,7 @@ export class EmailService {
      * Send Competition Joined Confirmation
      */
     static async sendCompetitionJoined(email: string, name: string, competitionTitle: string) {
-        const subject = `🏆 Entry Confirmed: Welcome to Shark Battle Ground – ${competitionTitle}`;
+        const subject = `🏆 Entry Confirmed: Welcome to FundedMaster Battle Ground – ${competitionTitle}`;
 
         const html = `
             <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #ffffff; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
@@ -125,7 +125,7 @@ export class EmailService {
                 </div>
 
                 <p style="font-size: 14px; color: #444;">
-                    You are now officially part of the <strong>Shark Battle Ground</strong>.  
+                    You are now officially part of the <strong>FundedMaster Battle Ground</strong>.  
                     Prepare your strategy, manage your risk, and compete with the best traders.
                 </p>
 
@@ -139,7 +139,7 @@ export class EmailService {
 
                 <p style="margin-top: 25px; font-size: 13px; color: #666;">
                     Best regards,<br/>
-                    <strong>Shark Funded Team</strong>
+                    <strong>FundedMaster Team</strong>
                 </p>
             </div>
         `;
@@ -150,13 +150,15 @@ Welcome to the Battle Ground, ${name}!
 Your entry has been successfully confirmed for:
 ${competitionTitle}
 
-You are now officially part of the Shark Battle Ground.
+
+You are now officially part of the FundedMaster Battle Ground.
 Prepare your strategy and compete with the best.
 
 IMPORTANT: The competition starts this coming Monday. Trading begins on that day.
 
+
 Best regards,
-Shark Funded Team
+FundedMaster Team
         `;
 
         await this.sendEmail(email, subject, html, text);
@@ -188,6 +190,37 @@ Shark Funded Team
         `;
 
         const text = `Hi ${name},\n\nYour verification code for ${purpose} is: ${code}\n\nThis code expires in 10 minutes.\n\nIf you didn't request this code, please ignore this email.`;
+
+        await this.sendEmail(email, subject, html, text);
+    }
+
+    /**
+     * Send Payout Request Confirmation
+     */
+    static async sendPayoutRequested(email: string, name: string, amount: number, method: string) {
+        const subject = `Payout Request Received - ${this.FROM_NAME}`;
+
+        const html = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #0d47a1;">Payout Request Received</h2>
+                <p>Hi ${name},</p>
+                <p>We have received your withdrawal request.</p>
+                
+                <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <p><strong>Amount:</strong> $${amount}</p>
+                    <p><strong>Method:</strong> ${method}</p>
+                    <p><strong>Status:</strong> Pending Review</p>
+                </div>
+
+                <p>Our team will process your request within 24-48 hours.</p>
+                
+                <p style="margin-top: 30px; font-size: 12px; color: #888;">
+                    If you did not make this request, please contact support immediately.
+                </p>
+            </div>
+        `;
+
+        const text = `Hi ${name},\n\nWe have received your withdrawal request of $${amount} via ${method}.\n\nStatus: Pending Review\n\nProcess time: 24-48 hours.`;
 
         await this.sendEmail(email, subject, html, text);
     }

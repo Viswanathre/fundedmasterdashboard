@@ -101,7 +101,7 @@ router.get('/payment', async (req: Request, res: Response) => {
 
         const internalOrderId = req.query.reference_id as string || req.query.reference as string || req.query.orderId as string;
         // Use consistent Frontend URL logic
-        const frontendUrl = process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://app.sharkfunded.com';
+        const frontendUrl = process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://app.fundedmaster.com';
 
         if (internalOrderId) {
             return res.redirect(`${frontendUrl}/payment/success?orderId=${internalOrderId}&check_status=true`);
@@ -118,7 +118,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         const internalOrderId = body.reference_id || body.reference || body.orderId || body.internalOrderId;
         const status = body.status || body.event?.split('.')[1];
         // Use consistent Frontend URL logic
-        const frontendUrl = process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://app.sharkfunded.com';
+        const frontendUrl = process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://app.fundedmaster.com';
 
         if (!internalOrderId) {
             console.error('❌ Missing order ID in webhook:', body);
@@ -174,7 +174,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         // 4. Create MT5 Account via Bridge
         const { data: profile } = await supabase.from('profiles').select('full_name, email').eq('id', order.user_id).single();
         const fullName = profile?.full_name || 'Trader';
-        const email = profile?.email || 'noemail@sharkfunded.com';
+        const email = profile?.email || 'noemail@fundedmaster.com';
 
         const accountTypeName = (order.account_type_name || '').toLowerCase();
         const isCompetition = order.model === 'competition' || (order.metadata && order.metadata.type === 'competition');
@@ -194,7 +194,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         }
 
         // Double check via Order ID pattern
-        if (String(internalOrderId).startsWith('SF-COMP')) {
+        if (String(internalOrderId).startsWith('SF-COMP') || String(internalOrderId).startsWith('FM-COMP')) {
             mt5Group = 'demo\\SF\\0-Demo\\comp';
         }
 
@@ -232,7 +232,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
                 login: mt5Data.login,
                 master_password: mt5Data.password,
                 investor_password: mt5Data.investor_password || '',
-                server: mt5Data.server || 'ALFX Limited',
+                server: mt5Data.server || 'neweracapitalmarkets-server',
                 platform: order.platform,
                 leverage: leverage,
                 mt5_group: mt5Group, // Store actual used group
@@ -280,7 +280,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
                 fullName,
                 String(mt5Data.login),
                 mt5Data.password,
-                mt5Data.server || 'ALFX Limited',
+                mt5Data.server || 'neweracapitalmarkets-server',
                 mt5Data.investor_password
             ).catch((e: any) => console.error('Failed to send credentials email:', e));
         }

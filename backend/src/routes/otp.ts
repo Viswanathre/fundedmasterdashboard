@@ -178,6 +178,50 @@ router.post('/verify', authenticate, async (req: AuthRequest, res: Response) => 
 });
 
 /**
+ * Verify a raw OTP code and mark it as verified (1-step verification)
+ */
+export async function verifyAndMarkOTP(userId: string, code: string, purpose: string): Promise<boolean> {
+    console.log(`🔍 Verifying OTP for user ${userId}, code: ${code}, purpose: ${purpose}`);
+
+    const { data: otpRecord, error } = await supabase
+        .from('otp_codes')
+        .select('id, code, purpose, verified, expires_at') // Select more fields for debug
+        .eq('user_id', userId)
+        .eq('code', code)
+        .eq('purpose', purpose)
+        .eq('verified', false)
+        .gt('expires_at', new Date().toISOString())
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+    if (error) {
+        console.error('❌ Error querying OTP table:', error);
+        return false;
+    }
+
+    if (!otpRecord) {
+        console.warn(`⚠️ No valid OTP found for verification. Params: User=${userId}, Code=${code}, Purpose=${purpose}`);
+        return false;
+    }
+
+    console.log(`✅ Valid OTP found: ${otpRecord.id}. Marking as verified...`);
+
+    // Mark as verified
+    const { error: updateError } = await supabase
+        .from('otp_codes')
+        .update({ verified: true })
+        .eq('id', otpRecord.id);
+
+    if (updateError) {
+        console.error('❌ Error updating OTP status:', updateError);
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * Helper function to verify OTP token (called from withdrawal endpoints)
  */
 export async function verifyOTPToken(userId: string, token: string, purpose: string): Promise<boolean> {

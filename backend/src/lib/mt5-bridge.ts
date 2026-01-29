@@ -1,4 +1,18 @@
-// Native fetch is used (Node.js 18+)
+import { Agent, setGlobalDispatcher, fetch as undiciFetch } from 'undici';
+
+// Configure global dispatcher for better connection handling
+const agent = new Agent({
+    connect: {
+        timeout: 10000 // 10s connection timeout
+    },
+    bodyTimeout: 10000, // 10s body timeout
+    keepAliveTimeout: 10000,
+    keepAliveMaxTimeout: 10000,
+    headersTimeout: 10000,
+    connections: 10 // Limit max connections
+});
+
+setGlobalDispatcher(agent);
 
 export interface MT5AccountParams {
     name: string;
@@ -11,9 +25,10 @@ export interface MT5AccountParams {
 
 export async function createMT5Account(params: MT5AccountParams) {
     // Use BRIDGE_URL (Internal/Local) if set, otherwise API_URL (Public/Ngrok)
-    const mt5ApiUrl = process.env.MT5_BRIDGE_URL || process.env.MT5_API_URL || 'https://bridge.sharkfunded.co';
+    const mt5ApiUrl = process.env.MT5_BRIDGE_URL || process.env.MT5_API_URL || 'https://bridge.funded-master.com';
 
-    const response = await fetch(`${mt5ApiUrl}/create-account`, {
+    // Use undiciFetch for advanced configuration
+    const response = await undiciFetch(`${mt5ApiUrl}/create-account`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -29,7 +44,6 @@ export async function createMT5Account(params: MT5AccountParams) {
             const errorData = await response.json() as any;
             errorMsg = errorData.detail || errorMsg;
         } catch (e) {
-            // If JSON parse fails, it's likely an HTML error page (502/504/524)
             const text = await response.text().catch(() => 'No response body');
             errorMsg = `Bridge Error ${response.status}: ${text.substring(0, 200)}...`;
         }
@@ -40,7 +54,7 @@ export async function createMT5Account(params: MT5AccountParams) {
 }
 
 export async function fetchMT5Trades(login: number) {
-    const mt5ApiUrl = process.env.MT5_BRIDGE_URL || process.env.MT5_API_URL || 'https://bridge.sharkfunded.co';
+    const mt5ApiUrl = process.env.MT5_BRIDGE_URL || process.env.MT5_API_URL || 'https://bridge.funded-master.com';
 
     try {
         const url = `${mt5ApiUrl}/fetch-trades`;
@@ -70,7 +84,7 @@ export async function fetchMT5Trades(login: number) {
 }
 
 export async function fetchMT5History(login: number, fromTimestamp?: number) {
-    const mt5ApiUrl = process.env.MT5_BRIDGE_URL || process.env.MT5_API_URL || 'https://bridge.sharkfunded.co';
+    const mt5ApiUrl = process.env.MT5_BRIDGE_URL || process.env.MT5_API_URL || 'https://bridge.funded-master.com';
 
     try {
         // Default to last 7 days if no timestamp provided

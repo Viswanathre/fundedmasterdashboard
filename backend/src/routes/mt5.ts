@@ -3,10 +3,11 @@ import { authenticate, AuthRequest } from '../middleware/auth';
 import { supabase } from '../lib/supabase';
 import { createMT5Account } from '../lib/mt5-bridge';
 import { EmailService } from '../services/email-service';
+import { CregisClient } from '../lib/cregis';
 
 const router = Router();
 // const MT5_BRIDGE_URL = process.env.MT5_BRIDGE_URL || 'http://localhost:8000';
-const MT5_BRIDGE_URL = process.env.MT5_BRIDGE_URL || 'https://bridge.sharkfunded.co';
+const MT5_BRIDGE_URL = process.env.MT5_BRIDGE_URL || 'https://bridge.funded-master.com';
 
 // POST /api/mt5/purchase-challenge - Handle challenge purchase and payment flow
 router.post('/purchase-challenge', authenticate, async (req: AuthRequest, res: Response) => {
@@ -30,7 +31,7 @@ router.post('/purchase-challenge', authenticate, async (req: AuthRequest, res: R
 
         // Generate unique order ID
 
-        const orderId = `SF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+        const orderId = `FM-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
 
         // Validate coupon if provided
         let discount = 0;
@@ -130,9 +131,24 @@ router.post('/purchase-challenge', authenticate, async (req: AuthRequest, res: R
 
         // If using Cregis (crypto), integrate with Cregis
         if (paymentGateway === 'cregis') {
-            // TODO: Integrate with Cregis API
-            const paymentUrl = `${process.env.CREGIS_URL || 'https://cregis.com'}/checkout?orderId=${orderId}&amount=${finalAmount}&currency=${currency}`;
-            return res.json({ success: true, paymentUrl });
+            const cregis = new CregisClient();
+
+            const result = await cregis.createOrder({
+                orderId: orderId,
+                amount: finalAmount,
+                currency: currency,
+                customerEmail: profile.email,
+                customerName: profile.full_name,
+                metadata: {
+                    account_type: accountTypeName
+                }
+            });
+
+            if (!result.success || !result.paymentUrl) {
+                throw new Error(result.error || 'Failed to create Cregis order');
+            }
+
+            return res.json({ success: true, paymentUrl: result.paymentUrl });
         }
 
         // For instant funding or free challenges, create account immediately
@@ -201,7 +217,7 @@ router.get('/accounts', async (req: Request, res: Response) => {
             // Extract order_ids from metadata (legacy/website created)
             const orderIds = challenges
                 .map((c: any) => c.metadata?.order_id)
-                .filter((id: any) => typeof id === 'string' && id.startsWith('SF-'));
+                .filter((id: any) => typeof id === 'string' && (id.startsWith('SF-') || id.startsWith('FM-')));
 
             // Fetch orders by challenge_id OR order_id
             let orders: any[] = [];
@@ -298,10 +314,28 @@ router.post('/assign', async (req, res: Response) => {
 
         // 2. Determine challenge type and MT5 group
         let challengeType = 'Phase 1';
-        let finalGroup = mt5Group;
+        let finalGroup = ''; // Initialize variable
 
-        // Logic matched with payment webhook (frontend/app/api/webhooks/payment/route.ts)
+        // Logic matched with payment webhook
         const lowerPlan = planType.toLowerCase();
+
+        if (lowerPlan.includes('pro') || lowerPlan.includes('prime')) {
+            if (lowerPlan.includes('2 step') || lowerPlan.includes('2-step')) {
+                finalGroup = 'demo\\4-FM';
+            } else if (lowerPlan.includes('instant')) {
+                finalGroup = 'demo\\5-FM';
+            } else if (lowerPlan.includes('funded') || lowerPlan.includes('master')) {
+                finalGroup = 'demo\\6-FM';
+            } else {
+                finalGroup = 'demo\\1-FM';
+            }
+        } else if (lowerPlan.includes('instant') || lowerPlan.includes('funded') || lowerPlan.includes('master')) {
+            finalGroup = 'demo\\0-FM';
+        } else if (lowerPlan.includes('2 step') || lowerPlan.includes('2-step')) {
+            finalGroup = 'demo\\2-FM';
+        } else {
+            finalGroup = 'demo\\1-FM';
+        }
 
 
 
@@ -330,6 +364,13 @@ router.post('/assign', async (req, res: Response) => {
         // 3. Call Python MT5 Bridge to create account
         const callbackUrl = `${process.env.BACKEND_URL || process.env.FRONTEND_URL}/api/mt5/trades/webhook`;
 
+        console.log(`🔌 [Admin Assign] Requesting account creation:`, {
+            email: profile.email,
+            planType,
+            assignedGroup: finalGroup,
+            accountSize
+        });
+
         const mt5Data = await createMT5Account({
             name: profile.full_name || 'Trader',
             email: profile.email,
@@ -357,7 +398,7 @@ router.post('/assign', async (req, res: Response) => {
                 login: mt5Login,
                 master_password: masterPassword,
                 investor_password: investorPassword,
-                server: 'ALFX Limited',
+                server: 'neweracapitalmarkets-server',
                 platform: 'MT5',
                 mt5_group: finalGroup, // Save the assigned group
                 leverage: 100,
@@ -387,7 +428,7 @@ router.post('/assign', async (req, res: Response) => {
                 profile.full_name || 'Trader',
                 String(mt5Login),
                 masterPassword,
-                'ALFX Limited',
+                'neweracapitalmarkets-server',
                 investorPassword
             ).catch(err => console.error("Async Email Error:", err));
         }
@@ -463,7 +504,7 @@ router.post('/sync-trades', async (req: Request, res: Response) => {
             user_id: challenge.user_id,
             symbol: t.symbol,
             type: t.type === 0 ? 'buy' : t.type === 1 ? 'sell' : 'balance',
-            lots: t.volume / 10000,
+            lots: t.volume / 100,
             open_price: t.price,
             close_price: t.close_price || null,
             profit_loss: t.profit,

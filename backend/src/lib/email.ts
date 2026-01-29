@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 import { supabase } from './supabase';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@sharkfunded.com';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'info@fundedmaster.com';
 
 interface EmailData {
     userId: string;

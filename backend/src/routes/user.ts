@@ -158,7 +158,7 @@ router.put('/update-password', authenticate, async (req: AuthRequest, res: Respo
     }
 });
 
-// GET /api/user/wallet - Get user wallet balance
+// GET /api/user/wallet - Get user wallet address
 router.get('/wallet', authenticate, async (req: AuthRequest, res: Response) => {
     try {
         const user = req.user;
@@ -167,24 +167,93 @@ router.get('/wallet', authenticate, async (req: AuthRequest, res: Response) => {
             return;
         }
 
-        const { data: profile, error } = await supabase
-            .from('profiles')
-            .select('wallet_balance')
-            .eq('id', user.id)
+        const { data: wallet, error } = await supabase
+            .from('wallet_addresses')
+            .select('*')
+            .eq('user_id', user.id)
             .single();
 
-        if (error) {
+        // It's okay if no wallet found, just return null
+        if (error && error.code !== 'PGRST116') {
             console.error('Error fetching wallet:', error);
             res.status(500).json({ error: 'Failed to fetch wallet' });
             return;
         }
 
         res.json({
-            balance: profile?.wallet_balance || 0
+            wallet: wallet || null
         });
 
     } catch (error: any) {
         console.error('Wallet GET error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// POST /api/user/wallet - Save and lock wallet address
+router.post('/wallet', authenticate, async (req: AuthRequest, res: Response) => {
+    try {
+        const user = req.user;
+        const { walletAddress } = req.body;
+
+        if (!user) {
+            res.status(401).json({ error: 'Not authenticated' });
+            return;
+        }
+
+        if (!walletAddress || walletAddress.length < 20) {
+            res.status(400).json({ error: 'Invalid wallet address' });
+            return;
+        }
+
+        // Check if already locked
+        const { data: existing } = await supabase
+            .from('wallet_addresses')
+            .select('is_locked')
+            .eq('user_id', user.id)
+            .single();
+
+        if (existing && existing.is_locked) {
+            res.status(400).json({ error: 'Wallet address is already locked and cannot be changed.' });
+            return;
+        }
+
+
+
+        // Validate Profile Exists (Guard against Zombie Sessions)
+        console.log(`[Wallet] Validating profile for user ${user.id}...`);
+        const { data: profileCheck, error: lookError } = await supabase.from('profiles').select('id').eq('id', user.id).single();
+        console.log(`[Wallet] Profile check result:`, profileCheck, `Error:`, lookError);
+
+        if (!profileCheck) {
+            console.warn(`🧟 Zombie Session Detected (ID: ${user.id}). User deleted from DB.`);
+            res.status(401).json({ error: 'Session expired or invalid. Please login again.' });
+            return;
+        }
+
+        // Upsert wallet
+        const { data, error } = await supabase
+            .from('wallet_addresses')
+            .upsert({
+                user_id: user.id,
+                wallet_address: walletAddress,
+                wallet_type: 'USDT_TRC20',
+                is_locked: true, // Auto-lock on save as per requirements
+                updated_at: new Date().toISOString()
+            })
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error saving wallet:', error);
+            res.status(500).json({ error: 'Failed to save wallet address' });
+            return;
+        }
+
+        res.json({ success: true, wallet: data });
+
+    } catch (error: any) {
+        console.error('Wallet POST error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

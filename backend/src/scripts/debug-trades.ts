@@ -17,41 +17,33 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function checkTrades() {
-    // 1. Find the challenge
-    const { data: challenges, error: cError } = await supabase
-        .from('challenges')
-        .select('*')
-        .eq('login', 889224326) // Target specific account
-        .limit(1);
+    console.log('Fetching last 5 trades from DB...');
 
-    if (cError) {
-        console.error('Error fetching challenges:', cError);
+    const { data: trades, error: tError } = await supabase
+        .from('trades')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+    if (tError) {
+        console.error('Error fetching trades:', tError);
         return;
     }
 
-    console.log(`Found ${challenges.length} active challenges.`);
-
-    for (const c of challenges) {
-        console.log(`\nChecking Challenge: ${c.id} (Login: ${c.login})`);
-
-        const { data: trades, error: tError } = await supabase
-            .from('trades')
-            .select('*')
-            .eq('challenge_id', c.id);
-
-        if (tError) {
-            console.error('Error fetching trades:', tError);
-            continue;
-        }
-
-        console.log(`  - Found ${trades?.length} trades.`);
-        if (trades && trades.length > 0) {
-            console.log(`  - Sample Trade:`, JSON.stringify(trades[0], null, 2));
-
-            // Analyze Types
-            const types = [...new Set(trades.map(t => t.type))];
-            console.log(`  - Unique Types: ${types.join(', ')}`);
-        }
+    if (trades && trades.length > 0) {
+        console.log(`Found ${trades.length} trades.`);
+        trades.forEach((t, i) => {
+            console.log(`\nTrade #${i + 1}:`);
+            console.log(`  Ticket: ${t.ticket}`);
+            console.log(`  Type (RaW): ${t.type}`);
+            console.log(`  Direction: ${t.direction}`);
+            console.log(`  Lots/Volume: ${t.volume || t.lots}`);
+            console.log(`  Symbol: ${t.symbol}`);
+            console.log(`  Open Price: ${t.open_price}`);
+            console.log(`  Close Price: ${t.close_price}`);
+        });
+    } else {
+        console.log('No trades found.');
     }
 }
 

@@ -15,17 +15,17 @@ if (!REDIS_URL) {
 export const redis = new Redis(REDIS_URL || '', {
     maxRetriesPerRequest: null, // Required for BullMQ
     enableReadyCheck: false,
-    retryStrategy(times) {
+    retryStrategy(times: number) {
         const delay = Math.min(times * 500, 5000); // Slower retry (500ms -> 5s) to reduce spam
         return delay;
     },
 });
 
-redis.on('error', (err) => console.error('🔴 Redis Client Error:', err));
+redis.on('error', (err: Error) => console.error('🔴 Redis Client Error:', err));
 redis.on('connect', () => {
     if (DEBUG) console.log('🟢 Redis Client Connected');
     // Attempt to set eviction policy for BullMQ reliability
-    redis.config('SET', 'maxmemory-policy', 'noeviction').catch(err => {
+    redis.config('SET', 'maxmemory-policy', 'noeviction').catch((err: Error) => {
         if (DEBUG) console.warn('⚠️ Could not set Redis eviction policy (requires admin permissions):', err.message);
     });
 });

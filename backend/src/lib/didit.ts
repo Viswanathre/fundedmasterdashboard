@@ -60,3 +60,30 @@ export async function createDiditSession(userId: string): Promise<DiditSessionRe
         );
     }
 }
+
+export async function getDiditSession(sessionId: string): Promise<any> {
+    if (!DIDIT_API_KEY) {
+        throw new Error('DIDIT_CLIENT_SECRET is not configured');
+    }
+
+    try {
+        const response = await axios.get(
+            `${DIDIT_API_BASE_URL}/v2/session/${sessionId}/decision`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Api-Key': DIDIT_API_KEY,
+                },
+            }
+        );
+
+        return response.data;
+    } catch (error: any) {
+        console.error('Didit API error (get session):', error.response?.data || error.message);
+        throw new Error(
+            error.response?.data?.message ||
+            error.response?.data?.error ||
+            'Failed to fetch Didit session details'
+        );
+    }
+}

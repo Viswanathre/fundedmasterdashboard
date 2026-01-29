@@ -181,16 +181,37 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         // Create MT5 account
         const profile = await supabase.from('profiles').select('full_name, email').eq('id', order.user_id).single();
         const fullName = profile.data?.full_name || 'Trader';
-        const email = profile.data?.email || 'noemail@sharkfunded.com';
+        const email = profile.data?.email || 'noemail@fundedmaster.com';
 
         let mt5Group = order.account_types.mt5_group_name;
         const accountTypeName = (order.account_type_name || '').toLowerCase();
-        if (accountTypeName.includes('1 step') || accountTypeName.includes('2 step') || accountTypeName.includes('evaluation') || accountTypeName.includes('instant')) {
-            mt5Group = 'demo\\s\\0-sf';
+
+        // LOGIC:
+        // Live / Instant / Master -> demo\0-FM
+        // Prime / Lite (Phase 1) / Evaluation -> demo\1-FM (Phase 2 upgrades to 2-FM via admin action)
+
+        if (accountTypeName.includes('pro') || accountTypeName.includes('prime')) {
+            if (accountTypeName.includes('2 step') || accountTypeName.includes('2-step')) {
+                mt5Group = 'demo\\4-FM';
+            } else if (accountTypeName.includes('instant')) {
+                mt5Group = 'demo\\5-FM';
+            } else if (accountTypeName.includes('funded') || accountTypeName.includes('master')) {
+                mt5Group = 'demo\\6-FM';
+            } else {
+                // Fallback for Prime 1-Step or unspecified
+                mt5Group = 'demo\\1-FM';
+            }
+        } else if (accountTypeName.includes('instant') || accountTypeName.includes('funded') || accountTypeName.includes('master')) {
+            mt5Group = 'demo\\0-FM';
+        } else if (accountTypeName.includes('2 step') || accountTypeName.includes('2-step')) {
+            mt5Group = 'demo\\2-FM';
+        } else {
+            // Default to Phase 1 group for Lite/Evaluation
+            mt5Group = 'demo\\1-FM';
         }
 
         // Override for Competitions
-        if (internalOrderId && String(internalOrderId).startsWith('SF-COMP')) {
+        if (internalOrderId && (String(internalOrderId).startsWith('SF-COMP') || String(internalOrderId).startsWith('FM-COMP'))) {
             mt5Group = 'demo\\SF\\0-Demo\\comp';
             console.log('🏆 Detected Competition Order. Enforcing group:', mt5Group);
         }
@@ -235,7 +256,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
                 login: mt5Data.login,
                 master_password: mt5Data.password,
                 investor_password: mt5Data.investor_password || '',
-                server: mt5Data.server || 'ALFX Limited',
+                server: mt5Data.server || 'neweracapitalmarkets-server',
                 platform: order.platform,
                 leverage: order.account_types.leverage,
             })
@@ -261,7 +282,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
                 fullName,
                 String(mt5Data.login),
                 mt5Data.password,
-                mt5Data.server || 'ALFX Limited',
+                mt5Data.server || 'neweracapitalmarkets-server',
                 mt5Data.investor_password
             ).catch(err => console.error(`🔥 Async Email Error for ${email}:`, err));
         }
