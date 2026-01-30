@@ -183,8 +183,25 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         const fullName = profile.data?.full_name || 'Trader';
         const email = profile.data?.email || 'noemail@fundedmaster.com';
 
-        let mt5Group = order.account_types.mt5_group_name;
+        let mt5Group = order.account_types?.mt5_group_name;
         const accountTypeName = (order.account_type_name || '').toLowerCase();
+
+        // 1. Try to get group from Database Config (Priority)
+        // Check if join worked
+        if (!order.account_types && order.account_type_name) {
+            console.log(`⚠️ Order Join Failed. Creating manual lookup for account type: ${order.account_type_name}`);
+            const { data: at } = await supabase
+                .from('account_types')
+                .select('mt5_group_name')
+                .ilike('name', `%${order.account_type_name}%`)
+                .limit(1)
+                .single();
+
+            if (at) {
+                mt5Group = at.mt5_group_name;
+                console.log(`✅ Found Account Type by manual name match: ${mt5Group}`);
+            }
+        }
 
         // LOGIC:
         // Live / Instant / Master -> demo\0-FM
