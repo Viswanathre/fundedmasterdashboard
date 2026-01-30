@@ -324,6 +324,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
             return res.redirect(`${frontendUrl}/payment/success?orderId=${internalOrderId}&amount=${order.amount}`);
         }
 
+        console.log(`🏁 Webhook Process Completed Successfully for Order ${internalOrderId}`);
         res.json({ success: true, message: 'Process completed' });
 
     } catch (error: any) {
