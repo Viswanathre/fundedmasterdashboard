@@ -112,11 +112,13 @@ router.get('/payment', async (req: Request, res: Response) => {
 
 async function handlePaymentWebhook(req: Request, res: Response) {
     try {
+        console.log('📥 [WEBHOOK] Handler started');
         const body = req.method === 'GET' ? req.query : req.body;
-        // console.log('💰 [Payment] Webhook received');
+        console.log('� [WEBHOOK] Body parsed:', JSON.stringify(body).substring(0, 200));
 
         const internalOrderId = body.reference_id || body.reference || body.orderId || body.internalOrderId;
         const status = body.status || body.event?.split('.')[1];
+        console.log(`📥 [WEBHOOK] OrderID: ${internalOrderId}, Status: ${status}`);
         // Use consistent Frontend URL logic
         const frontendUrl = process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://app.fundedmaster.com';
 
@@ -140,9 +142,10 @@ async function handlePaymentWebhook(req: Request, res: Response) {
 
         // 2. Determine Success
         const isSuccess = status === 'success' || status === 'paid' || status === 'verified' || body.event === 'payment.success';
+        console.log(`📥 [WEBHOOK] isSuccess: ${isSuccess}`);
 
         if (!isSuccess) {
-            console.log('⚠️ Payment not successful:', status);
+            console.log('⚠️ [WEBHOOK] Payment not successful, status:', status);
             if (req.method === 'GET') {
                 return res.redirect(`${frontendUrl}/payment/failed?orderId=${internalOrderId}`);
             }
@@ -150,6 +153,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         }
 
         // 3. Status Update (Atomic)
+        console.log(`📥 [WEBHOOK] Attempting to update order ${internalOrderId} to paid...`);
         const { data: order, error: updateError } = await supabase
             .from('payment_orders')
             .update({
@@ -164,6 +168,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
             .single();
 
         if (updateError) {
+            console.log('⚠️ [WEBHOOK] Order update failed:', updateError.message);
             // Already processed
             if (req.method === 'GET') {
                 return res.redirect(`${frontendUrl}/payment/success?orderId=${internalOrderId}`);
@@ -171,6 +176,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
             return res.json({ message: 'Order already processed or not found' });
         }
 
+        console.log(`✅ [WEBHOOK] Order updated successfully. Creating MT5 account...`);
         // 4. Create MT5 Account via Bridge
         const { data: profile } = await supabase.from('profiles').select('full_name, email').eq('id', order.user_id).single();
         const fullName = profile?.full_name || 'Trader';
@@ -234,6 +240,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
 
 
 
+        console.log(`🚀 [WEBHOOK] Creating MT5 account in group: ${mt5Group}`);
         const mt5Data = await createMT5Account({
             name: fullName,
             email: email,
