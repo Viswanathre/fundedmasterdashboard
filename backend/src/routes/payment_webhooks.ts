@@ -190,24 +190,32 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         // Live / Instant / Master -> demo\0-FM
         // Prime / Lite (Phase 1) / Evaluation -> demo\1-FM (Phase 2 upgrades to 2-FM via admin action)
 
-        if (accountTypeName.includes('pro') || accountTypeName.includes('prime')) {
-            if (accountTypeName.includes('2 step') || accountTypeName.includes('2-step')) {
-                mt5Group = 'demo\\4-FM';
-            } else if (accountTypeName.includes('instant')) {
-                mt5Group = 'demo\\5-FM';
-            } else if (accountTypeName.includes('funded') || accountTypeName.includes('master')) {
-                mt5Group = 'demo\\6-FM';
+        // 1. Try to get group from Database Config (Priority)
+        if (mt5Group && mt5Group.trim() !== '') {
+            console.log(`✅ Using DB Configured MT5 Group: ${mt5Group}`);
+        } else {
+            // 2. Fallback to Hardcoded Logic (Legacy / Backup)
+            console.log('⚠️ MT5 Group not found in DB for this account type. Using fallback logic.');
+
+            if (accountTypeName.includes('pro') || accountTypeName.includes('prime')) {
+                if (accountTypeName.includes('2 step') || accountTypeName.includes('2-step')) {
+                    mt5Group = 'demo\\4-FM';
+                } else if (accountTypeName.includes('instant')) {
+                    mt5Group = 'demo\\5-FM';
+                } else if (accountTypeName.includes('funded') || accountTypeName.includes('master')) {
+                    mt5Group = 'demo\\6-FM';
+                } else {
+                    // Fallback for Prime 1-Step or unspecified
+                    mt5Group = 'demo\\1-FM';
+                }
+            } else if (accountTypeName.includes('instant') || accountTypeName.includes('funded') || accountTypeName.includes('master')) {
+                mt5Group = 'demo\\0-FM';
+            } else if (accountTypeName.includes('2 step') || accountTypeName.includes('2-step')) {
+                mt5Group = 'demo\\2-FM';
             } else {
-                // Fallback for Prime 1-Step or unspecified
+                // Default to Phase 1 group for Lite/Evaluation
                 mt5Group = 'demo\\1-FM';
             }
-        } else if (accountTypeName.includes('instant') || accountTypeName.includes('funded') || accountTypeName.includes('master')) {
-            mt5Group = 'demo\\0-FM';
-        } else if (accountTypeName.includes('2 step') || accountTypeName.includes('2-step')) {
-            mt5Group = 'demo\\2-FM';
-        } else {
-            // Default to Phase 1 group for Lite/Evaluation
-            mt5Group = 'demo\\1-FM';
         }
 
         // Override for Competitions
