@@ -164,7 +164,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
             })
             .eq('order_id', internalOrderId)
             .eq('status', 'pending')
-            .select('*, account_types(*)')
+            .select('*')
             .single();
 
         if (updateError) {
