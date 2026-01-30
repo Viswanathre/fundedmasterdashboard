@@ -180,10 +180,44 @@ async function handlePaymentWebhook(req: Request, res: Response) {
         const isCompetition = order.model === 'competition' || (order.metadata && order.metadata.type === 'competition');
 
         // TRUST DB GROUP (User Request)
-        let mt5Group = 'demo\\forex'; // Default fallback
-        if (order.account_types?.mt5_group_name) {
-            mt5Group = order.account_types.mt5_group_name;
+        let mt5Group = order.account_types?.mt5_group_name;
+
+        // 1. Try to get group from Database Config (Priority) - Robust Lookup
+        if (!order.account_types && order.account_type_name) {
+            console.log(`⚠️ Order Join Failed in webhooks.ts. Creating manual lookup for account type: ${order.account_type_name}`);
+            const { data: at } = await supabase
+                .from('account_types')
+                .select('mt5_group_name')
+                .ilike('name', `%${order.account_type_name}%`)
+                .limit(1)
+                .single();
+
+            if (at) {
+                mt5Group = at.mt5_group_name;
+                console.log(`✅ Found Account Type by manual name match: ${mt5Group}`);
+            }
         }
+
+        // Fallback Logic if still undefined
+        if (!mt5Group) {
+            console.log('⚠️ MT5 Group still null. Using Hardcoded FM Fallback.');
+            if (accountTypeName.includes('pro') || accountTypeName.includes('prime')) {
+                if (accountTypeName.includes('2 step') || accountTypeName.includes('2-step')) {
+                    mt5Group = 'demo\\4-FM';
+                } else if (accountTypeName.includes('instant')) {
+                    mt5Group = 'demo\\5-FM';
+                } else {
+                    mt5Group = 'demo\\1-FM';
+                }
+            } else if (accountTypeName.includes('instant') || accountTypeName.includes('funded')) {
+                mt5Group = 'demo\\0-FM';
+            } else if (accountTypeName.includes('2 step')) {
+                mt5Group = 'demo\\2-FM';
+            } else {
+                mt5Group = 'demo\\1-FM';
+            }
+        }
+
 
         let leverage = 100;
         if (isCompetition) {
