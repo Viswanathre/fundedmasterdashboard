@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2, Mail, Lock, ArrowRight, CheckCircle, User, Eye, EyeOff, Phone, Globe } from 'lucide-react'
 import AuthCard from '@/components/auth/AuthCard'
 import { motion } from 'framer-motion'
+import { COUNTRIES } from '@/lib/countries'
 
 function SignupContent() {
     const [fullName, setFullName] = useState('')
@@ -161,44 +162,11 @@ function SignupContent() {
                             className="w-full bg-[#011d16] border border-white/10 rounded-xl px-12 py-3.5 text-white focus:outline-none focus:border-[#d9e838]/50 focus:bg-[#011d16] transition-all font-medium appearance-none cursor-pointer"
                         >
                             <option value="" disabled className="bg-[#011d16] text-gray-400">Select your country</option>
-                            <option value="United States" className="bg-[#011d16]">United States</option>
-                            <option value="United Kingdom" className="bg-[#011d16]">United Kingdom</option>
-                            <option value="Canada" className="bg-[#011d16]">Canada</option>
-                            <option value="Australia" className="bg-[#011d16]">Australia</option>
-                            <option value="Germany" className="bg-[#011d16]">Germany</option>
-                            <option value="France" className="bg-[#011d16]">France</option>
-                            <option value="Spain" className="bg-[#011d16]">Spain</option>
-                            <option value="Italy" className="bg-[#011d16]">Italy</option>
-                            <option value="Netherlands" className="bg-[#011d16]">Netherlands</option>
-                            <option value="Belgium" className="bg-[#011d16]">Belgium</option>
-                            <option value="Switzerland" className="bg-[#011d16]">Switzerland</option>
-                            <option value="Austria" className="bg-[#011d16]">Austria</option>
-                            <option value="Sweden" className="bg-[#011d16]">Sweden</option>
-                            <option value="Norway" className="bg-[#011d16]">Norway</option>
-                            <option value="Denmark" className="bg-[#011d16]">Denmark</option>
-                            <option value="Finland" className="bg-[#011d16]">Finland</option>
-                            <option value="Poland" className="bg-[#011d16]">Poland</option>
-                            <option value="Czech Republic" className="bg-[#011d16]">Czech Republic</option>
-                            <option value="Portugal" className="bg-[#011d16]">Portugal</option>
-                            <option value="Greece" className="bg-[#011d16]">Greece</option>
-                            <option value="Ireland" className="bg-[#011d16]">Ireland</option>
-                            <option value="New Zealand" className="bg-[#011d16]">New Zealand</option>
-                            <option value="Singapore" className="bg-[#011d16]">Singapore</option>
-                            <option value="Hong Kong" className="bg-[#011d16]">Hong Kong</option>
-                            <option value="Japan" className="bg-[#011d16]">Japan</option>
-                            <option value="South Korea" className="bg-[#011d16]">South Korea</option>
-                            <option value="India" className="bg-[#011d16]">India</option>
-                            <option value="China" className="bg-[#011d16]">China</option>
-                            <option value="Brazil" className="bg-[#011d16]">Brazil</option>
-                            <option value="Mexico" className="bg-[#011d16]">Mexico</option>
-                            <option value="Argentina" className="bg-[#011d16]">Argentina</option>
-                            <option value="Chile" className="bg-[#011d16]">Chile</option>
-                            <option value="South Africa" className="bg-[#011d16]">South Africa</option>
-                            <option value="United Arab Emirates" className="bg-[#011d16]">United Arab Emirates</option>
-                            <option value="Saudi Arabia" className="bg-[#011d16]">Saudi Arabia</option>
-                            <option value="Turkey" className="bg-[#011d16]">Turkey</option>
-                            <option value="Russia" className="bg-[#011d16]">Russia</option>
-                            <option value="Other" className="bg-[#011d16]">Other</option>
+                            {COUNTRIES.map((country) => (
+                                <option key={country.code} value={country.name} className="bg-[#011d16]">
+                                    {country.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
                 </div>
