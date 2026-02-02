@@ -65,8 +65,9 @@ export class SharkPayGateway implements PaymentGateway {
             console.log("🦈 [SharkPay Debug] Backend URL:", backendUrl);
             const payload = {
                 amount: amountINR, // Amount in INR
-                name: params.customerName,
                 email: params.customerEmail,
+                name: params.customerName,
+                customer_phone: params.customerPhone || '',
                 reference_id: params.orderId, // Our internal order ID
                 success_url: `${frontendUrl}/payment/success?orderId=${params.orderId}`,
                 failed_url: `${frontendUrl}/payment/failed`,

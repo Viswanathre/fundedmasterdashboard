@@ -241,6 +241,8 @@ async function handlePaymentWebhook(req: Request, res: Response) {
             console.log('🏆 Detected Competition Order. Enforcing group:', mt5Group);
         }
 
+        console.log(`🚀 [WEBHOOK] Creating MT5 Account with Group: '${mt5Group}' for Type: '${accountTypeName}'`);
+
         const mt5Data = await createMT5Account({
             name: fullName,
             email: email,
@@ -296,12 +298,12 @@ async function handlePaymentWebhook(req: Request, res: Response) {
             }).eq('order_id', internalOrderId);
         }
 
-        console.log('✅ Account created successfully for order:', internalOrderId);
+        console.log(' Account created successfully for order:', internalOrderId);
 
         // Send Email Credentials
         // Send Email Credentials (Async - do not await to prevent gateway timeout)
         if (email) {
-            console.log(`📧 Queuing async email to ${email} for order ${internalOrderId}...`);
+            console.log(`Queuing async email to ${email} for order ${internalOrderId}...`);
             EmailService.sendAccountCredentials(
                 email,
                 fullName,

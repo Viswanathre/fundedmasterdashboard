@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         let user = sessionUser;
         let dbClient: any = supabase; // Default to authenticated user client
         const body = await request.json();
-        const { type, model, size, platform, coupon, gateway = 'sharkpay', competitionId, customerEmail, password, customerName } = body;
+        const { type, model, size, platform, coupon, gateway = 'sharkpay', competitionId, customerEmail, password, customerName, customerPhone } = body;
 
         // Auto-Registration Logic if no session
         if (!user) {
@@ -24,71 +24,50 @@ export async function POST(request: NextRequest) {
                 return NextResponse.json({ error: 'Unauthorized: Login or provide email' }, { status: 401 });
             }
 
-            // Create Admin Client for User Management
-            const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
-            const supabaseAdmin = createSupabaseClient(
-                process.env.NEXT_PUBLIC_SUPABASE_URL,
-                process.env.SUPABASE_SERVICE_ROLE_KEY
-            );
+            // Switch to Public Client for SignUp (Triggers Email Verification)
+            // But checking current constraints: we want to create a user and let them verify.
+            // If we use admin.createUser with email_confirm: false, it won't send email.
+            // If we use standard signUp, it sends email.
 
-            // Switch to Admin Client for DB operations (Bypass RLS)
-            dbClient = supabaseAdmin;
-
-            // 1. Try to get existing user by email
-            // Note: listUsers is the only way to search by email in Admin API efficiently if we don't know the ID
-            // Or we try to createUser and catch failure.
-
-            // Let's try creating first.
-            const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+            // Try Standard SignUp first
+            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
                 email: customerEmail,
-                password: password || 'SharkFunded123!', // Fallback password if not provided
-                email_confirm: true,
-                user_metadata: { full_name: customerName || 'Trader' }
+                password: password || 'SharkFunded123!',
+                options: {
+                    data: {
+                        full_name: customerName || 'Trader',
+                        phone: customerPhone,
+                    }
+                }
             });
 
-            if (createError) {
-                // If user already exists, we SHOULD probably fetch them.
-                // But for security, we shouldn't just let anyone book on anyone's behalf without auth?
-                // However, user explicitly requested "without login".
-                // We'll search for the user by email to get the ID.
-                // User creation failed. We'll try to find them.
+            if (signUpError) {
+                // If user already registered, proceed to find them (using admin as fallback for lookup)
+                console.log("SignUp User existing or error:", signUpError.message);
 
+                const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
+                const supabaseAdmin = createSupabaseClient(
+                    process.env.NEXT_PUBLIC_SUPABASE_URL,
+                    process.env.SUPABASE_SERVICE_ROLE_KEY
+                );
+                dbClient = supabaseAdmin; // Upgrade to admin for lookup
 
-                // WARNING: This allows unauthenticated orders for existing emails.
-                // In many e-commerce flows (Guest Checkout) this is acceptable as long as we don't expose sensitive info.
-
-                // We can use listUsers to filter? OR just trust the flow. 
-                // Since this is a server-side admin operation, we have power.
-                // But listUsers by email isn't direct in older api.
-                // Actually, let's just use the `payment_orders` logic. 
-                // Ideally we should prompt login. But for this specific task "without login also i need to use":
-
-                // Let's try to get user by ID? No we don't have ID.
-                // We'll proceed by assuming we can't get the ID if we can't create. 
-                // Wait! createUser returns the user object even if they exist? No, it errors.
-
-                // WORKAROUND: We will have to ask the frontend to Login if the account exists, 
-                // OR we can implement a "Guest" user logic that creates a Shadow user?
-                // No, CRM needs a real user.
-
-                // Let's try to find the user in the `profiles` table (publicly accessible? likely not).
-                // We'll use the Admin client to query `auth.users` via RPC or just assume we can get it.
-                // Actually, `supabaseAdmin.rpc` to a function that looks up user_id by email is safest.
-                // OR: just query the `profiles` table if we have RLS bypassing or Service Role:
                 const { data: existingProfile } = await supabaseAdmin
                     .from('profiles')
-                    .select('id')
+                    .select('id, full_name, email')
                     .eq('email', customerEmail)
                     .single();
 
                 if (existingProfile) {
                     user = { id: existingProfile.id, email: customerEmail } as any;
                 } else {
-                    return NextResponse.json({ error: 'Account exists but profile missing. Please contact support.' }, { status: 400 });
+                    // If signUp failed but no profile, it's a real error
+                    return NextResponse.json({ error: 'Registration failed: ' + signUpError.message }, { status: 400 });
                 }
-
-            } else {
-                user = newUser.user as any;
+            } else if (signUpData.user) {
+                user = signUpData.user;
+                // Note: user.identities might show if they are confirmed or not. 
+                // Since we used signUp, an email should have been sent.
             }
         }
 
@@ -103,7 +82,7 @@ export async function POST(request: NextRequest) {
         }
 
         // SECURITY FIX: Whitelist Allowed Sizes
-        const ALLOWED_SIZES = [5000, 10000, 25000, 50000, 100000, 200000];
+        const ALLOWED_SIZES = [3000, 6000, 12000, 5000, 10000, 25000, 50000, 100000, 200000];
         if (type !== 'competition' && !ALLOWED_SIZES.includes(Number(size))) {
             return NextResponse.json({ error: 'Invalid account size selected.' }, { status: 400 });
         }
@@ -181,8 +160,9 @@ export async function POST(request: NextRequest) {
                 orderId: order.order_id,
                 amount: amount,
                 currency: 'USD',
-                customerEmail: user.email || 'noemail@sharkfunded.com',
-                customerName: 'Trader',
+                customerEmail: customerEmail || user.email || 'noemail@sharkfunded.com',
+                customerName: customerName || 'Trader',
+                customerPhone: customerPhone,
                 metadata: {
                     competition_id: finalCompetitionId,
                 },
@@ -199,17 +179,23 @@ export async function POST(request: NextRequest) {
         }
 
         // 2. Handle Challenge Types (Existing Logic)
-        // 2. Handle Challenge Types (Existing Logic)
         // Determine account type name
         let accountTypeName = '';
-        if (model === 'pro') {
-            if (type === 'instant') accountTypeName = 'Instant Funding Pro';
-            else if (type === '1-step') accountTypeName = '1 Step Pro';
-            else if (type === '2-step') accountTypeName = '2 Step Pro';
+
+        if (model === 'prime') {
+            if (type === 'fastest') accountTypeName = 'Prime Instant';
+            else if (type === 'new') accountTypeName = 'Prime Phase 2';
+            // Fallback for direct API usage
+            else if (type === '1-step') accountTypeName = 'Evaluation Phase 1';
         } else {
+            // Lite Model
             if (type === 'instant') accountTypeName = 'Instant Funding';
-            else if (type === '1-step') accountTypeName = '1 Step';
-            else if (type === '2-step') accountTypeName = '2 Step';
+            else if (type === '1-step') accountTypeName = 'Evaluation Phase 1';
+            else if (type === '2-step') accountTypeName = 'Evaluation Phase 2';
+
+            // Handle frontend "fastest" sends for Lite
+            if (type === 'fastest') accountTypeName = 'Instant Funding';
+            if (type === 'new') accountTypeName = 'Evaluation Phase 2';
         }
 
         // OPTIMIZATION: Fetch Profile and Account Type in Parallel to reduce cross-region latency
@@ -218,8 +204,7 @@ export async function POST(request: NextRequest) {
                 .from('account_types')
                 .select('*')
                 .eq('name', accountTypeName)
-                .eq('status', 'active')
-                .single(),
+                .limit(1),
             dbClient
                 .from('profiles')
                 .select('full_name, email')
@@ -227,17 +212,29 @@ export async function POST(request: NextRequest) {
                 .single()
         ]);
 
-        const accountType = accountTypeRes.data;
+        const accountType = accountTypeRes.data?.[0];
         const profile = profileRes.data;
 
         if (accountTypeRes.error || !accountType) {
+            // Debug: Fetch all types to see what's available
+            const { data: allTypes } = await dbClient.from('account_types').select('name');
+            console.error(`Invalid account type: ${accountTypeName}. Available types: ${JSON.stringify(allTypes?.map((t: any) => t.name))}`);
+
+            console.error(`Invalid account type: ${accountTypeName} for model=${model} type=${type}. DB Error: ${accountTypeRes.error?.message}`);
             return NextResponse.json({
-                error: 'Invalid account type configuration'
+                error: 'Invalid account type configuration',
+                debug: {
+                    requested: { model, type },
+                    derivedName: accountTypeName,
+                    dbError: accountTypeRes.error,
+                    found: !!accountType,
+                    availableTypes: allTypes?.map((t: any) => t.name)
+                }
             }, { status: 400 });
         }
 
         // Calculate pricing in USD (base currency)
-        const basePrice = await calculatePrice(type, model, size, dbClient);
+        const basePrice = await calculatePrice(type, model, size);
 
         // Validate and apply coupon discount
         let discountAmount = 0;
@@ -312,8 +309,9 @@ export async function POST(request: NextRequest) {
             orderId: order.order_id,
             amount: finalAmount, // USD amount - gateway converts if needed
             currency: 'USD', // Always pass USD
-            customerEmail: user.email || profile?.email || 'noemail@sharkfunded.com',
-            customerName: profile?.full_name || 'Trader',
+            customerEmail: customerEmail || user.email || profile?.email || 'noemail@sharkfunded.com',
+            customerName: customerName || profile?.full_name || 'Trader',
+            customerPhone: customerPhone,
             metadata: {
                 account_type: accountTypeName,
                 account_size: size,
@@ -354,35 +352,52 @@ export async function POST(request: NextRequest) {
 
 
 // Helper function to calculate price in USD
-async function calculatePrice(type: string, model: string, size: string, supabase: any): Promise<number> {
+// Matches frontend logic strictly
+async function calculatePrice(type: string, model: string, size: string | number): Promise<number> {
     const sizeNum = Number(size);
-    let priceUSD = 0;
 
-    // Exact pricing matching frontend
-    if (type === '1-step') {
-        if (sizeNum === 5000) priceUSD = 39;
-        else if (sizeNum === 10000) priceUSD = 69;
-        else if (sizeNum === 25000) priceUSD = 149;
-        else if (sizeNum === 50000) priceUSD = 279;
-        else if (sizeNum === 100000) priceUSD = 499;
-        else if (sizeNum === 200000) priceUSD = 949;
-        else priceUSD = sizeNum * 0.005;
-    } else if (type === '2-step') {
-        if (sizeNum === 5000) priceUSD = 29;
-        else if (sizeNum === 10000) priceUSD = 49;
-        else if (sizeNum === 25000) priceUSD = 119;
-        else if (sizeNum === 50000) priceUSD = 229;
-        else if (sizeNum === 100000) priceUSD = 449;
-        else if (sizeNum === 200000) priceUSD = 899;
-        else priceUSD = sizeNum * 0.0045;
-    } else if (type === 'instant') {
-        priceUSD = sizeNum * 0.08;
+    if (model === "prime") {
+        if (type === "fastest") {
+            if (sizeNum === 5000) return 74;
+            if (sizeNum === 10000) return 125;
+            if (sizeNum === 25000) return 298;
+            if (sizeNum === 50000) return 525;
+            if (sizeNum === 100000) return 730;
+        }
+        if (type === "new") {
+            if (sizeNum === 5000) return 88;
+            if (sizeNum === 10000) return 134;
+            if (sizeNum === 25000) return 354;
+            if (sizeNum === 50000) return 618;
+            if (sizeNum === 100000) return 915;
+        }
     }
 
-    // Pro model markup
-    if (model === 'pro') {
-        priceUSD = priceUSD * 1.2;
+    if (model === "lite") {
+        if (type === "instant") {
+            if (sizeNum === 3000) return 51;
+            if (sizeNum === 6000) return 88;
+            if (sizeNum === 12000) return 134;
+            if (sizeNum === 25000) return 374;
+            if (sizeNum === 50000) return 748;
+            if (sizeNum === 100000) return 1198;
+        }
+        if (type === "1-step") {
+            if (sizeNum === 5000) return 72;
+            if (sizeNum === 10000) return 105;
+            if (sizeNum === 25000) return 225;
+            if (sizeNum === 50000) return 390;
+            if (sizeNum === 100000) return 825;
+        }
+        if (type === "2-step") {
+            if (sizeNum === 5000) return 45;
+            if (sizeNum === 10000) return 83;
+            if (sizeNum === 25000) return 188;
+            if (sizeNum === 50000) return 352;
+            if (sizeNum === 100000) return 660;
+        }
     }
 
-    return Math.round(priceUSD);
+    // Fallback if no match found (safeguard)
+    return 100;
 }

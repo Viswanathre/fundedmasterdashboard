@@ -48,7 +48,7 @@ export default function PublicSidebar({ isOpen = true, onClose }: SidebarProps) 
                     "inset-y-0 left-0 h-screen w-[260px] md:w-auto", // Fixed width on mobile
                     // Desktop: floating, rounded, shorter height
                     "md:relative md:h-[calc(100vh-2rem)] md:m-4 md:rounded-3xl md:block hidden", // Hidden on mobile by default unless handled by layout
-                    "bg-[#0a0d20] bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#1a2342] via-[#0a0d20] to-[#0a0d20] border-r border-white/5 md:border border-white/10 shadow-2xl"
+                    "bg-[#042f24] bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#0d4435] via-[#042f24] to-[#042f24] border-r border-white/5 md:border border-white/10 shadow-2xl"
                 )}
             >
                 {/* Background Overlay */}
@@ -63,7 +63,7 @@ export default function PublicSidebar({ isOpen = true, onClose }: SidebarProps) 
                 </div>
 
                 {/* Pattern Overlay */}
-                <div className="absolute inset-0 z-0 pointer-events-none opacity-100">
+                <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
                     <Image
                         src="/sidebar-pattern.svg"
                         alt=""
@@ -81,8 +81,8 @@ export default function PublicSidebar({ isOpen = true, onClose }: SidebarProps) 
                     <Link href="/" className="flex items-center gap-3 group w-full h-full relative">
                         <div className="relative w-10 h-10 shrink-0">
                             <Image
-                                src="/shark-icon.svg"
-                                alt="SharkFunded"
+                                src="/logo.png"
+                                alt="FundedMaster"
                                 fill
                                 className="object-contain"
                                 priority
@@ -91,7 +91,7 @@ export default function PublicSidebar({ isOpen = true, onClose }: SidebarProps) 
 
                         {!isCollapsed && (
                             <span className="text-xl font-bold text-white tracking-wide">
-                                SharkFunded
+                                FundedMaster
                             </span>
                         )}
                     </Link>
@@ -104,7 +104,7 @@ export default function PublicSidebar({ isOpen = true, onClose }: SidebarProps) 
                     <div className="flex-1 overflow-y-auto px-4 space-y-2 scrollbar-hide">
                         {!isCollapsed && (
                             <div className="px-4 mb-3">
-                                <span className="text-xs font-medium text-gray-500/80">Menu</span>
+                                <span className="text-xs font-medium text-emerald-500/80">Menu</span>
                             </div>
                         )}
 
@@ -118,7 +118,7 @@ export default function PublicSidebar({ isOpen = true, onClose }: SidebarProps) 
                                             "relative flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-200 group",
                                             isCollapsed ? "justify-center px-2" : "",
                                             isActive
-                                                ? "text-white bg-gradient-to-b from-blue-600/0 via-blue-600/50 to-[#96C0FF] border-b-[3px] border-[#B7DCFF] shadow-lg shadow-blue-500/20"
+                                                ? "text-[#d9e838] bg-[#d9e838]/10 border-b-[3px] border-[#d9e838] shadow-lg shadow-[#d9e838]/10"
                                                 : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                                         )}
                                     >
@@ -128,14 +128,14 @@ export default function PublicSidebar({ isOpen = true, onClose }: SidebarProps) 
                                             strokeWidth={isActive ? 2.5 : 1.5}
                                             className={cn(
                                                 "relative z-10 shrink-0 transition-colors",
-                                                isActive ? "text-white" : "text-gray-400 group-hover:text-white"
+                                                isActive ? "text-[#d9e838]" : "text-gray-400 group-hover:text-white"
                                             )}
                                         />
 
                                         {!isCollapsed && (
                                             <span className={cn(
                                                 "relative z-10 text-[14px] tracking-wide transition-colors",
-                                                isActive ? "text-white font-semibold" : "text-gray-400 font-medium group-hover:text-white"
+                                                isActive ? "text-[#d9e838] font-semibold" : "text-gray-400 font-medium group-hover:text-white"
                                             )}>
                                                 {item.label}
                                             </span>

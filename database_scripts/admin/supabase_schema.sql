@@ -30,6 +30,7 @@ add column if not exists referred_by uuid references public.profiles(id),
 add column if not exists total_commission numeric default 0,
 add column if not exists total_referrals integer default 0,
 add column if not exists phone text,
+add column if not exists nationality text,
 add column if not exists user_type text default 'client';
 
 -- Staging table for user migration
@@ -67,13 +68,15 @@ begin
     where referral_code = new.raw_user_meta_data->>'referral_code';
   end if;
 
-  insert into public.profiles (id, full_name, email, referral_code, referred_by)
+  insert into public.profiles (id, full_name, email, referral_code, referred_by, phone, nationality)
   values (
     new.id, 
     new.raw_user_meta_data->>'full_name', 
     new.email,
     substring(md5(random()::text) from 0 for 8), -- Generate a random 7-char code
-    referrer_id -- Save the referrer's ID
+    referrer_id, -- Save the referrer's ID
+    new.raw_user_meta_data->>'phone',
+    new.raw_user_meta_data->>'nationality'
   );
   
   -- Increment referral count for the referrer

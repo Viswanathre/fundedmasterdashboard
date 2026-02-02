@@ -11,6 +11,7 @@ export interface CreateOrderParams {
     amount: number;
     currency: string;
     customerEmail: string;
+    customerPhone?: string; // Added for verification
     customerName: string;
     metadata?: Record<string, any>;
 }

@@ -30,7 +30,3 @@ INSERT INTO public.account_types (name, mt5_group_name, leverage) VALUES
     ('Prime Instant', 'demo\\5-FM', 100),
     ('Master Account', 'demo\\6-FM', 100),
     ('Competition', 'demo\\SF\\0-Demo\\comp', 100);
-
--- Make sure payment_orders references this table correctly (Add FK if missing)
--- ALTER TABLE public.payment_orders 
--- ADD COLUMN IF NOT EXISTS account_type_id UUID REFERENCES public.account_types(id);

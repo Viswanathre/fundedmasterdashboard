@@ -11,7 +11,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
 
 async function checkChallenge() {
-    const challengeId = '3beaa4e7-48fc-47d4-a3c7-92598c6dd2f8';
+    const challengeId = '05272843-e23a-4f04-9f9e-a81f99d44ce4';
 
     console.log(`🔍 Checking challenge: ${challengeId}`);
 

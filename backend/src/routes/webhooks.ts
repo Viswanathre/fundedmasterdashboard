@@ -154,7 +154,7 @@ async function handlePaymentWebhook(req: Request, res: Response) {
 
         // 3. Status Update (Atomic)
         console.log(`📥 [WEBHOOK] Attempting to update order ${internalOrderId} to paid...`);
-        const { data: order, error: updateError } = await supabase
+        const { data: updatedOrders, error: updateError } = await supabase
             .from('payment_orders')
             .update({
                 status: 'paid',
@@ -164,16 +164,47 @@ async function handlePaymentWebhook(req: Request, res: Response) {
             })
             .eq('order_id', internalOrderId)
             .eq('status', 'pending')
-            .select('*')
-            .single();
+            .select('*');
 
         if (updateError) {
             console.log('⚠️ [WEBHOOK] Order update failed:', updateError.message);
-            // Already processed
             if (req.method === 'GET') {
-                return res.redirect(`${frontendUrl}/payment/success?orderId=${internalOrderId}`);
+                return res.redirect(`${frontendUrl}/payment/failed?orderId=${internalOrderId}`);
             }
-            return res.json({ message: 'Order already processed or not found' });
+            return res.json({ message: 'Order update failed' });
+        }
+
+        let order = updatedOrders && updatedOrders.length > 0 ? updatedOrders[0] : null;
+
+        if (!order) {
+            console.log(`⚠️ [WEBHOOK] Update returned no rows for ${internalOrderId}. Checking if already paid...`);
+            // Check if it exists but is already paid
+            const { data: existingOrders } = await supabase
+                .from('payment_orders')
+                .select('*')
+                .eq('order_id', internalOrderId);
+
+            const existingOrder = existingOrders?.[0];
+
+            if (existingOrder && existingOrder.status === 'paid') {
+                console.log(`ℹ️ [WEBHOOK] Order ${internalOrderId} is already paid.`);
+                if (existingOrder.is_account_created) {
+                    console.log(`✅ [WEBHOOK] Account already created for ${internalOrderId}. Stopping.`);
+                    if (req.method === 'GET') {
+                        return res.redirect(`${frontendUrl}/payment/success?orderId=${internalOrderId}`);
+                    }
+                    return res.json({ success: true, message: 'Order already processed' });
+                }
+                // If paid but account not created, proceed using the existing order to create account
+                console.log(`⚠️ [WEBHOOK] Order ${internalOrderId} was paid but account not created. Retrying creation...`);
+                order = existingOrder;
+            } else {
+                console.log(`❌ [WEBHOOK] Order ${internalOrderId} not found or invalid status.`);
+                if (req.method === 'GET') {
+                    return res.redirect(`${frontendUrl}/payment/failed?orderId=${internalOrderId}`);
+                }
+                return res.json({ message: 'Order already processed or not found' });
+            }
         }
 
         console.log(`✅ [WEBHOOK] Order updated successfully. Creating MT5 account...`);
