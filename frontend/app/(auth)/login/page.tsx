@@ -46,8 +46,8 @@ export default function LoginPage() {
                 throw error
             }
 
-            router.refresh()
-            router.push('/dashboard')
+            // Force a hard reload to ensure cookies are properly set and middleware sees the session
+            window.location.href = '/dashboard'
         } catch (err: any) {
             setError(err.message)
             setLoading(false)
