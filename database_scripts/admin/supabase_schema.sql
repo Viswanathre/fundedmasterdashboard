@@ -89,7 +89,7 @@ begin
   return new;
 end;
 $$ language plpgsql security definer;
-
+ 
 -- Trigger the function every time a user is created
 create or replace trigger on_auth_user_created
   after insert on auth.users
