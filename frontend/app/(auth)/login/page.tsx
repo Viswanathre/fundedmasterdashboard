@@ -56,7 +56,7 @@ export default function LoginPage() {
 
     return (
         <AuthCard
-            title="Welcome Back"
+            title="Welcome"
             subtitle="Sign in to your trading account"
             footerText="Don't have an account?"
             footerLinkText="Sign up"
